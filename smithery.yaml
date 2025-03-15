@@ -29,8 +29,8 @@ startCommand:
     }
 
 listTools:
-  command: "python"
-  args: ["-m", "mcp.inspector", "node", "index.js"]
+  command: "python3"
+  args: ["inspector.py"]
   env: {}
   
 build:
