@@ -10,6 +10,10 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashidae/airtable-mcp.git"
+  },
   "keywords": [
     "airtable",
     "mcp",
@@ -19,8 +23,12 @@
     "claude",
     "gpt"
   ],
-  "author": "Rashid A",
+  "author": "Rashid Azarang",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rashidae/airtable-mcp/issues"
+  },
+  "homepage": "https://github.com/rashidae/airtable-mcp#readme",
   "engines": {
     "node": ">=14.0.0"
   },

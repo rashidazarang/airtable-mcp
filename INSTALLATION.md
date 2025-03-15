@@ -35,7 +35,7 @@ That way, you can simply tell Cursor or any AI code editor with MCP integrations
 ## Requirements
 
 * Node.js 14+ installed on your machine
-* Python 3.10+ installed on your machine
+* Python 3.10+ installed on your machine (automatically detected)
 * Airtable Personal Access Token (API Key)
 * MCP Client Application (Cursor, Claude Desktop, Cline, Zed, etc.)
 
@@ -50,10 +50,10 @@ That way, you can simply tell Cursor or any AI code editor with MCP integrations
 The simplest way to install and use Airtable MCP is via NPX:
 
 ```bash
-# Install globally (optional)
+# Install globally
 npm install -g airtable-mcp
 
-# Or use directly with npx
+# Or use directly with npx (no installation needed)
 npx airtable-mcp --token YOUR_AIRTABLE_TOKEN --base YOUR_BASE_ID
 ```
 
@@ -73,12 +73,7 @@ npx airtable-mcp --token YOUR_AIRTABLE_TOKEN --base YOUR_BASE_ID
 2. Navigate to Features, scroll down to MCP Servers and click "Add new MCP server"
 3. Give it a unique name (airtable-tools), set type to "command" and set the command to:
 
-**For macOS/Linux:**
-```bash
-npx airtable-mcp --token YOUR_AIRTABLE_TOKEN --base YOUR_BASE_ID
-```
-
-**For Windows:**
+**For macOS/Linux/Windows:**
 ```bash
 npx airtable-mcp --token YOUR_AIRTABLE_TOKEN --base YOUR_BASE_ID
 ```

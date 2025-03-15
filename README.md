@@ -11,6 +11,7 @@ This application is a powerful Airtable integration tool that enables AI-powered
 - **Data Access**: Read, create, update, and delete records
 - **Schema Management**: Export, compare, and update schemas
 - **Command-line Configuration**: Use API tokens directly through command-line parameters
+- **NPX Compatible**: Easy installation with a single command
 
 ## Architecture
 
@@ -33,11 +34,47 @@ Model Context Protocol (MCP) is a capability supported by Anthropic AI models th
 
 ### Prerequisites
 
-- Python 3.10+
+- Node.js 14+
+- Python 3.10+ (automatically detected)
 - Airtable API token
 - A compatible MCP client (Cursor, Claude Desktop, etc.)
 
-### Setup
+### Quick Setup with NPX (Recommended)
+
+The fastest way to get started:
+
+```bash
+# Install globally
+npm install -g airtable-mcp
+
+# Or run directly with npx
+npx airtable-mcp --token "your_airtable_token" --base "your_base_id"
+```
+
+### Configure Your MCP Client
+
+For Cursor, update your `~/.cursor/mcp.json` file:
+
+```json
+{
+  "mcpServers": {
+    "airtable-tools": {
+      "command": "npx",
+      "args": [
+        "airtable-mcp",
+        "--token", "your_airtable_token",
+        "--base", "your_base_id"
+      ]
+    }
+  }
+}
+```
+
+Restart your MCP client to load the new tools.
+
+### Manual Installation (Alternative)
+
+If you prefer to clone the repository and install manually:
 
 1. Clone this repository:
    ```bash
@@ -50,25 +87,10 @@ Model Context Protocol (MCP) is a capability supported by Anthropic AI models th
    pip install -r requirements.txt
    ```
 
-3. Configure your MCP client to use the Airtable MCP server.
-
-   For Cursor, update your `~/.cursor/mcp.json` file:
-   ```json
-   {
-     "mcpServers": {
-       "airtable-tools": {
-         "command": "/path/to/python3.10",
-         "args": [
-           "/path/to/airtable-mcp/src/server.py",
-           "--token", "your_airtable_token",
-           "--base", "your_base_id"
-         ]
-       }
-     }
-   }
+3. Run the server:
+   ```bash
+   python airtable_mcp/src/server.py --token "your_airtable_token" --base "your_base_id"
    ```
-
-4. Restart your MCP client to load the new tools.
 
 ## Usage
 
@@ -114,12 +136,13 @@ module.exports = {
   apps: [
     {
       name: 'airtable-mcp',
-      script: '/path/to/airtable-mcp/src/server.py',
+      script: 'npx',
       args: [
+        'airtable-mcp',
         '--token', 'your_airtable_token',
         '--base', 'your_base_id'
       ],
-      interpreter: '/path/to/python3.10',
+      interpreter: '/usr/local/bin/node',
       env: {
         PATH: process.env.PATH,
       },
@@ -138,6 +161,10 @@ pm2 start ecosystem.config.js
 - Works with any MCP-compatible client
 - Primarily designed for Cursor IDE integration
 - Supports other AI editors and MCP clients
+
+## Detailed Documentation
+
+For detailed installation instructions, troubleshooting, and advanced configurations, see [INSTALLATION.md](INSTALLATION.md).
 
 ## License
 
