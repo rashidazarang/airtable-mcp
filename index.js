@@ -31,7 +31,31 @@ const getPythonPath = () => {
   }
 };
 
+// Check Python version
+const checkPythonVersion = (pythonPath) => {
+  try {
+    const versionStr = execSync(`${pythonPath} --version`).toString().trim();
+    const versionMatch = versionStr.match(/Python (\d+)\.(\d+)/);
+    if (versionMatch) {
+      const major = parseInt(versionMatch[1]);
+      const minor = parseInt(versionMatch[2]);
+      return (major > 3 || (major === 3 && minor >= 10));
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
 const pythonPath = getPythonPath();
+
+// Verify Python compatibility
+if (!checkPythonVersion(pythonPath)) {
+  console.error('❌ Error: MCP SDK requires Python 3.10+');
+  console.error('Please install Python 3.10 or newer and try again.');
+  process.exit(1);
+}
+
 const serverScript = path.join(__dirname, 'airtable_mcp', 'src', 'server.py');
 
 // Check if the script exists
