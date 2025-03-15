@@ -1,7 +1,7 @@
 # Airtable MCP
 
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![Available on Smithery](https://img.shields.io/badge/Available%20on-Smithery-black?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzgiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCAzOCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzEyNl8xMzUpIj4KPHBhdGggZD0iTTguNjI1IDE0LjYyNUgxOS44NzVMMTQuMzc1IDIzLjM3NUg4LjYyNUwxNC4zNzUgMTQuNjI1VjguODc1TDMuMTI1IDIzLjM3NVYyOS4xMjVIMTQuMzc1TDE5Ljg3NSAyMC4zNzVIMjUuNjI1TDE5Ljg3NSAyOS4xMjVMMzQuODc1IDExLjc1SDI5LjEyNUwyMy42MjUgMTEuNzVMMTkuODc1IDMuMTI1SDMuMTI1VjhMMTQuMzc1IDhMMTkuODc1IDE3LjI1SDI1LjYyNUwxOS44NzUgOC44NzVMOC42MjUgMjYuMjVMMjkuMTI1IDI2LjI1SDM0Ljg3NUwzNC44NzUgMjAuMzc1TDIzLjYyNSAyMC4zNzVMMTkuODc1IDExLjc1SDguNjI1VjE0LjYyNVoiIGZpbGw9IndoaXRlIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMTI2XzEzNSI+CjxyZWN0IHdpZHRoPSIzMS43NSIgaGVpZ2h0PSIyNiIgZmlsbD0id2hpdGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMuMTI1IDMuMTI1KSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=)](https://smithery.ai/server/@rashidazarang/airtable-mcp/tools)
+[![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 
 > Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Cursor, Claude Code, Cline, Zed, and other Claude-powered editors.
 
