@@ -54,6 +54,10 @@ async def api_call(endpoint, method="GET", data=None, params=None):
     """Make an Airtable API call"""
     import requests
     
+    # Check if token is available before making API calls
+    if not server_state["token"]:
+        return {"error": "No Airtable API token provided. Please set via --token or AIRTABLE_PERSONAL_ACCESS_TOKEN"}
+    
     headers = {
         "Authorization": f"Bearer {server_state['token']}",
         "Content-Type": "application/json"
@@ -85,6 +89,10 @@ async def api_call(endpoint, method="GET", data=None, params=None):
 @mcp.tool()
 async def list_bases() -> str:
     """List all accessible Airtable bases"""
+    # Check for token - return informational message if missing
+    if not server_state["token"]:
+        return "Please provide an Airtable API token to list your bases."
+    
     result = await api_call("meta/bases")
     
     if "error" in result:
@@ -101,6 +109,10 @@ async def list_bases() -> str:
 @mcp.tool()
 async def list_tables(base_id: Optional[str] = None) -> str:
     """List all tables in the specified base or the default base"""
+    # Check for token - return informational message if missing
+    if not server_state["token"]:
+        return "Please provide an Airtable API token to list tables."
+    
     base = base_id or server_state["base_id"]
     
     if not base:
@@ -903,6 +915,7 @@ def main():
         
         if not server_state["token"]:
             logger.warning("No Airtable API token provided. Please set via --token or AIRTABLE_PERSONAL_ACCESS_TOKEN")
+            logger.info("Tool listing will still work but API calls will require a token")
         
         # Setup asyncio event loop
         if sys.platform == 'win32':
