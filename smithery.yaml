@@ -16,12 +16,23 @@ startCommand:
         description: "Your default Airtable base ID (optional)"
     required: ["airtable_token"]
   commandFunction: |
-    (config) => ({
-      command: "node",
-      args: ["index.js", "--token", config.airtable_token, ...(config.base_id ? ["--base", config.base_id] : [])],
-      env: {}
-    })
+    (config) => {
+      // Token should be passed as an environment variable for security
+      return {
+        command: "node",
+        args: ["index.js", 
+              "--token", config.airtable_token,
+              ...(config.base_id ? ["--base", config.base_id] : [])
+        ],
+        env: {}
+      };
+    }
 
+listTools:
+  command: "python"
+  args: ["-m", "mcp.inspector", "node", "index.js"]
+  env: {}
+  
 build:
   dockerfile: "Dockerfile"
 
