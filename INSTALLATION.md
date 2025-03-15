@@ -45,9 +45,17 @@ That way, you can simply tell Cursor or any AI code editor with MCP integrations
 
 ## Installation
 
-### 1. Install via NPX (Recommended)
+### 1. Install via Smithery (Easiest)
 
-The simplest way to install and use Airtable MCP is via NPX:
+The easiest way to install Airtable MCP is through Smithery:
+
+1. Visit [Smithery](https://smithery.ai)
+2. Search for "@rashidazarang/airtable-mcp"
+3. Click "Install" and follow the prompts to configure with your Airtable token and base ID
+
+### 2. Install via NPX (Alternative)
+
+Another simple way to install and use Airtable MCP is via NPX:
 
 ```bash
 # Install globally
@@ -57,7 +65,7 @@ npm install -g airtable-mcp
 npx airtable-mcp --token YOUR_AIRTABLE_TOKEN --base YOUR_BASE_ID
 ```
 
-### 2. Get Your Airtable API Token
+### 3. Get Your Airtable API Token
 
 1. Log in to your Airtable account
 2. Go to your [Account Settings](https://airtable.com/account)
@@ -65,7 +73,7 @@ npx airtable-mcp --token YOUR_AIRTABLE_TOKEN --base YOUR_BASE_ID
 4. Create a Personal Access Token with appropriate permissions
 5. Copy your token to use in the configuration
 
-### 3. Configure Your MCP Client
+### 4. Configure Your MCP Client
 
 #### For Cursor:
 
@@ -99,14 +107,14 @@ Edit your `~/.cursor/mcp.json` file to include:
 }
 ```
 
-### 4. Verify Connection
+### 5. Verify Connection
 
 1. Restart your MCP client (Cursor, etc.)
 2. Create a new query using the Composer Agent with Claude 3.5 Sonnet model
 3. Ask something like "List my Airtable bases" or "Show me the tables in my current base"
 4. You should see a response with your Airtable data
 
-### 5. For Production Use (Optional)
+### 6. For Production Use (Optional)
 
 For continuous availability, you can set up Airtable MCP using PM2:
 
@@ -171,5 +179,5 @@ Here are some common issues and their solutions:
 
 ### For more help
 
-- Open an issue on the [GitHub repository](https://github.com/rashidae/airtable-mcp/issues)
+- Open an issue on the [GitHub repository](https://github.com/rashidazarang/airtable-mcp/issues)
 - Check the Airtable API documentation for any API-specific errors 

@@ -12,6 +12,7 @@ This application is a powerful Airtable integration tool that enables AI-powered
 - **Schema Management**: Export, compare, and update schemas
 - **Command-line Configuration**: Use API tokens directly through command-line parameters
 - **NPX Compatible**: Easy installation with a single command
+- **Smithery Integration**: One-click installation via Smithery
 
 ## Architecture
 
@@ -39,9 +40,17 @@ Model Context Protocol (MCP) is a capability supported by Anthropic AI models th
 - Airtable API token
 - A compatible MCP client (Cursor, Claude Desktop, etc.)
 
-### Quick Setup with NPX (Recommended)
+### Smithery Installation (Recommended)
 
-The fastest way to get started:
+The easiest way to install:
+
+1. Visit [Smithery](https://smithery.ai)
+2. Search for "@rashidazarang/airtable-mcp"
+3. Click "Install" and follow the prompts
+
+### Quick Setup with NPX (Alternative)
+
+Another fast way to get started:
 
 ```bash
 # Install globally
@@ -72,13 +81,13 @@ For Cursor, update your `~/.cursor/mcp.json` file:
 
 Restart your MCP client to load the new tools.
 
-### Manual Installation (Alternative)
+### Manual Installation (Advanced)
 
 If you prefer to clone the repository and install manually:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/rashidae/airtable-mcp.git
+   git clone https://github.com/rashidazarang/airtable-mcp.git
    cd airtable-mcp
    ```
 

@@ -1,0 +1,44 @@
+name: "@rashidazarang/airtable-mcp"
+version: 1.0.0
+description: "Airtable MCP integration for AI code editors"
+
+server:
+  type: standalone
+  lang: python
+  build:
+    method: docker
+    dockerfile: Dockerfile
+  command:
+    - node
+    - index.js
+  args:
+    - "--token"
+    - "{airtable_token}"
+    - "--base"
+    - "{base_id}"
+
+parameters:
+  - name: airtable_token
+    label: "Airtable API Token"
+    description: "Your Airtable Personal Access Token"
+    required: true
+    type: string
+    secret: true
+  - name: base_id
+    label: "Default Base ID"
+    description: "Your default Airtable base ID (optional)"
+    required: false
+    type: string
+
+compatibility:
+  cursor: true
+  zed: true
+  mcp_clients: true
+
+local_only: false
+
+metadata:
+  author: "Rashid Azarang"
+  license: "MIT"
+  repository: "https://github.com/rashidazarang/airtable-mcp"
+  homepage: "https://github.com/rashidazarang/airtable-mcp#readme" 
