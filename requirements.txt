@@ -3,6 +3,8 @@ anthropic>=0.19.1
 argparse>=1.4.0
 python-dotenv>=1.0.0
 pydantic>=2.4.2
-# MCP Python Core will be installed from Smithery directly in the Dockerfile
+# MCP SDK with WebSocket support
+mcp-python-core>=0.2.0
 requests>=2.31.0
-typing-extensions>=4.7.1 
+typing-extensions>=4.7.1
+websockets>=11.0.3 

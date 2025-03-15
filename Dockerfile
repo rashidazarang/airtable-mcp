@@ -5,25 +5,33 @@ WORKDIR /app
 # Install Node.js for the NPX functionality
 RUN apt-get update && \
     apt-get install -y curl gnupg && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy package files
-COPY package.json index.js /app/
-COPY airtable_mcp/ /app/airtable_mcp/
-COPY requirements.txt /app/
+# Copy package files first (for better layer caching)
+COPY package.json /app/
+COPY package-lock.json /app/
 
-# Install MCP Python Core from the Smithery release
-RUN pip install --no-cache-dir https://smithery.ai/api/packages/base-python-client/releases/latest/download && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Install the Node.js package
+# Install Node.js dependencies
 RUN npm install
 
-# Expose the port the server will run on
+# Copy Python requirements and install
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY index.js /app/
+COPY airtable_mcp/ /app/airtable_mcp/
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PYTHONUNBUFFERED=1
+
+# Expose the port the server might run on
 EXPOSE 3000
 
-# Command to run the server
-ENTRYPOINT ["node", "index.js"] 
+# Start the server in STDIO mode by default
+# Smithery will override this with their own command
+CMD ["node", "index.js"] 
