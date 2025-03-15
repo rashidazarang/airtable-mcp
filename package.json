@@ -1,0 +1,36 @@
+{
+  "name": "airtable-mcp",
+  "version": "0.1.0",
+  "description": "Airtable integration tools for AI via Anthropic's Model Context Protocol",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "pip install -r requirements.txt",
+    "start": "python airtable_mcp/src/server.py",
+    "start:token": "python airtable_mcp/src/server.py --token",
+    "start:base": "python airtable_mcp/src/server.py --token --base"
+  },
+  "bin": {
+    "airtable-mcp": "./bin/airtable-mcp.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashidae/airtable-mcp.git"
+  },
+  "keywords": [
+    "airtable",
+    "mcp",
+    "anthropic",
+    "ai",
+    "claude",
+    "cursor"
+  ],
+  "author": "Rashid Azarang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rashidae/airtable-mcp/issues"
+  },
+  "homepage": "https://github.com/rashidae/airtable-mcp#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
