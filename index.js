@@ -8,10 +8,12 @@ const { spawn } = require('child_process');
 const args = process.argv.slice(2);
 let tokenIndex = args.indexOf('--token');
 let baseIndex = args.indexOf('--base');
+let configIndex = args.indexOf('--config');
 
-// Extract token and base ID
+// Extract token, base ID and config
 const token = tokenIndex !== -1 && tokenIndex + 1 < args.length ? args[tokenIndex + 1] : null;
 const baseId = baseIndex !== -1 && baseIndex + 1 < args.length ? args[baseIndex + 1] : null;
+const config = configIndex !== -1 && configIndex + 1 < args.length ? args[configIndex + 1] : null;
 
 console.log('🔌 Airtable MCP - Connecting your AI to Airtable');
 console.log('-----------------------------------------------');
@@ -76,18 +78,33 @@ if (token) {
 if (baseId) {
   scriptArgs.push('--base', baseId);
 }
-
-console.log(`🚀 Starting Airtable MCP Server using ${pythonPath}`);
-if (token) {
-  console.log('✅ Using provided API token');
+if (config) {
+  scriptArgs.push('--config', config);
+  
+  // Try to extract and log info from config
+  try {
+    const configObj = JSON.parse(config);
+    if (configObj.airtable_token) {
+      console.log('✅ Using API token from config');
+    }
+    if (configObj.base_id) {
+      console.log(`✅ Using base ID from config: ${configObj.base_id}`);
+    }
+  } catch (e) {
+    console.warn('⚠️ Could not parse config JSON, passing it directly to Python script');
+  }
 } else {
-  console.log('⚠️ No API token provided, will try to use .env file');
-}
+  if (token) {
+    console.log('✅ Using provided API token');
+  } else {
+    console.log('⚠️ No API token provided, will try to use .env file');
+  }
 
-if (baseId) {
-  console.log(`✅ Using base ID: ${baseId}`);
-} else {
-  console.log('ℹ️ No base ID provided, will need to set one later');
+  if (baseId) {
+    console.log(`✅ Using base ID: ${baseId}`);
+  } else {
+    console.log('ℹ️ No base ID provided, will need to set one later');
+  }
 }
 
 // Execute the Python script

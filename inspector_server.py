@@ -23,6 +23,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Airtable MCP Server")
     parser.add_argument("--token", dest="api_token", help="Airtable Personal Access Token")
     parser.add_argument("--base", dest="base_id", help="Airtable Base ID")
+    parser.add_argument("--config", dest="config_json", help="Configuration as JSON (for Smithery integration)")
     return parser.parse_args()
 
 # Set up logging
@@ -32,28 +33,45 @@ logger = logging.getLogger("airtable-mcp")
 # Parse arguments
 args = parse_args()
 
+# Handle config JSON from Smithery if provided
+config = {}
+if args.config_json:
+    try:
+        # Strip any trailing quotes or backslashes that might be present
+        config_str = args.config_json.rstrip('\\"')
+        logger.info(f"Parsing config: {config_str}")
+        config = json.loads(config_str)
+        logger.info(f"Successfully parsed config: {config}")
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse config JSON: {e}")
+        logger.error(f"Raw config string: {args.config_json}")
+
 # Create MCP server
 app = FastMCP("Airtable Tools")
 
-# Get token from arguments or environment
-token = args.api_token or os.environ.get("AIRTABLE_PERSONAL_ACCESS_TOKEN", "")
-base_id = args.base_id or os.environ.get("AIRTABLE_BASE_ID", "")
+# Get token from arguments, config, or environment
+token = args.api_token or config.get("airtable_token", "") or os.environ.get("AIRTABLE_PERSONAL_ACCESS_TOKEN", "")
+# Clean up token if it has trailing quote
+if token and token.endswith('"'):
+    token = token[:-1]
+    
+base_id = args.base_id or config.get("base_id", "") or os.environ.get("AIRTABLE_BASE_ID", "")
 
 if not token:
-    logger.warning("No Airtable API token provided. Use --token or set AIRTABLE_PERSONAL_ACCESS_TOKEN environment variable.")
+    logger.warning("No Airtable API token provided. Use --token, --config, or set AIRTABLE_PERSONAL_ACCESS_TOKEN environment variable.")
 else:
     logger.info(f"Using Airtable token: {token[:5]}...{token[-5:]}")
 
 if base_id:
     logger.info(f"Using base ID: {base_id}")
 else:
-    logger.warning("No base ID provided. Use --base or set AIRTABLE_BASE_ID environment variable.")
+    logger.warning("No base ID provided. Use --base, --config, or set AIRTABLE_BASE_ID environment variable.")
 
 # Helper functions for Airtable API calls
 async def api_call(endpoint, method="GET", data=None, params=None):
     """Make an Airtable API call"""
     if not token:
-        return {"error": "No Airtable API token provided. Use --token or set AIRTABLE_PERSONAL_ACCESS_TOKEN environment variable."}
+        return {"error": "No Airtable API token provided. Use --token, --config, or set AIRTABLE_PERSONAL_ACCESS_TOKEN environment variable."}
     
     headers = {
         "Authorization": f"Bearer {token}",

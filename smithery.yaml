@@ -17,13 +17,11 @@ startCommand:
     required: ["airtable_token"]
   commandFunction: |
     (config) => {
-      // Use Python directly with the new inspector_server.py
+      // Pass config as a JSON string to the inspector_server.py
+      const configStr = JSON.stringify(config);
       return {
         command: "python3.10",
-        args: ["inspector_server.py", 
-              "--token", config.airtable_token,
-              ...(config.base_id ? ["--base", config.base_id] : [])
-        ],
+        args: ["inspector_server.py", "--config", configStr],
         env: {}
       };
     }
