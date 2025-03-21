@@ -1,0 +1,40 @@
+{
+  "name": "airtable-mcp",
+  "version": "1.1.0",
+  "description": "Airtable MCP for AI tools - updated to work with MCP SDK 1.4.1+",
+  "main": "index.js",
+  "bin": {
+    "airtable-mcp": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "python3.10 test_client.py"
+  },
+  "keywords": [
+    "airtable",
+    "mcp",
+    "ai",
+    "claude",
+    "anthropic",
+    "cursor",
+    "claude-code",
+    "smithery",
+    "model-context-protocol"
+  ],
+  "author": "Rashid Azarang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashidazarang/airtable-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rashidazarang/airtable-mcp/issues"
+  },
+  "homepage": "https://github.com/rashidazarang/airtable-mcp#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  }
+}
