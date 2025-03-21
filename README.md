@@ -3,7 +3,7 @@
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 
-> Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Cursor, Claude Code, Cline, Zed, and other Claude-powered editors.
+> Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Cursor, Claude Desktop, Cline, Zed, and other Claude-powered editors.
 
 This application is a powerful Airtable integration tool that enables AI-powered applications via Anthropic's Model Context Protocol (MCP) to access and manipulate Airtable data directly from your IDE.
 
@@ -71,6 +71,13 @@ npm install -g airtable-mcp
 npx airtable-mcp --token "your_airtable_token" --base "your_base_id"
 ```
 
+### MCP Client Integration
+
+For detailed instructions on integrating with specific MCP clients, see:
+
+- [Claude Integration Guide](CLAUDE_INTEGRATION.md) - Setup instructions for Claude Desktop, Cursor, Cline, and other clients
+- [Smithery Setup](https://smithery.ai/server/@rashidazarang/airtable-mcp) - One-click installation via Smithery
+
 ### Configure Your MCP Client
 
 For Cursor, update your `~/.cursor/mcp.json` file:
@@ -79,9 +86,9 @@ For Cursor, update your `~/.cursor/mcp.json` file:
 {
   "mcpServers": {
     "airtable-tools": {
-      "command": "python3.10",
+      "command": "npx",
       "args": [
-        "/path/to/inspector_server.py",
+        "airtable-mcp",
         "--token", "your_airtable_token",
         "--base", "your_base_id"
       ]
@@ -140,4 +147,4 @@ MIT
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. 
+Contributions are welcome! Please feel free to submit a Pull Request.
