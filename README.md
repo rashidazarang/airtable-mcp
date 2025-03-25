@@ -51,17 +51,44 @@ This MCP has been updated to work with the latest MCP SDK version. The new imple
 - Airtable API token
 - A compatible MCP client (Cursor, Claude Desktop, etc.)
 
-### Smithery Installation (Recommended)
+### Recommended: Using Smithery via NPX (Easiest Method)
 
-The easiest way to install:
+The simplest way to use this MCP is through Smithery via NPX. This handles all dependencies and configuration automatically.
+
+1. Configure your MCP client by adding the following to your MCP configuration file (e.g., `~/.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "airtable-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@smithery/cli@latest",
+        "run",
+        "@rashidazarang/airtable-mcp",
+        "--config",
+        "{\"airtable_token\":\"YOUR_AIRTABLE_TOKEN\\\"\",\"base_id\":\"YOUR_BASE_ID\"}"
+      ]
+    }
+  }
+}
+```
+
+2. Replace `YOUR_AIRTABLE_TOKEN\"` with your Airtable API token (maintaining the backslash and quote), and `YOUR_BASE_ID` with your Airtable base ID.
+3. Restart your MCP client to load the new tools.
+
+### Smithery Web Installation (Alternative)
+
+Another easy installation method:
 
 1. Visit [Smithery](https://smithery.ai)
 2. Search for "@rashidazarang/airtable-mcp"
 3. Click "Install" and follow the prompts
 
-### Quick Setup with NPX (Alternative)
+### Traditional NPX Installation (Advanced)
 
-Another fast way to get started:
+If you prefer a more traditional approach:
 
 ```bash
 # Install globally
@@ -148,3 +175,35 @@ MIT
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Using with Claude and Windsurf
+
+### Version 1.2.0 Update: Improved Compatibility
+
+The latest version includes important fixes to address common issues:
+
+1. **AbortController Compatibility**: Added polyfill for Node.js versions < 15.0.0
+2. **JSON Parsing Improvements**: Enhanced handling of malformed JSON configurations
+3. **Windsurf Support**: Special configuration templates for Windsurf users
+
+### Common Issues and Solutions
+
+#### JSON Format Errors
+
+If you see errors like `Unexpected token 'F', "Found & ig"... is not valid JSON`, try:
+
+1. **Use Individual Parameters**:
+   ```
+   npx -y @smithery/cli@latest run @rashidazarang/airtable-mcp --token YOUR_TOKEN --base YOUR_BASE_ID
+   ```
+
+2. **For Windsurf Users**: Use the template in `examples/windsurf_mcp_config.json`
+
+#### AbortController Not Defined
+
+This typically happens on older Node.js versions. The current version includes an automatic polyfill, but you can also:
+
+1. **Update Node.js**: Install Node.js v15+ for native AbortController support
+2. **Update This Package**: Make sure you're using version 1.2.0 or higher
+
+See [CLAUDE_INTEGRATION.md](./CLAUDE_INTEGRATION.md) for detailed setup instructions.

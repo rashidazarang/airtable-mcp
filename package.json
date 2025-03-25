@@ -1,14 +1,13 @@
 {
-  "name": "airtable-mcp",
-  "version": "1.1.0",
-  "description": "Airtable MCP for AI tools - updated to work with MCP SDK 1.4.1+",
+  "name": "@rashidazarang/airtable-mcp",
+  "version": "1.2.0",
+  "description": "Airtable MCP for AI tools - compatible with MCP SDK 1.4.1+, includes compatibility fixes for Claude and Windsurf",
   "main": "index.js",
   "bin": {
     "airtable-mcp": "index.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "python3.10 test_client.py"
+    "start": "node index.js"
   },
   "keywords": [
     "airtable",
@@ -19,7 +18,8 @@
     "cursor",
     "claude-code",
     "smithery",
-    "model-context-protocol"
+    "model-context-protocol",
+    "windsurf"
   ],
   "author": "Rashid Azarang",
   "license": "MIT",

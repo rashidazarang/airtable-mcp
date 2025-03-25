@@ -39,12 +39,31 @@ if args.config_json:
     try:
         # Strip any trailing quotes or backslashes that might be present
         config_str = args.config_json.rstrip('\\"')
-        logger.info(f"Parsing config: {config_str}")
+        # Additional sanitization for JSON format
+        config_str = config_str.strip()
+        # Handle escaped quotes
+        if config_str.startswith('"') and config_str.endswith('"'):
+            config_str = config_str[1:-1]
+        # Fix escaped quotes within JSON
+        config_str = config_str.replace('\\"', '"')
+        # Replace escaped backslashes
+        config_str = config_str.replace('\\\\', '\\')
+        
+        logger.info(f"Parsing sanitized config: {config_str}")
         config = json.loads(config_str)
         logger.info(f"Successfully parsed config: {config}")
     except json.JSONDecodeError as e:
         logger.error(f"Failed to parse config JSON: {e}")
         logger.error(f"Raw config string: {args.config_json}")
+        # Try one more approach - sometimes config is double-quoted JSON
+        try:
+            # Try to interpret as Python string literal
+            import ast
+            literal_str = ast.literal_eval(f"'''{args.config_json}'''")
+            config = json.loads(literal_str)
+            logger.info(f"Successfully parsed config using ast: {config}")
+        except Exception as ast_error:
+            logger.error(f"Failed alternate parsing method: {ast_error}")
 
 # Create MCP server
 app = FastMCP("Airtable Tools")

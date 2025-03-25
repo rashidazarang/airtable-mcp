@@ -4,6 +4,24 @@ const path = require('path');
 const { execSync } = require('child_process');
 const { spawn } = require('child_process');
 
+// Polyfill for AbortController in older Node.js versions
+if (typeof globalThis.AbortController === 'undefined') {
+  globalThis.AbortController = class AbortController {
+    constructor() {
+      this.signal = {
+        aborted: false,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true
+      };
+    }
+    abort() {
+      this.signal.aborted = true;
+    }
+  };
+  console.log('ℹ️ Added AbortController polyfill for compatibility with older Node.js versions');
+}
+
 // Parse command-line arguments
 const args = process.argv.slice(2);
 let tokenIndex = args.indexOf('--token');
@@ -91,7 +109,36 @@ if (config) {
       console.log(`✅ Using base ID from config: ${configObj.base_id}`);
     }
   } catch (e) {
-    console.warn('⚠️ Could not parse config JSON, passing it directly to Python script');
+    console.warn('⚠️ Could not parse config JSON, attempting to sanitize...');
+    
+    // Sanitize config JSON - fix common formatting issues
+    try {
+      // Remove any unexpected line breaks, extra quotes, and escape characters
+      const sanitizedConfig = config
+        .replace(/[\r\n]+/g, '')
+        .replace(/\\+"/g, '"')
+        .replace(/^"/, '')
+        .replace(/"$/, '')
+        .replace(/\\/g, '');
+      
+      // Try parsing it
+      const configObj = JSON.parse(sanitizedConfig);
+      if (configObj) {
+        console.log('✅ Successfully sanitized config JSON');
+        // Update config with sanitized version
+        scriptArgs[scriptArgs.indexOf(config)] = sanitizedConfig;
+        config = sanitizedConfig;
+        
+        if (configObj.airtable_token) {
+          console.log('✅ Using API token from sanitized config');
+        }
+        if (configObj.base_id) {
+          console.log(`✅ Using base ID from sanitized config: ${configObj.base_id}`);
+        }
+      }
+    } catch (sanitizeErr) {
+      console.warn('⚠️ Could not sanitize config JSON, passing it directly to Python script');
+    }
   }
 } else {
   if (token) {

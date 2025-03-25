@@ -1,114 +1,109 @@
-# Using Airtable MCP with Claude
+# Claude/Windsurf Integration Guide
 
-This guide explains how to integrate the Airtable MCP with various Claude MCP clients.
+This guide explains how to set up the Airtable MCP for use with Claude (including Anthropic's tools and in VSCode extensions like Windsurf).
 
-## Compatible Claude MCP Clients
+## Setup for Claude
 
-This MCP works with any client that supports Anthropic's Model Context Protocol (MCP), including:
+### Requirements
 
-- [Claude Desktop](https://claude.ai/desktop)
-- [Cursor](https://cursor.sh/)
-- [Cline](https://github.com/lpw/cline)
-- [Zed](https://zed.dev/)
-- Any other MCP-compatible client
+- Node.js v14 or higher
+- An Airtable account with Personal Access Token
+- An Airtable base you want to connect to
 
-## Recommended: Using Smithery (Easiest Method)
+### Configuration
 
-The recommended way to use this MCP is through Smithery, which handles all dependencies and configuration automatically:
+Claude requires the configuration to be specified in JSON format. Here's how to set up the configuration for Claude:
 
-1. **Configure your MCP client**:
-   - Edit your client's MCP configuration file (e.g., `~/.cursor/mcp.json`)
-   - Add the following configuration:
+1. In Claude settings, add a new MCP server with these settings:
+   - Name: `airtable-mcp`
+   - Command: `npx`
+   - Arguments:
+     ```
+     -y @smithery/cli@latest run @rashidazarang/airtable-mcp --config {"airtable_token":"your_token_here","base_id":"your_base_id_here"}
+     ```
 
+2. **IMPORTANT: JSON Format**  
+   Make sure the JSON in the `--config` parameter is properly formatted:
+   - No line breaks
+   - No extra backslashes
+   - No surrounding quotes
+
+### Troubleshooting JSON Issues
+
+If you encounter the error `Unexpected token 'F', "Found & ig"... is not valid JSON`, try these fixes:
+
+1. **Method 1: Simplify JSON** - Remove any complex characters from your token and try again.
+
+2. **Method 2: Escape Properly** - Make sure you format the command with proper escaping:
+   ```
+   -y @smithery/cli@latest run @rashidazarang/airtable-mcp --config {\"airtable_token\":\"your_token_here\",\"base_id\":\"your_base_id_here\"}
+   ```
+
+3. **Method 3: Use Separate Parameters** - Instead of using --config, use individual parameters:
+   ```
+   -y @smithery/cli@latest run @rashidazarang/airtable-mcp --token your_token_here --base your_base_id_here
+   ```
+
+## Setup for Windsurf
+
+Windsurf users should use a dedicated config file to avoid JSON parsing issues:
+
+1. Create a file called `mcp_config.json` with:
    ```json
    {
      "mcpServers": {
-       "airtable-mcp": {
+       "AIRTABLE": {
          "command": "npx",
          "args": [
            "-y",
            "@smithery/cli@latest",
            "run",
            "@rashidazarang/airtable-mcp",
-           "--config",
-           "{\"airtable_token\":\"YOUR_AIRTABLE_TOKEN\\\"\",\"base_id\":\"YOUR_BASE_ID\"}"
+           "--token",
+           "your_token_here",
+           "--base",
+           "your_base_id_here"
          ]
        }
      }
    }
    ```
 
-2. **Replace tokens**:
-   - Replace `YOUR_AIRTABLE_TOKEN\"` with your Airtable Personal Access Token (maintaining the backslash and quote)
-   - Replace `YOUR_BASE_ID` with your Airtable base ID
+2. In Windsurf settings, configure it to use this file.
 
-3. **Restart your client** to load the new tools
+## Common Issues
 
-## Setting Up with Claude Desktop
+### AbortController Error
 
-1. **Install the Airtable MCP**:
-   ```bash
-   npm install -g airtable-mcp
-   ```
+If you see an error like `ReferenceError: AbortController is not defined`, this is because you're using an older version of Node.js that doesn't include this feature. Options to fix:
 
-2. **Start the MCP server**:
-   ```bash
-   airtable-mcp --token "your_airtable_token" --base "your_base_id"
-   ```
+1. **Update Node.js** (recommended) - Install Node.js v15+ which includes AbortController natively.
 
-3. **Configure Claude Desktop**:
-   - Open Claude Desktop
-   - Go to Settings > Tools > Add Tool
-   - For the tool URL, use: `http://localhost:8010/mcp` (default port)
-   - Click "Add Tool"
-   - You'll now see the Airtable tools in Claude's tool palette
+2. **Use Polyfill** - New versions of our MCP (1.1.0+) automatically add a polyfill for older Node versions.
 
-## Setting Up with Cursor
+### Server Disconnected or Timeout Errors
 
-1. **Edit your Cursor MCP configuration**:
-   - Open or create the file: `~/.cursor/mcp.json`
-   - Add the Smithery configuration as described in the "Recommended" section above
+1. Check that your Airtable token is valid and has the necessary permissions
+2. Ensure you have proper internet connectivity
+3. Try restarting the MCP server
+4. Check the logs for any specific error messages
 
-2. **Restart Cursor** to load the new tools
+## Using the MCP with Claude
 
-## Setting Up with Cline
+Once connected, you can use the following tools:
 
-1. **Start the MCP server**:
-   ```bash
-   npx airtable-mcp --token "your_airtable_token" --base "your_base_id"
-   ```
+- `list_bases` - Show available Airtable bases
+- `list_tables` - List tables in the current base
+- `list_records` - Get records from a specific table
+- `create_records` - Add new records to a table
+- `update_records` - Modify existing records
 
-2. **Run Cline with MCP support**:
-   ```bash
-   cline --mcp-urls http://localhost:8010/mcp
-   ```
+For example, in Claude, you might ask:
+"Please list all tables in my Airtable base and then show me records from the 'Contacts' table."
 
-## Using the MCP in Claude
+## Support
 
-Once configured, you can use natural language to work with Airtable data. Here are some examples:
-
-- "Can you list all the tables in our Airtable base?"
-- "Get all records from the Projects table where Status is Complete"
-- "Create a new record in the Contacts table with name John Smith and email john@example.com"
-- "Update the Budget field for the Marketing project to $15,000"
-
-## Testing Your Setup
-
-To confirm your MCP setup is working correctly:
-
-1. Restart your MCP client after making configuration changes
-2. Start a conversation with Claude
-3. Ask a simple question like "Can you list all the tables in my Airtable base?"
-4. Claude should respond with a list of tables from your Airtable base
-
-If you see tables listed, congratulations! Your Airtable MCP is working correctly.
-
-## Troubleshooting
-
-- **Tool not appearing**: Make sure the MCP server is running and the client is properly configured
-- **Authentication errors**: Verify your Airtable token has the necessary permissions
-- **Connection issues**: Confirm the MCP server is running on the expected port (default is 8010)
-- **JSON escaping issues**: Make sure the backslash characters in the configuration are preserved
-- **Smithery not found**: Try installing the Smithery CLI globally with `npm install -g @smithery/cli`
-
-For more detailed troubleshooting, check the server logs where you started the Airtable MCP. 
+If you continue to experience issues, please report them on GitHub with:
+- Error messages
+- Node.js version (`node -v`)
+- Operating system details 
