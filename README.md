@@ -207,3 +207,19 @@ This typically happens on older Node.js versions. The current version includes a
 2. **Update This Package**: Make sure you're using version 1.2.0 or higher
 
 See [CLAUDE_INTEGRATION.md](./CLAUDE_INTEGRATION.md) for detailed setup instructions.
+
+## Claude Integration Improvements
+
+### Version 1.2.1 Update: Claude-specific Methods
+
+We've added enhanced support for Claude's interface by implementing these additional methods:
+
+1. **resources/list**: Lists available Airtable resources (bases, tables, records)
+2. **prompts/list**: Provides suggested prompts for common Airtable operations
+
+These methods improve Claude's user experience by:
+- Eliminating "Method not found" errors in logs
+- Supporting Claude's native UI components
+- Enabling better integration with Claude's interface
+
+If you're using Claude Desktop or other Claude integrations, this update should provide a more seamless experience with fewer error messages.

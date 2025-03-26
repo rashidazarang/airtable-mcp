@@ -297,5 +297,51 @@ async def set_base_id(base_id_param: str) -> str:
     base_id = base_id_param
     return f"Base ID set to: {base_id}"
 
+# Add Claude-specific methods
+@app.rpc_method("resources/list")
+async def resources_list(params: Dict = None) -> Dict:
+    """List available Airtable resources for Claude"""
+    resources = [
+        {
+            "id": "airtable_bases",
+            "name": "Airtable Bases",
+            "description": "The Airtable bases accessible with your API token"
+        },
+        {
+            "id": "airtable_tables",
+            "name": "Airtable Tables",
+            "description": "Tables in your current Airtable base"
+        },
+        {
+            "id": "airtable_records",
+            "name": "Airtable Records",
+            "description": "Records in your Airtable tables"
+        }
+    ]
+    return {"resources": resources}
+
+@app.rpc_method("prompts/list")
+async def prompts_list(params: Dict = None) -> Dict:
+    """List available prompts for Claude"""
+    prompts = [
+        {
+            "id": "list_tables_prompt",
+            "name": "List Tables",
+            "description": "List all tables in your Airtable base"
+        },
+        {
+            "id": "list_records_prompt",
+            "name": "List Records",
+            "description": "List records from a specific Airtable table"
+        },
+        {
+            "id": "create_record_prompt",
+            "name": "Create Record",
+            "description": "Create a new record in an Airtable table"
+        }
+    ]
+    return {"prompts": prompts}
+
+# Start the server
 if __name__ == "__main__":
-    app.run() 
+    app.start() 

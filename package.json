@@ -1,7 +1,7 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "1.2.0",
-  "description": "Airtable MCP for AI tools - compatible with MCP SDK 1.4.1+, includes compatibility fixes for Claude and Windsurf",
+  "version": "1.2.1",
+  "description": "Airtable MCP for AI tools - compatible with MCP SDK 1.4.1+, includes enhanced Claude integration",
   "main": "index.js",
   "bin": {
     "airtable-mcp": "index.js"
