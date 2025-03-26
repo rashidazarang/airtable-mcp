@@ -1,40 +1,37 @@
 {
   "name": "@rashidazarang/airtable-mcp",
   "version": "1.2.2",
-  "description": "Airtable MCP for AI tools - includes robust error handling for Claude integration",
+  "description": "Airtable MCP for Claude Desktop - Connect directly to Airtable using natural language",
   "main": "index.js",
-  "bin": {
-    "airtable-mcp": "index.js"
-  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "airtable",
     "mcp",
-    "ai",
     "claude",
+    "claude-desktop",
     "anthropic",
-    "cursor",
-    "claude-code",
-    "smithery",
-    "model-context-protocol",
-    "windsurf"
+    "ai",
+    "database"
   ],
   "author": "Rashid Azarang",
   "license": "MIT",
+  "dependencies": {
+    "@smithery/cli": "^1.0.0",
+    "airtable": "^0.12.2",
+    "dotenv": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rashidazarang/airtable-mcp.git"
+    "url": "https://github.com/rashidazarang/airtable-mcp"
   },
   "bugs": {
     "url": "https://github.com/rashidazarang/airtable-mcp/issues"
   },
-  "homepage": "https://github.com/rashidazarang/airtable-mcp#readme",
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "dependencies": {
-    "dotenv": "^16.0.3"
-  }
+  "homepage": "https://github.com/rashidazarang/airtable-mcp#readme"
 }
