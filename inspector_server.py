@@ -10,6 +10,7 @@ import json
 import logging
 import requests
 import argparse
+import traceback
 from typing import Optional, Dict, Any, List
 
 try:
@@ -67,6 +68,47 @@ if args.config_json:
 
 # Create MCP server
 app = FastMCP("Airtable Tools")
+
+# Add error handling wrapper for all MCP methods
+def handle_exceptions(func):
+    """Decorator to properly handle and format exceptions in MCP functions"""
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            logger.error(f"Error in MCP handler: {str(e)}\n{error_trace}")
+            sys.stderr.write(f"Error in MCP handler: {str(e)}\n{error_trace}\n")
+            
+            # For tool functions that return strings, return a formatted error message
+            if hasattr(func, "__annotations__") and func.__annotations__.get("return") == str:
+                return f"Error: {str(e)}"
+            
+            # For RPC methods that return dicts, return a properly formatted JSON error
+            return {"error": {"code": -32000, "message": str(e)}}
+    return wrapper
+
+# Patch the tool method to automatically apply error handling
+original_tool = app.tool
+def patched_tool(*args, **kwargs):
+    def decorator(func):
+        wrapped_func = handle_exceptions(func)
+        return original_tool(*args, **kwargs)(wrapped_func)
+    return decorator
+
+# Replace app.tool with our patched version
+app.tool = patched_tool
+
+# Also patch rpc_method
+original_rpc_method = app.rpc_method
+def patched_rpc_method(*args, **kwargs):
+    def decorator(func):
+        wrapped_func = handle_exceptions(func)
+        return original_rpc_method(*args, **kwargs)(wrapped_func)
+    return decorator
+
+# Replace app.rpc_method with our patched version
+app.rpc_method = patched_rpc_method
 
 # Get token from arguments, config, or environment
 token = args.api_token or config.get("airtable_token", "") or os.environ.get("AIRTABLE_PERSONAL_ACCESS_TOKEN", "")
@@ -301,46 +343,56 @@ async def set_base_id(base_id_param: str) -> str:
 @app.rpc_method("resources/list")
 async def resources_list(params: Dict = None) -> Dict:
     """List available Airtable resources for Claude"""
-    resources = [
-        {
-            "id": "airtable_bases",
-            "name": "Airtable Bases",
-            "description": "The Airtable bases accessible with your API token"
-        },
-        {
-            "id": "airtable_tables",
-            "name": "Airtable Tables",
-            "description": "Tables in your current Airtable base"
-        },
-        {
-            "id": "airtable_records",
-            "name": "Airtable Records",
-            "description": "Records in your Airtable tables"
-        }
-    ]
-    return {"resources": resources}
+    try:
+        resources = [
+            {
+                "id": "airtable_bases",
+                "name": "Airtable Bases",
+                "description": "The Airtable bases accessible with your API token"
+            },
+            {
+                "id": "airtable_tables",
+                "name": "Airtable Tables",
+                "description": "Tables in your current Airtable base"
+            },
+            {
+                "id": "airtable_records",
+                "name": "Airtable Records",
+                "description": "Records in your Airtable tables"
+            }
+        ]
+        return {"resources": resources}
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        logger.error(f"Error in resources/list: {str(e)}\n{error_trace}")
+        return {"error": {"code": -32000, "message": str(e)}}
 
 @app.rpc_method("prompts/list")
 async def prompts_list(params: Dict = None) -> Dict:
     """List available prompts for Claude"""
-    prompts = [
-        {
-            "id": "list_tables_prompt",
-            "name": "List Tables",
-            "description": "List all tables in your Airtable base"
-        },
-        {
-            "id": "list_records_prompt",
-            "name": "List Records",
-            "description": "List records from a specific Airtable table"
-        },
-        {
-            "id": "create_record_prompt",
-            "name": "Create Record",
-            "description": "Create a new record in an Airtable table"
-        }
-    ]
-    return {"prompts": prompts}
+    try:
+        prompts = [
+            {
+                "id": "list_tables_prompt",
+                "name": "List Tables",
+                "description": "List all tables in your Airtable base"
+            },
+            {
+                "id": "list_records_prompt",
+                "name": "List Records",
+                "description": "List records from a specific Airtable table"
+            },
+            {
+                "id": "create_record_prompt",
+                "name": "Create Record",
+                "description": "Create a new record in an Airtable table"
+            }
+        ]
+        return {"prompts": prompts}
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        logger.error(f"Error in prompts/list: {str(e)}\n{error_trace}")
+        return {"error": {"code": -32000, "message": str(e)}}
 
 # Start the server
 if __name__ == "__main__":
