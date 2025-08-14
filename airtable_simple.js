@@ -2,21 +2,60 @@
 
 const http = require('http');
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
 
-// Parse command line arguments
+// Load environment variables from .env file if it exists
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+  require('dotenv').config({ path: envPath });
+}
+
+// Parse command line arguments with environment variable fallback
 const args = process.argv.slice(2);
 let tokenIndex = args.indexOf('--token');
 let baseIndex = args.indexOf('--base');
 
-if (tokenIndex === -1 || baseIndex === -1) {
-  console.error('Usage: node airtable_simple.js --token YOUR_TOKEN --base YOUR_BASE_ID');
+// Use environment variables as fallback
+const token = tokenIndex !== -1 ? args[tokenIndex + 1] : process.env.AIRTABLE_TOKEN || process.env.AIRTABLE_API_TOKEN;
+const baseId = baseIndex !== -1 ? args[baseIndex + 1] : process.env.AIRTABLE_BASE_ID || process.env.AIRTABLE_BASE;
+
+if (!token || !baseId) {
+  console.error('Error: Missing Airtable credentials');
+  console.error('\nUsage options:');
+  console.error('  1. Command line: node airtable_simple.js --token YOUR_TOKEN --base YOUR_BASE_ID');
+  console.error('  2. Environment variables: AIRTABLE_TOKEN and AIRTABLE_BASE_ID');
+  console.error('  3. .env file with AIRTABLE_TOKEN and AIRTABLE_BASE_ID');
   process.exit(1);
 }
 
-const token = args[tokenIndex + 1];
-const baseId = args[baseIndex + 1];
+// Configure logging levels
+const LOG_LEVELS = {
+  ERROR: 0,
+  WARN: 1,
+  INFO: 2,
+  DEBUG: 3
+};
 
-console.log(`Starting Airtable MCP server with token ${token.slice(0, 5)}...${token.slice(-5)} and base ${baseId}`);
+const currentLogLevel = process.env.LOG_LEVEL ? LOG_LEVELS[process.env.LOG_LEVEL.toUpperCase()] || LOG_LEVELS.INFO : LOG_LEVELS.INFO;
+
+function log(level, message, ...args) {
+  const levelName = Object.keys(LOG_LEVELS).find(key => LOG_LEVELS[key] === level);
+  const timestamp = new Date().toISOString();
+  
+  if (level <= currentLogLevel) {
+    const prefix = `[${timestamp}] [${levelName}]`;
+    if (level === LOG_LEVELS.ERROR) {
+      console.error(prefix, message, ...args);
+    } else if (level === LOG_LEVELS.WARN) {
+      console.warn(prefix, message, ...args);
+    } else {
+      console.log(prefix, message, ...args);
+    }
+  }
+}
+
+log(LOG_LEVELS.INFO, `Starting Airtable MCP server with token ${token.slice(0, 5)}...${token.slice(-5)} and base ${baseId}`);
 
 // Create HTTP server
 const server = http.createServer(async (req, res) => {

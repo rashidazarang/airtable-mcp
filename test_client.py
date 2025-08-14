@@ -4,14 +4,21 @@ Simple test client for Airtable MCP
 """
 import asyncio
 import json
+import os
 import sys
 import subprocess
 import time
 from typing import Dict, Any
 
-# Define the token and base ID
-TOKEN = "patnWSCSCmnsqeQ4I.2a3603372f6df67e51f9fe553012192019f2d81c3eab0f94ebd702d7fb63e338"
-BASE_ID = "appi7fWMQcB3BNzPs"
+# Load credentials from environment variables
+TOKEN = os.environ.get('AIRTABLE_TOKEN', 'YOUR_AIRTABLE_TOKEN_HERE')
+BASE_ID = os.environ.get('AIRTABLE_BASE_ID', 'YOUR_BASE_ID_HERE')
+
+if TOKEN == 'YOUR_AIRTABLE_TOKEN_HERE' or BASE_ID == 'YOUR_BASE_ID_HERE':
+    print("Error: Please set AIRTABLE_TOKEN and AIRTABLE_BASE_ID environment variables")
+    print("Example: export AIRTABLE_TOKEN=your_token_here")
+    print("         export AIRTABLE_BASE_ID=your_base_id_here")
+    sys.exit(1)
 
 # Helper function to directly make Airtable API calls
 def api_call(endpoint, token=TOKEN):

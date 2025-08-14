@@ -1,11 +1,17 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "Airtable MCP for Claude Desktop - Connect directly to Airtable using natural language",
-  "main": "index.js",
+  "main": "airtable_simple.js",
+  "bin": {
+    "airtable-mcp": "./airtable_simple.js"
+  },
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node airtable_simple.js",
+    "start:python": "python3.10 inspector_server.py",
+    "test": "node test_mcp_comprehensive.js",
+    "test:quick": "./quick_test.sh",
+    "dev": "node airtable_simple.js --token YOUR_TOKEN --base YOUR_BASE_ID"
   },
   "keywords": [
     "airtable",

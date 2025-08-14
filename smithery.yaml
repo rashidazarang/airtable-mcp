@@ -1,7 +1,7 @@
 # Smithery.ai configuration
 name: "@rashidazarang/airtable-mcp"
-version: "1.0.0"
-description: "Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Cursor, Claude Code, Cline, Zed, and other Claude-powered editors."
+version: "1.2.4"
+description: "Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Claude Desktop and other Claude-powered editors."
 
 startCommand:
   type: stdio
@@ -11,31 +11,35 @@ startCommand:
       airtable_token:
         type: string
         description: "Your Airtable Personal Access Token"
+        required: true
       base_id:
         type: string
-        description: "Your default Airtable base ID (optional)"
-    required: ["airtable_token"]
+        description: "Your default Airtable base ID"
+        required: true
+    required: ["airtable_token", "base_id"]
   commandFunction: |
     (config) => {
-      // Pass config as a JSON string to the inspector_server.py
-      const configStr = JSON.stringify(config);
+      // Use the working JavaScript implementation
       return {
-        command: "python3.10",
-        args: ["inspector_server.py", "--config", configStr],
-        env: {}
+        command: "node",
+        args: ["airtable_simple.js", "--token", config.airtable_token, "--base", config.base_id],
+        env: {
+          AIRTABLE_TOKEN: config.airtable_token,
+          AIRTABLE_BASE_ID: config.base_id
+        }
       };
     }
 
 listTools:
-  command: "python3.10"
-  args: ["inspector.py"]
+  command: "node"
+  args: ["airtable_simple.js", "--list-tools"]
   env: {}
   
 build:
-  dockerfile: "Dockerfile"
+  dockerfile: "Dockerfile.node"
 
 metadata:
   author: "Rashid Azarang"
   license: "MIT"
   repository: "https://github.com/rashidazarang/airtable-mcp"
-  homepage: "https://github.com/rashidazarang/airtable-mcp#readme" 
+  homepage: "https://github.com/rashidazarang/airtable-mcp#readme"
