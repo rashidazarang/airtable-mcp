@@ -1,98 +1,249 @@
-# Airtable MCP
+# Airtable MCP Server
 
-![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
+![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
+[![MCP](https://img.shields.io/badge/MCP-1.2.4-green)](https://github.com/rashidazarang/airtable-mcp)
 
-> Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Claude Desktop and other Claude-powered editors.
+A Model Context Protocol (MCP) server that enables AI assistants like Claude to interact with your Airtable bases. Query, create, update, and delete records using natural language through a secure, standardized interface.
 
-## Quick Start
+## 🔒 Security Notice
 
-1. **Get Your Airtable Credentials**
-   - Get your Airtable API token from your [account page](https://airtable.com/account)
-   - Get your base ID from your Airtable base URL (format: `appi7fWMQcB3BNzPs`)
+**Important**: Version 1.2.4 includes critical security fixes. If you used this MCP before January 2025, please see [SECURITY_NOTICE.md](./SECURITY_NOTICE.md) for important information about token rotation.
 
-2. **Configure Claude Desktop**
-   - Open `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Add the following configuration:
-   ```json
-   {
-     "mcpServers": {
-       "airtable-mcp": {
-         "command": "npx",
-         "args": [
-           "@smithery/cli",
-           "run",
-           "@rashidazarang/airtable-mcp",
-           "--token",
-           "YOUR_AIRTABLE_TOKEN",
-           "--base",
-           "YOUR_BASE_ID"
-         ]
-       }
-     }
-   }
+## ✨ Features
+
+- 🔍 **Natural Language Queries** - Ask questions about your data in plain English
+- 📊 **Full CRUD Operations** - Create, read, update, and delete records
+- 🏗️ **Schema Management** - View and understand your base structure
+- 🔐 **Secure Authentication** - Uses environment variables for credentials
+- 🚀 **Easy Setup** - Multiple installation options available
+- ⚡ **Fast & Reliable** - Built with Node.js for optimal performance
+
+## 📋 Prerequisites
+
+- Node.js 14+ installed on your system
+- An Airtable account with a Personal Access Token
+- Your Airtable Base ID
+
+## 🚀 Quick Start
+
+### Step 1: Get Your Airtable Credentials
+
+1. **Personal Access Token**: Visit [Airtable Account](https://airtable.com/account) → Create a token with the following scopes:
+   - `data.records:read`
+   - `data.records:write`
+   - `schema.bases:read`
+
+2. **Base ID**: Open your Airtable base and copy the ID from the URL:
    ```
-   - Replace `YOUR_AIRTABLE_TOKEN` and `YOUR_BASE_ID` with your actual credentials
-   - Save and restart Claude Desktop
+   https://airtable.com/[BASE_ID]/...
+   ```
 
-3. **Start Using Airtable Tools**
-   - Open Claude Desktop
-   - Wait 30 seconds for the connection to establish
-   - Start using Airtable commands in natural language
+### Step 2: Installation
 
-## Features
+Choose one of these installation methods:
 
-- **Base Management**: List and select Airtable bases
-- **Table Operations**: Browse tables, fields, and records
-- **Data Access**: Read, create, update, and delete records
-- **Schema Management**: Export, compare, and update schemas
-- **Natural Language Interface**: Use plain English to interact with your Airtable data
+#### Option A: Install via NPM (Recommended)
 
-## Available Tools
+```bash
+npm install -g @rashidazarang/airtable-mcp
+```
 
-| Tool Name | Description | Example Usage |
-|-----------|-------------|---------------|
-| `list_bases` | List all accessible Airtable bases | "Show me all my Airtable bases" |
-| `list_tables` | List all tables in the current base | "What tables are in this base?" |
-| `list_records` | List records with optional filtering | "Show me all records in the Projects table" |
-| `get_record` | Get a specific record | "Get record ABC123 from Tasks table" |
-| `create_records` | Create new records | "Create a new record in Contacts with name John" |
-| `update_records` | Update existing records | "Update status to Complete in record XYZ" |
-| `set_base_id` | Switch to a different base | "Switch to base appi7fWMQcB3BNzPs" |
+#### Option B: Clone from GitHub
 
-## Troubleshooting
+```bash
+git clone https://github.com/rashidazarang/airtable-mcp.git
+cd airtable-mcp
+npm install
+```
 
-### Common Issues
+### Step 3: Set Up Environment Variables
 
-1. **Connection Issues**
-   - Make sure Node.js is installed (`node -v` should show v14 or higher)
-   - Verify your API token and base ID are correct
-   - Restart Claude Desktop after configuration changes
+Create a `.env` file in your project directory:
 
-2. **JSON Parsing Errors**
-   - Double-check the JSON format in your configuration file
-   - Avoid using extra backslashes or escape characters
-   - Use the simplified configuration format shown above
+```env
+AIRTABLE_TOKEN=your_personal_access_token_here
+AIRTABLE_BASE_ID=your_base_id_here
+```
 
-3. **Command Not Found**
-   - Install Node.js if not already installed
-   - Run `npm install -g npm@latest` to update npm
-   - Try running `npx @smithery/cli --version` to verify the installation
+**Security Note**: Never commit `.env` files to version control!
 
-### Need Help?
+### Step 4: Configure Your MCP Client
 
-- Check the [Issues](https://github.com/rashidazarang/airtable-mcp/issues) page
-- Join our [Discord community](https://discord.gg/your-discord)
-- Email support at support@example.com
+#### For Claude Desktop
 
-## Contributing
+Add to your Claude Desktop configuration file:
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+**MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
-## License
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "npx",
+      "args": [
+        "@rashidazarang/airtable-mcp",
+        "--token",
+        "YOUR_AIRTABLE_TOKEN",
+        "--base",
+        "YOUR_BASE_ID"
+      ]
+    }
+  }
+}
+```
 
-MIT
+#### For Environment Variables (More Secure)
+
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "npx",
+      "args": ["@rashidazarang/airtable-mcp"],
+      "env": {
+        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN",
+        "AIRTABLE_BASE_ID": "YOUR_BASE_ID"
+      }
+    }
+  }
+}
+```
+
+### Step 5: Restart Your MCP Client
+
+After configuration, restart Claude Desktop or your MCP client to load the Airtable server.
+
+## 🎯 Usage Examples
+
+Once configured, you can interact with your Airtable data naturally:
+
+```
+"Show me all records in the Projects table"
+"Create a new task with priority 'High' and due date tomorrow"
+"Update the status of task ID rec123 to 'Completed'"
+"Delete all records where status is 'Archived'"
+"What tables are in my base?"
+```
+
+## 🛠️ Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `list_tables` | Get all tables in your base |
+| `list_records` | Query records with optional filtering |
+| `create_record` | Add new records to a table |
+| `update_record` | Modify existing records |
+| `delete_record` | Remove records from a table |
+
+## 🔧 Advanced Configuration
+
+### Using with Smithery Cloud
+
+For cloud-hosted MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "npx",
+      "args": [
+        "@smithery/cli",
+        "run",
+        "@rashidazarang/airtable-mcp",
+        "--token",
+        "YOUR_TOKEN",
+        "--base",
+        "YOUR_BASE_ID"
+      ]
+    }
+  }
+}
+```
+
+### Direct Node.js Execution
+
+If you cloned the repository:
+
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "node",
+      "args": [
+        "/path/to/airtable-mcp/airtable_simple.js",
+        "--token",
+        "YOUR_TOKEN",
+        "--base",
+        "YOUR_BASE_ID"
+      ]
+    }
+  }
+}
+```
+
+## 🧪 Testing
+
+Run the test suite to verify your setup:
+
+```bash
+# Set environment variables first
+export AIRTABLE_TOKEN=your_token
+export AIRTABLE_BASE_ID=your_base_id
+
+# Run tests
+npm test
+```
+
+## 🐛 Troubleshooting
+
+### "Connection Refused" Error
+- Ensure the MCP server is running
+- Check that port 8010 is not blocked
+- Restart your MCP client
+
+### "Invalid Token" Error
+- Verify your Personal Access Token is correct
+- Check that the token has the required scopes
+- Ensure no extra spaces in your credentials
+
+### "Base Not Found" Error
+- Confirm your Base ID is correct
+- Check that your token has access to the base
+
+### Port Conflicts
+If port 8010 is in use:
+```bash
+lsof -ti:8010 | xargs kill -9
+```
+
+## 📚 Documentation
+
+- [Detailed Setup Guide](./CLAUDE_INTEGRATION.md)
+- [Development Guide](./DEVELOPMENT.md)
+- [Security Notice](./SECURITY_NOTICE.md)
+- [Release Notes](./RELEASE_NOTES_v1.2.4.md)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+## 📄 License
+
+MIT License - see [LICENSE](./LICENSE) file for details
+
+## 🙏 Acknowledgments
+
+- Built for the [Model Context Protocol](https://modelcontextprotocol.io/)
+- Powered by [Airtable API](https://airtable.com/developers/web/api/introduction)
+- Compatible with [Claude Desktop](https://claude.ai/) and other MCP clients
+
+## 📮 Support
+
+- **Issues**: [GitHub Issues](https://github.com/rashidazarang/airtable-mcp/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/rashidazarang/airtable-mcp/discussions)
 
 ---
 
-For detailed setup instructions with other MCP clients, see [CLAUDE_INTEGRATION.md](./CLAUDE_INTEGRATION.md).
+**Version**: 1.2.4 | **Status**: ✅ Production Ready | **Last Updated**: January 2025
