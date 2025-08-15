@@ -2,13 +2,13 @@
 
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-1.5.0-green)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-1.6.0-green)](https://github.com/rashidazarang/airtable-mcp)
 
 A Model Context Protocol (MCP) server that enables AI assistants like Claude to interact with your Airtable bases. Query, create, update, and delete records using natural language through a secure, standardized interface.
 
 ## 🔒 Security Notice
 
-**Important**: Version 1.5.0 adds comprehensive schema management with 23 total tools. Major upgrade with full table and field management capabilities.
+**Important**: Version 1.6.0 adds batch operations and attachment management with 33 total tools. Complete Airtable API coverage with advanced features.
 
 ## ✨ Features
 
@@ -21,7 +21,10 @@ A Model Context Protocol (MCP) server that enables AI assistants like Claude to 
 - 🔐 **Secure Authentication** - Uses environment variables for credentials
 - 🚀 **Easy Setup** - Multiple installation options available
 - ⚡ **Fast & Reliable** - Built with Node.js for optimal performance
-- 🎯 **23 Powerful Tools** - Most comprehensive Airtable API coverage available
+- 🎯 **33 Powerful Tools** - Complete Airtable API coverage with batch operations
+- 📎 **Attachment Management** - Upload files via URLs to attachment fields
+- ⚡ **Batch Operations** - Create, update, delete up to 10 records at once
+- 👥 **Collaboration Tools** - Manage base collaborators and shared views
 
 ## 📋 Prerequisites
 
@@ -153,7 +156,17 @@ Once configured, you can interact with your Airtable data naturally:
 "What field types are available in Airtable?"
 ```
 
-## 🛠️ Available Tools (23 Total)
+### Batch Operations & Attachments (v1.6.0+)
+```
+"Create 5 new records at once in the Tasks table"
+"Update multiple records with new status values"
+"Delete these 3 records in one operation"
+"Attach this image URL to the record's photo field"
+"Who are the collaborators on this base?"
+"Show me all shared views in this base"
+```
+
+## 🛠️ Available Tools (33 Total)
 
 ### 📊 Data Operations (7 tools)
 | Tool | Description |
@@ -197,6 +210,32 @@ Once configured, you can interact with your Airtable data naturally:
 | `create_field` | Add new fields to existing tables with all field types |
 | `update_field` | Modify field properties, names, and options |
 | `delete_field` | Remove fields (with safety confirmation required) |
+
+### ⚡ Batch Operations (4 tools) - **New in v1.6.0**
+| Tool | Description |
+|------|-------------|
+| `batch_create_records` | Create up to 10 records at once for better performance |
+| `batch_update_records` | Update up to 10 records simultaneously |
+| `batch_delete_records` | Delete up to 10 records in a single operation |
+| `batch_upsert_records` | Update existing or create new records based on key fields |
+
+### 📎 Attachment Management (1 tool) - **New in v1.6.0**
+| Tool | Description |
+|------|-------------|
+| `upload_attachment` | Attach files from public URLs to attachment fields |
+
+### 👁️ Advanced Views (2 tools) - **New in v1.6.0**
+| Tool | Description |
+|------|-------------|
+| `create_view` | Create new views (grid, form, calendar, etc.) with custom configurations |
+| `get_view_metadata` | Get detailed view information including filters and sorts |
+
+### 🏢 Base Management (3 tools) - **New in v1.6.0**
+| Tool | Description |
+|------|-------------|
+| `create_base` | Create new Airtable bases with initial table structures |
+| `list_collaborators` | View base collaborators and their permission levels |
+| `list_shares` | List shared views and their public configurations |
 
 ## 🔧 Advanced Configuration
 
@@ -256,16 +295,19 @@ export AIRTABLE_BASE_ID=your_base_id
 # Start the server
 node airtable_simple.js &
 
-# Run comprehensive tests (v1.5.0+)
-./test_v1.5.0_final.sh
+# Run comprehensive tests (v1.6.0+)
+./test_v1.6.0_comprehensive.sh
 ```
 
 The test suite validates:
-- All 23 tools with real API calls
+- All 33 tools with real API calls
 - Complete CRUD operations
 - Advanced schema management
+- Batch operations (create/update/delete multiple records)
+- Attachment management via URLs
+- Advanced view creation and metadata
+- Base management and collaboration tools
 - Webhook management
-- Table and field creation/modification
 - Error handling and edge cases
 - Security verification
 - 100% test coverage
@@ -294,7 +336,8 @@ lsof -ti:8010 | xargs kill -9
 
 ## 📚 Documentation
 
-- 🎆 [Release Notes v1.5.0](./RELEASE_NOTES_v1.5.0.md) - **Latest major release**
+- 🎆 [Release Notes v1.6.0](./RELEASE_NOTES_v1.6.0.md) - **Latest major release**
+- [Release Notes v1.5.0](./RELEASE_NOTES_v1.5.0.md)
 - [Release Notes v1.4.0](./RELEASE_NOTES_v1.4.0.md)
 - [Detailed Setup Guide](./CLAUDE_INTEGRATION.md)
 - [Development Guide](./DEVELOPMENT.md)
@@ -302,7 +345,8 @@ lsof -ti:8010 | xargs kill -9
 
 ## 📦 Version History
 
-- **v1.5.0** (2025-08-15) - 🎆 **Major release**: Added comprehensive schema management (23 total tools)
+- **v1.6.0** (2025-08-15) - 🎆 **Major release**: Added batch operations & attachment management (33 total tools)
+- **v1.5.0** (2025-08-15) - Added comprehensive schema management (23 total tools)
 - **v1.4.0** (2025-08-14) - Added webhook support and enhanced CRUD operations (12 tools)
 - **v1.2.4** (2025-08-12) - Security fixes and stability improvements
 - **v1.2.3** (2025-08-11) - Bug fixes and error handling

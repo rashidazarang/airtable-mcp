@@ -55,7 +55,7 @@ function log(level, message, ...args) {
   }
 }
 
-log(LOG_LEVELS.INFO, `Starting Enhanced Airtable MCP server v1.5.0`);
+log(LOG_LEVELS.INFO, `Starting Enhanced Airtable MCP server v1.6.0`);
 log(LOG_LEVELS.INFO, `Authentication configured`);
 log(LOG_LEVELS.INFO, `Base connection established`);
 
@@ -462,6 +462,196 @@ const server = http.createServer(async (req, res) => {
                     table: { type: 'string', description: 'Table name or ID' }
                   },
                   required: ['table']
+                }
+              },
+              {
+                name: 'upload_attachment',
+                description: 'Upload/attach a file from URL to a record',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    recordId: { type: 'string', description: 'Record ID to attach file to' },
+                    fieldName: { type: 'string', description: 'Name of the attachment field' },
+                    url: { type: 'string', description: 'Public URL of the file to attach' },
+                    filename: { type: 'string', description: 'Optional filename for the attachment' }
+                  },
+                  required: ['table', 'recordId', 'fieldName', 'url']
+                }
+              },
+              {
+                name: 'batch_create_records',
+                description: 'Create multiple records at once (up to 10)',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    records: {
+                      type: 'array',
+                      description: 'Array of record objects to create (max 10)',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          fields: { type: 'object', description: 'Record fields' }
+                        },
+                        required: ['fields']
+                      },
+                      maxItems: 10
+                    }
+                  },
+                  required: ['table', 'records']
+                }
+              },
+              {
+                name: 'batch_update_records',
+                description: 'Update multiple records at once (up to 10)',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    records: {
+                      type: 'array',
+                      description: 'Array of record objects to update (max 10)',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string', description: 'Record ID' },
+                          fields: { type: 'object', description: 'Fields to update' }
+                        },
+                        required: ['id', 'fields']
+                      },
+                      maxItems: 10
+                    }
+                  },
+                  required: ['table', 'records']
+                }
+              },
+              {
+                name: 'batch_delete_records',
+                description: 'Delete multiple records at once (up to 10)',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    recordIds: {
+                      type: 'array',
+                      description: 'Array of record IDs to delete (max 10)',
+                      items: { type: 'string' },
+                      maxItems: 10
+                    }
+                  },
+                  required: ['table', 'recordIds']
+                }
+              },
+              {
+                name: 'batch_upsert_records',
+                description: 'Update existing records or create new ones based on key fields',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    records: {
+                      type: 'array',
+                      description: 'Array of record objects (max 10)',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          fields: { type: 'object', description: 'Record fields' }
+                        },
+                        required: ['fields']
+                      },
+                      maxItems: 10
+                    },
+                    keyFields: {
+                      type: 'array',
+                      description: 'Fields to use for matching existing records',
+                      items: { type: 'string' }
+                    }
+                  },
+                  required: ['table', 'records', 'keyFields']
+                }
+              },
+              {
+                name: 'create_view',
+                description: 'Create a new view for a table',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    name: { type: 'string', description: 'Name for the new view' },
+                    type: { type: 'string', description: 'View type (grid, form, calendar, etc.)', enum: ['grid', 'form', 'calendar', 'gallery', 'kanban', 'timeline', 'gantt'] },
+                    visibleFieldIds: { type: 'array', description: 'Array of field IDs to show in view', items: { type: 'string' } },
+                    fieldOrder: { type: 'array', description: 'Order of fields in view', items: { type: 'string' } }
+                  },
+                  required: ['table', 'name', 'type']
+                }
+              },
+              {
+                name: 'get_view_metadata',
+                description: 'Get detailed metadata for a specific view',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    viewId: { type: 'string', description: 'View ID' }
+                  },
+                  required: ['table', 'viewId']
+                }
+              },
+              {
+                name: 'create_base',
+                description: 'Create a new Airtable base',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string', description: 'Name for the new base' },
+                    workspaceId: { type: 'string', description: 'Workspace ID to create the base in' },
+                    tables: {
+                      type: 'array',
+                      description: 'Initial tables to create in the base',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          name: { type: 'string', description: 'Table name' },
+                          description: { type: 'string', description: 'Table description' },
+                          fields: {
+                            type: 'array',
+                            description: 'Table fields',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                name: { type: 'string', description: 'Field name' },
+                                type: { type: 'string', description: 'Field type' }
+                              },
+                              required: ['name', 'type']
+                            }
+                          }
+                        },
+                        required: ['name', 'fields']
+                      }
+                    }
+                  },
+                  required: ['name', 'tables']
+                }
+              },
+              {
+                name: 'list_collaborators',
+                description: 'List collaborators and their permissions for the current base',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    baseId: { type: 'string', description: 'Base ID (optional, defaults to current base)' }
+                  }
+                }
+              },
+              {
+                name: 'list_shares',
+                description: 'List shared views and their configurations',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    baseId: { type: 'string', description: 'Base ID (optional, defaults to current base)' }
+                  }
                 }
               }
             ]
@@ -1026,6 +1216,262 @@ const server = http.createServer(async (req, res) => {
               } else {
                 responseText = `No views found for table "${tableInfo.name}".`;
               }
+            }
+          }
+          
+          // NEW v1.6.0 TOOLS - Attachment and Batch Operations
+          else if (toolName === 'upload_attachment') {
+            const { table, recordId, fieldName, url, filename } = toolParams;
+            
+            const attachment = { url };
+            if (filename) attachment.filename = filename;
+            
+            const updateBody = {
+              fields: {
+                [fieldName]: [attachment]
+              }
+            };
+            
+            result = await callAirtableAPI(`${table}/${recordId}`, 'PATCH', updateBody);
+            
+            responseText = `Successfully attached file to record ${recordId}:\n`;
+            responseText += `Field: ${fieldName}\n`;
+            responseText += `URL: ${url}\n`;
+            if (filename) responseText += `Filename: ${filename}\n`;
+          }
+          
+          else if (toolName === 'batch_create_records') {
+            const { table, records } = toolParams;
+            
+            if (records.length > 10) {
+              responseText = 'Error: Cannot create more than 10 records at once. Please split into smaller batches.';
+            } else {
+              const body = { records };
+              result = await callAirtableAPI(table, 'POST', body);
+              
+              responseText = `Successfully created ${result.records.length} records:\n`;
+              result.records.forEach((record, index) => {
+                responseText += `${index + 1}. ID: ${record.id}\n`;
+                const fields = Object.keys(record.fields);
+                if (fields.length > 0) {
+                  responseText += `   Fields: ${fields.join(', ')}\n`;
+                }
+              });
+            }
+          }
+          
+          else if (toolName === 'batch_update_records') {
+            const { table, records } = toolParams;
+            
+            if (records.length > 10) {
+              responseText = 'Error: Cannot update more than 10 records at once. Please split into smaller batches.';
+            } else {
+              const body = { records };
+              result = await callAirtableAPI(table, 'PATCH', body);
+              
+              responseText = `Successfully updated ${result.records.length} records:\n`;
+              result.records.forEach((record, index) => {
+                responseText += `${index + 1}. ID: ${record.id}\n`;
+                const fields = Object.keys(record.fields);
+                if (fields.length > 0) {
+                  responseText += `   Updated fields: ${fields.join(', ')}\n`;
+                }
+              });
+            }
+          }
+          
+          else if (toolName === 'batch_delete_records') {
+            const { table, recordIds } = toolParams;
+            
+            if (recordIds.length > 10) {
+              responseText = 'Error: Cannot delete more than 10 records at once. Please split into smaller batches.';
+            } else {
+              const queryParams = { records: recordIds };
+              result = await callAirtableAPI(table, 'DELETE', null, queryParams);
+              
+              responseText = `Successfully deleted ${result.records.length} records:\n`;
+              result.records.forEach((record, index) => {
+                responseText += `${index + 1}. Deleted ID: ${record.id}\n`;
+              });
+            }
+          }
+          
+          else if (toolName === 'batch_upsert_records') {
+            const { table, records, keyFields } = toolParams;
+            
+            if (records.length > 10) {
+              responseText = 'Error: Cannot upsert more than 10 records at once. Please split into smaller batches.';
+            } else {
+              // For simplicity, we'll implement this as a batch create with merge fields
+              // Note: Real upsert requires checking existing records first
+              const body = {
+                records,
+                performUpsert: {
+                  fieldsToMergeOn: keyFields
+                }
+              };
+              
+              result = await callAirtableAPI(table, 'PATCH', body);
+              
+              responseText = `Successfully upserted ${result.records.length} records:\n`;
+              result.records.forEach((record, index) => {
+                responseText += `${index + 1}. ID: ${record.id}\n`;
+                const fields = Object.keys(record.fields);
+                if (fields.length > 0) {
+                  responseText += `   Fields: ${fields.join(', ')}\n`;
+                }
+              });
+            }
+          }
+          
+          // NEW v1.6.0 TOOLS - Advanced View Management
+          else if (toolName === 'create_view') {
+            const { table, name, type, visibleFieldIds, fieldOrder } = toolParams;
+            
+            // Get table ID first
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              const body = {
+                name,
+                type
+              };
+              
+              if (visibleFieldIds) body.visibleFieldIds = visibleFieldIds;
+              if (fieldOrder) body.fieldOrder = fieldOrder;
+              
+              result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}/views`, 'POST', body);
+              
+              responseText = `Successfully created view "${name}" in table "${tableInfo.name}":\n`;
+              responseText += `View ID: ${result.id}\n`;
+              responseText += `Type: ${result.type}\n`;
+              if (result.visibleFieldIds && result.visibleFieldIds.length > 0) {
+                responseText += `Visible fields: ${result.visibleFieldIds.length}\n`;
+              }
+            }
+          }
+          
+          else if (toolName === 'get_view_metadata') {
+            const { table, viewId } = toolParams;
+            
+            // Get table ID first
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}/views/${viewId}`, 'GET');
+              
+              responseText = `View Metadata: ${result.name}\n`;
+              responseText += `ID: ${result.id}\n`;
+              responseText += `Type: ${result.type}\n`;
+              
+              if (result.visibleFieldIds && result.visibleFieldIds.length > 0) {
+                responseText += `\nVisible Fields (${result.visibleFieldIds.length}):\n`;
+                result.visibleFieldIds.forEach((fieldId, index) => {
+                  responseText += `${index + 1}. ${fieldId}\n`;
+                });
+              }
+              
+              if (result.filterByFormula) {
+                responseText += `\nFilter Formula: ${result.filterByFormula}\n`;
+              }
+              
+              if (result.sorts && result.sorts.length > 0) {
+                responseText += `\nSort Configuration:\n`;
+                result.sorts.forEach((sort, index) => {
+                  responseText += `${index + 1}. Field: ${sort.field}, Direction: ${sort.direction}\n`;
+                });
+              }
+            }
+          }
+          
+          // NEW v1.6.0 TOOLS - Base Management
+          else if (toolName === 'create_base') {
+            const { name, workspaceId, tables } = toolParams;
+            
+            const body = {
+              name,
+              tables: tables.map(table => ({
+                name: table.name,
+                description: table.description,
+                fields: table.fields
+              }))
+            };
+            
+            if (workspaceId) {
+              body.workspaceId = workspaceId;
+            }
+            
+            result = await callAirtableAPI('meta/bases', 'POST', body);
+            
+            responseText = `Successfully created base "${name}":\n`;
+            responseText += `Base ID: ${result.id}\n`;
+            if (result.tables && result.tables.length > 0) {
+              responseText += `\nTables created (${result.tables.length}):\n`;
+              result.tables.forEach((table, index) => {
+                responseText += `${index + 1}. ${table.name} (ID: ${table.id})\n`;
+                if (table.fields && table.fields.length > 0) {
+                  responseText += `   Fields: ${table.fields.length}\n`;
+                }
+              });
+            }
+          }
+          
+          else if (toolName === 'list_collaborators') {
+            const { baseId: targetBaseId } = toolParams;
+            const targetId = targetBaseId || baseId;
+            
+            result = await callAirtableAPI(`meta/bases/${targetId}/collaborators`, 'GET');
+            
+            if (result.collaborators && result.collaborators.length > 0) {
+              responseText = `Base collaborators (${result.collaborators.length}):\n\n`;
+              result.collaborators.forEach((collaborator, index) => {
+                responseText += `${index + 1}. ${collaborator.email || collaborator.name || 'Unknown'}\n`;
+                responseText += `   Permission: ${collaborator.permissionLevel || 'Unknown'}\n`;
+                responseText += `   Type: ${collaborator.type || 'User'}\n`;
+                if (collaborator.userId) {
+                  responseText += `   User ID: ${collaborator.userId}\n`;
+                }
+                responseText += '\n';
+              });
+            } else {
+              responseText = 'No collaborators found for this base.';
+            }
+          }
+          
+          else if (toolName === 'list_shares') {
+            const { baseId: targetBaseId } = toolParams;
+            const targetId = targetBaseId || baseId;
+            
+            result = await callAirtableAPI(`meta/bases/${targetId}/shares`, 'GET');
+            
+            if (result.shares && result.shares.length > 0) {
+              responseText = `Shared views (${result.shares.length}):\n\n`;
+              result.shares.forEach((share, index) => {
+                responseText += `${index + 1}. ${share.name || 'Unnamed Share'}\n`;
+                responseText += `   Share ID: ${share.id}\n`;
+                responseText += `   URL: ${share.url}\n`;
+                responseText += `   Type: ${share.type || 'View'}\n`;
+                if (share.viewId) {
+                  responseText += `   View ID: ${share.viewId}\n`;
+                }
+                if (share.tableId) {
+                  responseText += `   Table ID: ${share.tableId}\n`;
+                }
+                responseText += `   Effective: ${share.effective ? 'Yes' : 'No'}\n`;
+                responseText += '\n';
+              });
+            } else {
+              responseText = 'No shared views found for this base.';
             }
           }
           
