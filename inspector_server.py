@@ -99,17 +99,6 @@ def patched_tool(*args, **kwargs):
 # Replace app.tool with our patched version
 app.tool = patched_tool
 
-# Also patch rpc_method
-original_rpc_method = app.rpc_method
-def patched_rpc_method(*args, **kwargs):
-    def decorator(func):
-        wrapped_func = handle_exceptions(func)
-        return original_rpc_method(*args, **kwargs)(wrapped_func)
-    return decorator
-
-# Replace app.rpc_method with our patched version
-app.rpc_method = patched_rpc_method
-
 # Get token from arguments, config, or environment
 token = args.api_token or config.get("airtable_token", "") or os.environ.get("AIRTABLE_PERSONAL_ACCESS_TOKEN", "")
 # Clean up token if it has trailing quote
@@ -121,7 +110,7 @@ base_id = args.base_id or config.get("base_id", "") or os.environ.get("AIRTABLE_
 if not token:
     logger.warning("No Airtable API token provided. Use --token, --config, or set AIRTABLE_PERSONAL_ACCESS_TOKEN environment variable.")
 else:
-    logger.info(f"Using Airtable token: {token[:5]}...{token[-5:]}")
+    logger.info("Airtable authentication configured")
 
 if base_id:
     logger.info(f"Using base ID: {base_id}")
@@ -339,60 +328,9 @@ async def set_base_id(base_id_param: str) -> str:
     base_id = base_id_param
     return f"Base ID set to: {base_id}"
 
-# Add Claude-specific methods
-@app.rpc_method("resources/list")
-async def resources_list(params: Dict = None) -> Dict:
-    """List available Airtable resources for Claude"""
-    try:
-        resources = [
-            {
-                "id": "airtable_bases",
-                "name": "Airtable Bases",
-                "description": "The Airtable bases accessible with your API token"
-            },
-            {
-                "id": "airtable_tables",
-                "name": "Airtable Tables",
-                "description": "Tables in your current Airtable base"
-            },
-            {
-                "id": "airtable_records",
-                "name": "Airtable Records",
-                "description": "Records in your Airtable tables"
-            }
-        ]
-        return {"resources": resources}
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        logger.error(f"Error in resources/list: {str(e)}\n{error_trace}")
-        return {"error": {"code": -32000, "message": str(e)}}
-
-@app.rpc_method("prompts/list")
-async def prompts_list(params: Dict = None) -> Dict:
-    """List available prompts for Claude"""
-    try:
-        prompts = [
-            {
-                "id": "list_tables_prompt",
-                "name": "List Tables",
-                "description": "List all tables in your Airtable base"
-            },
-            {
-                "id": "list_records_prompt",
-                "name": "List Records",
-                "description": "List records from a specific Airtable table"
-            },
-            {
-                "id": "create_record_prompt",
-                "name": "Create Record",
-                "description": "Create a new record in an Airtable table"
-            }
-        ]
-        return {"prompts": prompts}
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        logger.error(f"Error in prompts/list: {str(e)}\n{error_trace}")
-        return {"error": {"code": -32000, "message": str(e)}}
+# Note: rpc_method is not available in the current MCP version
+# These methods would be used for Claude-specific functionality
+# but are not needed for basic MCP operation
 
 # Start the server
 if __name__ == "__main__":

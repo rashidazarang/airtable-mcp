@@ -56,8 +56,8 @@ function log(level, message, ...args) {
 }
 
 log(LOG_LEVELS.INFO, `Starting Enhanced Airtable MCP server v1.4.0`);
-log(LOG_LEVELS.INFO, `Token: ${token.slice(0, 5)}...${token.slice(-5)}`);
-log(LOG_LEVELS.INFO, `Base ID: ${baseId}`);
+log(LOG_LEVELS.INFO, `Authentication configured`);
+log(LOG_LEVELS.INFO, `Base connection established`);
 
 // Enhanced Airtable API function with full HTTP method support
 function callAirtableAPI(endpoint, method = 'GET', body = null, queryParams = {}) {
