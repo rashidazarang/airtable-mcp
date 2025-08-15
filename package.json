@@ -1,6 +1,6 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Airtable MCP for Claude Desktop - Connect directly to Airtable using natural language",
   "main": "airtable_simple.js",
   "bin": {

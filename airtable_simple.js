@@ -55,7 +55,7 @@ function log(level, message, ...args) {
   }
 }
 
-log(LOG_LEVELS.INFO, `Starting Enhanced Airtable MCP server v1.4.0`);
+log(LOG_LEVELS.INFO, `Starting Enhanced Airtable MCP server v1.5.0`);
 log(LOG_LEVELS.INFO, `Authentication configured`);
 log(LOG_LEVELS.INFO, `Base connection established`);
 
@@ -319,6 +319,150 @@ const server = http.createServer(async (req, res) => {
                   },
                   required: ['webhookId']
                 }
+              },
+              {
+                name: 'list_bases',
+                description: 'List all accessible Airtable bases',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    offset: { type: 'string', description: 'Pagination offset for listing more bases' }
+                  }
+                }
+              },
+              {
+                name: 'get_base_schema',
+                description: 'Get complete schema information for a base',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    baseId: { type: 'string', description: 'Base ID to get schema for (optional, defaults to current base)' }
+                  }
+                }
+              },
+              {
+                name: 'describe_table',
+                description: 'Get detailed information about a specific table including all fields',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' }
+                  },
+                  required: ['table']
+                }
+              },
+              {
+                name: 'create_table',
+                description: 'Create a new table in the base',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string', description: 'Name for the new table' },
+                    description: { type: 'string', description: 'Optional description for the table' },
+                    fields: { 
+                      type: 'array', 
+                      description: 'Array of field definitions',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          name: { type: 'string', description: 'Field name' },
+                          type: { type: 'string', description: 'Field type (singleLineText, number, etc.)' },
+                          description: { type: 'string', description: 'Field description' },
+                          options: { type: 'object', description: 'Field-specific options' }
+                        },
+                        required: ['name', 'type']
+                      }
+                    }
+                  },
+                  required: ['name', 'fields']
+                }
+              },
+              {
+                name: 'update_table',
+                description: 'Update table name or description',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    name: { type: 'string', description: 'New table name' },
+                    description: { type: 'string', description: 'New table description' }
+                  },
+                  required: ['table']
+                }
+              },
+              {
+                name: 'delete_table',
+                description: 'Delete a table (WARNING: This will permanently delete all data)',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID to delete' },
+                    confirm: { type: 'boolean', description: 'Must be true to confirm deletion' }
+                  },
+                  required: ['table', 'confirm']
+                }
+              },
+              {
+                name: 'create_field',
+                description: 'Add a new field to an existing table',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    name: { type: 'string', description: 'Field name' },
+                    type: { type: 'string', description: 'Field type (singleLineText, number, multipleSelectionList, etc.)' },
+                    description: { type: 'string', description: 'Field description' },
+                    options: { type: 'object', description: 'Field-specific options (e.g., choices for select fields)' }
+                  },
+                  required: ['table', 'name', 'type']
+                }
+              },
+              {
+                name: 'update_field',
+                description: 'Update field properties',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    fieldId: { type: 'string', description: 'Field ID to update' },
+                    name: { type: 'string', description: 'New field name' },
+                    description: { type: 'string', description: 'New field description' },
+                    options: { type: 'object', description: 'Updated field options' }
+                  },
+                  required: ['table', 'fieldId']
+                }
+              },
+              {
+                name: 'delete_field',
+                description: 'Delete a field from a table (WARNING: This will permanently delete all data in this field)',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' },
+                    fieldId: { type: 'string', description: 'Field ID to delete' },
+                    confirm: { type: 'boolean', description: 'Must be true to confirm deletion' }
+                  },
+                  required: ['table', 'fieldId', 'confirm']
+                }
+              },
+              {
+                name: 'list_field_types',
+                description: 'Get a reference of all available Airtable field types and their schemas',
+                inputSchema: {
+                  type: 'object',
+                  properties: {}
+                }
+              },
+              {
+                name: 'get_table_views',
+                description: 'List all views for a specific table',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    table: { type: 'string', description: 'Table name or ID' }
+                  },
+                  required: ['table']
+                }
               }
             ]
           }
@@ -565,6 +709,324 @@ const server = http.createServer(async (req, res) => {
             
             responseText = `Successfully refreshed webhook ${webhookId}:\n` +
               `New expiration: ${result.expirationTime}`;
+          }
+          
+          // Schema Management Tools
+          else if (toolName === 'list_bases') {
+            const { offset } = toolParams;
+            const queryParams = offset ? { offset } : {};
+            
+            result = await callAirtableAPI('meta/bases', 'GET', null, queryParams);
+            
+            if (result.bases && result.bases.length > 0) {
+              responseText = `Found ${result.bases.length} accessible base(s):\n`;
+              result.bases.forEach((base, index) => {
+                responseText += `${index + 1}. ${base.name} (ID: ${base.id})\n`;
+                if (base.permissionLevel) {
+                  responseText += `   Permission: ${base.permissionLevel}\n`;
+                }
+              });
+              if (result.offset) {
+                responseText += `\nNext page offset: ${result.offset}`;
+              }
+            } else {
+              responseText = 'No accessible bases found.';
+            }
+          }
+          
+          else if (toolName === 'get_base_schema') {
+            const { baseId: targetBaseId } = toolParams;
+            const targetId = targetBaseId || baseId;
+            
+            result = await callAirtableAPI(`meta/bases/${targetId}/tables`, 'GET');
+            
+            if (result.tables && result.tables.length > 0) {
+              responseText = `Base schema for ${targetId}:\n\n`;
+              result.tables.forEach((table, index) => {
+                responseText += `${index + 1}. Table: ${table.name} (ID: ${table.id})\n`;
+                if (table.description) {
+                  responseText += `   Description: ${table.description}\n`;
+                }
+                responseText += `   Fields (${table.fields.length}):\n`;
+                table.fields.forEach((field, fieldIndex) => {
+                  responseText += `   ${fieldIndex + 1}. ${field.name} (${field.type})\n`;
+                  if (field.description) {
+                    responseText += `      Description: ${field.description}\n`;
+                  }
+                });
+                if (table.views && table.views.length > 0) {
+                  responseText += `   Views (${table.views.length}): ${table.views.map(v => v.name).join(', ')}\n`;
+                }
+                responseText += '\n';
+              });
+            } else {
+              responseText = 'No tables found in this base.';
+            }
+          }
+          
+          else if (toolName === 'describe_table') {
+            const { table } = toolParams;
+            
+            // Get table schema first
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              responseText = `Table Details: ${tableInfo.name}\n`;
+              responseText += `ID: ${tableInfo.id}\n`;
+              if (tableInfo.description) {
+                responseText += `Description: ${tableInfo.description}\n`;
+              }
+              responseText += `\nFields (${tableInfo.fields.length}):\n`;
+              
+              tableInfo.fields.forEach((field, index) => {
+                responseText += `${index + 1}. ${field.name}\n`;
+                responseText += `   Type: ${field.type}\n`;
+                responseText += `   ID: ${field.id}\n`;
+                if (field.description) {
+                  responseText += `   Description: ${field.description}\n`;
+                }
+                if (field.options) {
+                  responseText += `   Options: ${JSON.stringify(field.options, null, 2)}\n`;
+                }
+                responseText += '\n';
+              });
+              
+              if (tableInfo.views && tableInfo.views.length > 0) {
+                responseText += `Views (${tableInfo.views.length}):\n`;
+                tableInfo.views.forEach((view, index) => {
+                  responseText += `${index + 1}. ${view.name} (${view.type})\n`;
+                });
+              }
+            }
+          }
+          
+          else if (toolName === 'create_table') {
+            const { name, description, fields } = toolParams;
+            
+            const body = {
+              name,
+              fields: fields.map(field => ({
+                name: field.name,
+                type: field.type,
+                description: field.description,
+                options: field.options
+              }))
+            };
+            
+            if (description) {
+              body.description = description;
+            }
+            
+            result = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'POST', body);
+            
+            responseText = `Successfully created table "${name}" (ID: ${result.id})\n`;
+            responseText += `Fields created: ${result.fields.length}\n`;
+            result.fields.forEach((field, index) => {
+              responseText += `${index + 1}. ${field.name} (${field.type})\n`;
+            });
+          }
+          
+          else if (toolName === 'update_table') {
+            const { table, name, description } = toolParams;
+            
+            // Get table ID first
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              const body = {};
+              if (name) body.name = name;
+              if (description !== undefined) body.description = description;
+              
+              if (Object.keys(body).length === 0) {
+                responseText = 'No updates specified. Provide name or description to update.';
+              } else {
+                result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}`, 'PATCH', body);
+                responseText = `Successfully updated table "${tableInfo.name}":\n`;
+                if (name) responseText += `New name: ${result.name}\n`;
+                if (description !== undefined) responseText += `New description: ${result.description || '(none)'}\n`;
+              }
+            }
+          }
+          
+          else if (toolName === 'delete_table') {
+            const { table, confirm } = toolParams;
+            
+            if (!confirm) {
+              responseText = 'Table deletion requires confirm=true to proceed. This action cannot be undone!';
+            } else {
+              // Get table ID first
+              const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+              const tableInfo = schemaResult.tables.find(t => 
+                t.name.toLowerCase() === table.toLowerCase() || t.id === table
+              );
+              
+              if (!tableInfo) {
+                responseText = `Table "${table}" not found.`;
+              } else {
+                result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}`, 'DELETE');
+                responseText = `Successfully deleted table "${tableInfo.name}" (ID: ${tableInfo.id})\n`;
+                responseText += 'All data in this table has been permanently removed.';
+              }
+            }
+          }
+          
+          // Field Management Tools
+          else if (toolName === 'create_field') {
+            const { table, name, type, description, options } = toolParams;
+            
+            // Get table ID first
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              const body = {
+                name,
+                type
+              };
+              
+              if (description) body.description = description;
+              if (options) body.options = options;
+              
+              result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}/fields`, 'POST', body);
+              
+              responseText = `Successfully created field "${name}" in table "${tableInfo.name}"\n`;
+              responseText += `Field ID: ${result.id}\n`;
+              responseText += `Type: ${result.type}\n`;
+              if (result.description) {
+                responseText += `Description: ${result.description}\n`;
+              }
+            }
+          }
+          
+          else if (toolName === 'update_field') {
+            const { table, fieldId, name, description, options } = toolParams;
+            
+            // Get table ID first
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              const body = {};
+              if (name) body.name = name;
+              if (description !== undefined) body.description = description;
+              if (options) body.options = options;
+              
+              if (Object.keys(body).length === 0) {
+                responseText = 'No updates specified. Provide name, description, or options to update.';
+              } else {
+                result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}/fields/${fieldId}`, 'PATCH', body);
+                responseText = `Successfully updated field in table "${tableInfo.name}":\n`;
+                responseText += `Field: ${result.name} (${result.type})\n`;
+                responseText += `ID: ${result.id}\n`;
+                if (result.description) {
+                  responseText += `Description: ${result.description}\n`;
+                }
+              }
+            }
+          }
+          
+          else if (toolName === 'delete_field') {
+            const { table, fieldId, confirm } = toolParams;
+            
+            if (!confirm) {
+              responseText = 'Field deletion requires confirm=true to proceed. This action cannot be undone!';
+            } else {
+              // Get table ID first
+              const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+              const tableInfo = schemaResult.tables.find(t => 
+                t.name.toLowerCase() === table.toLowerCase() || t.id === table
+              );
+              
+              if (!tableInfo) {
+                responseText = `Table "${table}" not found.`;
+              } else {
+                result = await callAirtableAPI(`meta/bases/${baseId}/tables/${tableInfo.id}/fields/${fieldId}`, 'DELETE');
+                responseText = `Successfully deleted field from table "${tableInfo.name}"\n`;
+                responseText += 'All data in this field has been permanently removed.';
+              }
+            }
+          }
+          
+          else if (toolName === 'list_field_types') {
+            responseText = `Available Airtable Field Types:\n\n`;
+            responseText += `Basic Fields:\n`;
+            responseText += `• singleLineText - Single line text input\n`;
+            responseText += `• multilineText - Multi-line text input\n`;
+            responseText += `• richText - Rich text with formatting\n`;
+            responseText += `• number - Number field with optional formatting\n`;
+            responseText += `• percent - Percentage field\n`;
+            responseText += `• currency - Currency field\n`;
+            responseText += `• singleSelect - Single choice from predefined options\n`;
+            responseText += `• multipleSelectionList - Multiple choices from predefined options\n`;
+            responseText += `• date - Date field\n`;
+            responseText += `• dateTime - Date and time field\n`;
+            responseText += `• phoneNumber - Phone number field\n`;
+            responseText += `• email - Email address field\n`;
+            responseText += `• url - URL field\n`;
+            responseText += `• checkbox - Checkbox (true/false)\n`;
+            responseText += `• rating - Star rating field\n`;
+            responseText += `• duration - Duration/time field\n\n`;
+            responseText += `Advanced Fields:\n`;
+            responseText += `• multipleAttachment - File attachments\n`;
+            responseText += `• linkedRecord - Link to records in another table\n`;
+            responseText += `• lookup - Lookup values from linked records\n`;
+            responseText += `• rollup - Calculate values from linked records\n`;
+            responseText += `• count - Count of linked records\n`;
+            responseText += `• formula - Calculated field with formulas\n`;
+            responseText += `• createdTime - Auto-timestamp when record created\n`;
+            responseText += `• createdBy - Auto-user who created record\n`;
+            responseText += `• lastModifiedTime - Auto-timestamp when record modified\n`;
+            responseText += `• lastModifiedBy - Auto-user who last modified record\n`;
+            responseText += `• autoNumber - Auto-incrementing number\n`;
+            responseText += `• barcode - Barcode/QR code field\n`;
+            responseText += `• button - Action button field\n`;
+          }
+          
+          else if (toolName === 'get_table_views') {
+            const { table } = toolParams;
+            
+            // Get table schema
+            const schemaResult = await callAirtableAPI(`meta/bases/${baseId}/tables`, 'GET');
+            const tableInfo = schemaResult.tables.find(t => 
+              t.name.toLowerCase() === table.toLowerCase() || t.id === table
+            );
+            
+            if (!tableInfo) {
+              responseText = `Table "${table}" not found.`;
+            } else {
+              if (tableInfo.views && tableInfo.views.length > 0) {
+                responseText = `Views for table "${tableInfo.name}" (${tableInfo.views.length}):\n\n`;
+                tableInfo.views.forEach((view, index) => {
+                  responseText += `${index + 1}. ${view.name}\n`;
+                  responseText += `   Type: ${view.type}\n`;
+                  responseText += `   ID: ${view.id}\n`;
+                  if (view.visibleFieldIds && view.visibleFieldIds.length > 0) {
+                    responseText += `   Visible fields: ${view.visibleFieldIds.length}\n`;
+                  }
+                  responseText += '\n';
+                });
+              } else {
+                responseText = `No views found for table "${tableInfo.name}".`;
+              }
+            }
           }
           
           else {
