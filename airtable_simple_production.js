@@ -379,7 +379,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       status: 'healthy',
-      version: '2.2.1',
+      version: '2.2.2',
       timestamp: new Date().toISOString(),
       uptime: process.uptime()
     }));
@@ -422,9 +422,11 @@ const server = http.createServer(async (req, res) => {
     
     res.writeHead(200, { 
       'Content-Type': 'text/html',
-      'Content-Security-Policy': "default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'",
+      'Content-Security-Policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';",
       'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY'
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'no-referrer'
     });
     
     res.end(`<!DOCTYPE html>
@@ -447,19 +449,42 @@ const server = http.createServer(async (req, res) => {
     </button>
   </div>
   <script>
-    function authorize() {
-      const baseUrl = ${JSON.stringify(redirectUri)};
+    // Use validated and sanitized values to prevent XSS
+    (function() {
+      const baseUrl = ${JSON.stringify(redirectUri.slice(0, 2000))};
       const code = ${JSON.stringify(authCode)};
-      const state = ${JSON.stringify(state || '')};
-      const url = baseUrl + '?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state);
-      window.location.href = url;
-    }
-    function deny() {
-      const baseUrl = ${JSON.stringify(redirectUri)};
-      const state = ${JSON.stringify(state || '')};
-      const url = baseUrl + '?error=access_denied&state=' + encodeURIComponent(state);
-      window.location.href = url;
-    }
+      const state = ${JSON.stringify((state || '').slice(0, 200))};
+      
+      window.authorize = function() {
+        try {
+          // Additional validation in JavaScript
+          const url = new URL(baseUrl);
+          if (!['http:', 'https:'].includes(url.protocol)) {
+            throw new Error('Invalid protocol');
+          }
+          const finalUrl = baseUrl + '?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state);
+          window.location.href = finalUrl;
+        } catch (e) {
+          console.error('Authorization failed:', e);
+          alert('Invalid redirect URL');
+        }
+      };
+      
+      window.deny = function() {
+        try {
+          // Additional validation in JavaScript
+          const url = new URL(baseUrl);
+          if (!['http:', 'https:'].includes(url.protocol)) {
+            throw new Error('Invalid protocol');
+          }
+          const finalUrl = baseUrl + '?error=access_denied&state=' + encodeURIComponent(state);
+          window.location.href = finalUrl;
+        } catch (e) {
+          console.error('Denial failed:', e);
+          alert('Invalid redirect URL');
+        }
+      };
+    })();
   </script>
 </body>
 </html>`);
@@ -588,7 +613,7 @@ const server = http.createServer(async (req, res) => {
                 },
                 serverInfo: {
                   name: 'Airtable MCP Server Enhanced',
-                  version: '2.2.1',
+                  version: '2.2.2',
                   description: 'Complete MCP 2024-11-05 server with Prompts, Sampling, Roots, Logging, and OAuth2'
                 }
               }
