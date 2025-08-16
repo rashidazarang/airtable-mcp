@@ -83,4 +83,55 @@ tmp/
 *.pid.lock
 
 # Environment variables
-.env.* 
+.env.*
+
+# AI Agent Project (new subdirectory)
+/ai-agent/
+
+# Test artifacts and temporary files
+/test-clone/
+*.tmp
+*.temp
+
+# Development artifacts
+/airtable_simple_v*.js
+/airtable_enhanced.js
+/airtable_v*.js
+*.backup.js
+
+# Development versions and test files
+/airtable_mcp_v2.js
+/airtable_mcp_v2_oauth.js
+/airtable_mcp_v3_advanced.js
+/test_*.js
+/test_*.sh
+/quick_test.sh
+/cleanup.sh
+/publish-steps.txt
+
+# Development documentation
+/DEVELOPMENT.md
+/IMPROVEMENT_PROPOSAL.md
+/MCP_REVIEW_SUMMARY.md
+/CAPABILITY_REPORT.md
+/API_DOCUMENTATION.md
+/RELEASE_NOTES_*.md
+
+# Infrastructure files (keep for reference but not in main package)
+/helm/
+/k8s/
+/monitoring/
+/docker-compose.production.yml
+/Dockerfile.production
+/.github/workflows/
+/.github/ISSUE_TEMPLATE/
+
+# Chrome extension development
+/airtable-clipper/
+
+# Package artifacts
+*.tgz
+/rashidazarang-airtable-mcp-*.tgz
+
+# Claude Code artifacts
+/.claude/
