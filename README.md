@@ -3,21 +3,35 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-2.2.1-blue)](https://github.com/rashidazarang/airtable-mcp)
-[![Security](https://img.shields.io/badge/Security-Enhanced-green)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-3.1.0-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
+[![AI Agent](https://img.shields.io/badge/AI_Agent-Enhanced-purple)](https://github.com/rashidazarang/airtable-mcp)
+[![Security](https://img.shields.io/badge/Security-Enterprise-green)](https://github.com/rashidazarang/airtable-mcp)
 [![Protocol](https://img.shields.io/badge/Protocol-2024--11--05-success)](https://modelcontextprotocol.io/)
 
-🏆 **Complete MCP 2024-11-05 Implementation** - A production-ready Model Context Protocol server that enables AI assistants like Claude to interact with your Airtable bases through a secure, feature-complete interface.
+🤖 **Revolutionary AI Agent v3.1.0** - Advanced AI-powered Airtable MCP server with **TypeScript support**, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
 
-## 🚀 Latest: Enhanced v2.2.1
+## 🚀 Latest: TypeScript Support v3.1.0
 
-**Complete MCP Protocol Support** with enterprise security:
-- ✅ **Prompts** - 4 AI-powered templates for data analysis
-- ✅ **Sampling** - LLM integration for intelligent operations  
-- ✅ **Roots** - Filesystem boundary management
-- ✅ **Logging** - Dynamic structured logging
-- ✅ **OAuth2** - PKCE authentication flow
-- ✅ **Security** - XSS protection, input validation, CSP headers
+**Enterprise-Grade Type Safety** with full backward compatibility:
+- 🔷 **TypeScript Implementation** - Complete type-safe server with strict validation
+- 📘 **Comprehensive Type Definitions** - All 33 tools and 10 AI prompts fully typed
+- 🛡️ **Compile-Time Safety** - Catch errors before runtime with advanced type checking
+- 🎯 **Developer Experience** - IntelliSense, auto-completion, and refactoring support
+- 🔄 **Dual Distribution** - Use with JavaScript or TypeScript, your choice
+- 📖 **Type Documentation** - Self-documenting APIs through comprehensive type definitions
+
+## 🤖 AI Intelligence Suite
+
+**Complete AI-Powered Intelligence** with enterprise capabilities:
+- 🤖 **10 AI Prompt Templates** - Advanced analytics, predictions, and automation
+- 🔮 **Predictive Analytics** - Forecasting and trend analysis with confidence intervals
+- 🗣️ **Natural Language Processing** - Query your data using human language
+- 📊 **Business Intelligence** - Automated insights and recommendations
+- 🏗️ **Smart Schema Design** - AI-optimized database architecture
+- ⚡ **Workflow Automation** - Intelligent process optimization
+- 🔍 **Data Quality Auditing** - Comprehensive quality assessment and fixes
+- 📈 **Statistical Analysis** - Advanced analytics with significance testing
 
 ## ✨ Features
 
@@ -63,13 +77,25 @@
 
 Choose one of these installation methods:
 
-#### Option A: Install via NPM (Recommended)
+#### 🔷 TypeScript Users (Recommended for Development)
+
+```bash
+# Install with TypeScript support
+npm install -g @rashidazarang/airtable-mcp
+
+# For development with types
+npm install --save-dev typescript @types/node
+```
+
+#### 📦 JavaScript Users (Production Ready)
+
+**Option A: Install via NPM (Recommended)**
 
 ```bash
 npm install -g @rashidazarang/airtable-mcp
 ```
 
-#### Option B: Clone from GitHub
+**Option B: Clone from GitHub**
 
 ```bash
 git clone https://github.com/rashidazarang/airtable-mcp.git
@@ -90,7 +116,35 @@ AIRTABLE_BASE_ID=your_base_id_here
 
 ### Step 4: Configure Your MCP Client
 
-#### For Claude Desktop
+#### 🔷 TypeScript Configuration (Enhanced Developer Experience)
+
+Add to your Claude Desktop configuration file with TypeScript binary:
+
+**MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\\Claude\\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "airtable-typescript": {
+      "command": "npx",
+      "args": [
+        "@rashidazarang/airtable-mcp",
+        "--token",
+        "YOUR_AIRTABLE_TOKEN",
+        "--base",
+        "YOUR_BASE_ID"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+#### 📦 JavaScript Configuration (Standard)
 
 Add to your Claude Desktop configuration file:
 
@@ -139,7 +193,39 @@ After configuration, restart Claude Desktop or your MCP client to load the Airta
 
 Once configured, you can interact with your Airtable data naturally:
 
-### Basic Operations
+### 🔷 TypeScript Development
+
+```typescript
+import { 
+  AirtableMCPServer, 
+  ListRecordsInput, 
+  AnalyzeDataPrompt 
+} from '@rashidazarang/airtable-mcp/types';
+
+const server = new AirtableMCPServer();
+
+// Type-safe data operations
+const params: ListRecordsInput = {
+  table: 'Tasks',
+  maxRecords: 10,
+  filterByFormula: "Status = 'Active'"
+};
+
+const records = await server.handleToolCall('list_records', params);
+
+// Type-safe AI analytics
+const analysis: AnalyzeDataPrompt = {
+  table: 'Sales',
+  analysis_type: 'predictive',
+  confidence_level: 0.95
+};
+
+const insights = await server.handlePromptGet('analyze_data', analysis);
+```
+
+### 📦 Natural Language Interactions
+
+**Basic Operations**
 ```
 "Show me all records in the Projects table"
 "Create a new task with priority 'High' and due date tomorrow"
@@ -149,7 +235,7 @@ Once configured, you can interact with your Airtable data naturally:
 "Search for records where Status equals 'Active'"
 ```
 
-### Webhook Operations (v1.4.0+)
+**Webhook Operations (v1.4.0+)**
 ```
 "Create a webhook for my table that notifies https://my-app.com/webhook"
 "List all active webhooks in my base"
@@ -157,7 +243,7 @@ Once configured, you can interact with your Airtable data naturally:
 "Delete webhook ach123xyz"
 ```
 
-### Schema Management (v1.5.0+)
+**Schema Management (v1.5.0+)**
 ```
 "List all my accessible Airtable bases"
 "Show me the complete schema for this base"
@@ -167,7 +253,7 @@ Once configured, you can interact with your Airtable data naturally:
 "What field types are available in Airtable?"
 ```
 
-### Batch Operations & Attachments (v1.6.0+)
+**Batch Operations & Attachments (v1.6.0+)**
 ```
 "Create 5 new records at once in the Tasks table"
 "Update multiple records with new status values"
@@ -248,13 +334,19 @@ Once configured, you can interact with your Airtable data naturally:
 | `list_collaborators` | View base collaborators and their permission levels |
 | `list_shares` | List shared views and their public configurations |
 
-### 🤖 AI Integration (4 prompts) - **New in v2.2.0**
-| Prompt | Description |
-|--------|-------------|
-| `analyze_data` | AI-powered data analysis with trends and insights |
-| `create_report` | Generate comprehensive reports with AI assistance |
-| `data_insights` | Discover hidden correlations and patterns |
-| `optimize_workflow` | Get AI recommendations for workflow improvements |
+### 🤖 AI Intelligence Suite (10 prompts) - **Revolutionary v3.0.0**
+| Prompt | Description | Enterprise Features |
+|--------|-------------|-------------------|
+| `analyze_data` | Advanced statistical analysis with ML insights | Confidence intervals, anomaly detection |
+| `create_report` | Intelligent report generation with recommendations | Multi-stakeholder customization, ROI analysis |
+| `data_insights` | Business intelligence and pattern discovery | Cross-table correlations, predictive indicators |
+| `optimize_workflow` | AI-powered automation recommendations | Change management, implementation roadmaps |
+| `smart_schema_design` | Database optimization with best practices | Compliance-aware (GDPR, HIPAA), scalability planning |
+| `data_quality_audit` | Comprehensive quality assessment and fixes | Automated remediation, governance frameworks |
+| `predictive_analytics` | Forecasting and trend prediction | Multiple algorithms, uncertainty quantification |
+| `natural_language_query` | Process human questions intelligently | Context awareness, confidence scoring |
+| `smart_data_transformation` | AI-assisted data processing | Quality rules, audit trails, optimization |
+| `automation_recommendations` | Workflow optimization suggestions | Technical feasibility, cost-benefit analysis |
 
 ## 🔧 Advanced Configuration
 
@@ -304,7 +396,28 @@ If you cloned the repository:
 
 ## 🧪 Testing
 
-Run the comprehensive test suite to verify all 12 tools:
+### 🔷 TypeScript Testing
+
+Run the comprehensive TypeScript test suite:
+
+```bash
+# Install dependencies first
+npm install
+
+# Run TypeScript type checking
+npm run test:types
+
+# Run full TypeScript test suite
+npm run test:ts
+
+# Build and test TypeScript server
+npm run build
+npm run start:ts
+```
+
+### 📦 JavaScript Testing
+
+Run the comprehensive test suite to verify all 33 tools:
 
 ```bash
 # Set environment variables first
@@ -318,7 +431,15 @@ node airtable_simple.js &
 ./test_v1.6.0_comprehensive.sh
 ```
 
-The test suite validates:
+The TypeScript test suite validates:
+- **Type Safety**: Compile-time validation of all interfaces
+- **Enterprise Testing**: 33 tools with strict type checking
+- **AI Prompt Validation**: All 10 AI templates with proper typing
+- **Error Handling**: Type-safe error management
+- **Performance**: Concurrent operations with type safety
+- **Integration**: Full MCP protocol compliance
+
+The JavaScript test suite validates:
 - All 33 tools with real API calls
 - Complete CRUD operations
 - Advanced schema management
@@ -355,7 +476,14 @@ lsof -ti:8010 | xargs kill -9
 
 ## 📚 Documentation
 
-- 🎆 [Release Notes v1.6.0](./RELEASE_NOTES_v1.6.0.md) - **Latest major release**
+### 🔷 TypeScript Documentation
+- 📘 [TypeScript Examples](./examples/typescript/) - Complete type-safe usage examples
+- 🏗️ [Type Definitions](./types/) - Comprehensive type definitions for all features
+- 🧪 [TypeScript Testing](./src/test-suite.ts) - Enterprise-grade testing framework
+
+### 📦 General Documentation  
+- 🎆 [Release Notes v3.1.0](./RELEASE_NOTES_v3.1.0.md) - **Latest TypeScript release**
+- [Release Notes v1.6.0](./RELEASE_NOTES_v1.6.0.md) - Major feature release
 - [Release Notes v1.5.0](./RELEASE_NOTES_v1.5.0.md)
 - [Release Notes v1.4.0](./RELEASE_NOTES_v1.4.0.md)
 - [Detailed Setup Guide](./CLAUDE_INTEGRATION.md)
@@ -364,7 +492,9 @@ lsof -ti:8010 | xargs kill -9
 
 ## 📦 Version History
 
-- **v2.2.1** (2025-08-16) - 🔒 **Security release**: Fixed XSS and format string vulnerabilities
+- **v3.1.0** (2025-08-16) - 🔷 **TypeScript Support**: Enterprise-grade type safety, comprehensive type definitions, dual JS/TS distribution
+- **v3.0.0** (2025-08-16) - 🤖 **Revolutionary AI Agent**: 10 intelligent prompts, predictive analytics, natural language processing
+- **v2.2.3** (2025-08-16) - 🔒 **Security release**: Final XSS vulnerability fixes and enhanced validation
 - **v2.2.0** (2025-08-16) - 🏆 **Major release**: Complete MCP 2024-11-05 protocol implementation
 - **v1.6.0** (2025-08-15) - 🎆 **Major release**: Added batch operations & attachment management (33 total tools)
 - **v1.5.0** (2025-08-15) - Added comprehensive schema management (23 total tools)
@@ -394,4 +524,4 @@ MIT License - see [LICENSE](./LICENSE) file for details
 
 ---
 
-**Version**: 2.2.1 | **Status**: ✅ Production Ready | **MCP Protocol**: 2024-11-05 Complete | **Last Updated**: August 16, 2025
+**Version**: 3.1.0 | **Status**: 🔷 TypeScript + 🤖 AI Agent | **MCP Protocol**: 2024-11-05 Complete | **Type Safety**: Enterprise-Grade | **Intelligence**: 10 AI Prompts | **Last Updated**: August 16, 2025

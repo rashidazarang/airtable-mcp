@@ -1,17 +1,33 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "3.0.0",
-  "description": "Advanced AI-powered Airtable MCP server with intelligent analytics, predictive modeling, and enterprise automation capabilities",
+  "version": "3.1.0",
+  "description": "Advanced AI-powered Airtable MCP server with TypeScript support, intelligent analytics, predictive modeling, and enterprise automation capabilities",
   "main": "airtable_simple_production.js",
+  "exports": {
+    ".": {
+      "import": "./dist/airtable-mcp-server.js",
+      "require": "./airtable_simple_production.js",
+      "types": "./types/index.d.ts"
+    },
+    "./types": "./types/index.d.ts",
+    "./types/*": "./types/*.d.ts"
+  },
   "bin": {
-    "airtable-mcp": "./airtable_simple_production.js"
+    "airtable-mcp": "./airtable_simple_production.js",
+    "airtable-mcp-ts": "./dist/airtable-mcp-server.js"
   },
   "scripts": {
     "start": "node airtable_simple_production.js",
+    "start:ts": "node dist/airtable-mcp-server.js",
     "start:python": "python3.10 inspector_server.py",
     "test": "node test_mcp_comprehensive.js",
     "test:quick": "./quick_test.sh",
-    "dev": "node airtable_simple_production.js --token YOUR_TOKEN --base YOUR_BASE_ID"
+    "test:types": "tsc --noEmit",
+    "test:ts": "npm run build && node dist/test-suite.js",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "node airtable_simple_production.js --token YOUR_TOKEN --base YOUR_BASE_ID",
+    "dev:ts": "npm run build && npm run start:ts"
   },
   "keywords": [
     "airtable",
@@ -20,23 +36,34 @@
     "claude-desktop",
     "anthropic",
     "ai",
-    "database"
+    "database",
+    "typescript",
+    "types"
   ],
   "files": [
     "airtable_simple.js",
     "airtable_simple_production.js",
+    "dist/",
+    "types/",
     "README.md",
     "LICENSE",
     "package.json",
+    "tsconfig.json",
     "examples/",
     "bin/"
   ],
+  "types": "types/index.d.ts",
   "author": "Rashid Azarang",
   "license": "MIT",
   "dependencies": {
     "@smithery/cli": "^1.0.0",
     "airtable": "^0.12.2",
     "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.10.0",
+    "@types/dotenv": "^8.2.0"
   },
   "engines": {
     "node": ">=14.0.0"

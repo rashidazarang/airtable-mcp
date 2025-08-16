@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "airtable-typescript": {
+      "command": "npx",
+      "args": [
+        "@rashidazarang/airtable-mcp",
+        "--token",
+        "YOUR_AIRTABLE_TOKEN",
+        "--base", 
+        "YOUR_BASE_ID"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO"
+      }
+    },
+    "airtable-typescript-dev": {
+      "command": "npm",
+      "args": ["run", "start:ts"],
+      "cwd": "/path/to/your/airtable-mcp",
+      "env": {
+        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN",
+        "AIRTABLE_BASE_ID": "YOUR_BASE_ID",
+        "NODE_ENV": "development",
+        "LOG_LEVEL": "DEBUG"
+      }
+    }
+  }
+}
