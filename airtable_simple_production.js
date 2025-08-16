@@ -62,12 +62,15 @@ function log(level, message, metadata = {}) {
   if (level <= currentLogLevel) {
     const timestamp = new Date().toISOString();
     const levelName = Object.keys(LOG_LEVELS).find(key => LOG_LEVELS[key] === level);
-    const output = `[${timestamp}] [${levelName}] ${message}`;
+    // Sanitize message to prevent format string attacks
+    const safeMessage = String(message).replace(/%/g, '%%');
+    const output = `[${timestamp}] [${levelName}] ${safeMessage}`;
     
     if (Object.keys(metadata).length > 0) {
-      console.log(output, JSON.stringify(metadata));
+      // Use separate arguments to avoid format string injection
+      console.log('%s %s', output, JSON.stringify(metadata));
     } else {
-      console.log(output);
+      console.log('%s', output);
     }
   }
 }
@@ -95,12 +98,35 @@ function checkRateLimit(clientId) {
   return true;
 }
 
-// Input validation
+// Input validation and HTML escaping
 function sanitizeInput(input) {
   if (typeof input === 'string') {
     return input.replace(/[<>]/g, '').trim().substring(0, 1000);
   }
   return input;
+}
+
+function escapeHtml(unsafe) {
+  if (typeof unsafe !== 'string') {
+    return String(unsafe);
+  }
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+    .replace(/\//g, "&#x2F;");
+}
+
+function validateUrl(url) {
+  try {
+    const parsed = new URL(url);
+    // Only allow http and https protocols
+    return ['http:', 'https:'].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
 }
 
 // Airtable API integration
@@ -353,7 +379,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       status: 'healthy',
-      version: '2.2.0',
+      version: '2.2.1',
       timestamp: new Date().toISOString(),
       uptime: process.uptime()
     }));
@@ -369,57 +395,107 @@ const server = http.createServer(async (req, res) => {
     const codeChallenge = params.code_challenge;
     const codeChallengeMethod = params.code_challenge_method;
     
+    // Validate inputs to prevent XSS
+    if (!clientId || !redirectUri) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'invalid_request', error_description: 'Missing required parameters' }));
+      return;
+    }
+    
+    // Validate redirect URI
+    if (!validateUrl(redirectUri)) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'invalid_request', error_description: 'Invalid redirect URI' }));
+      return;
+    }
+    
+    // Sanitize all user inputs for HTML output
+    const safeClientId = escapeHtml(clientId);
+    const safeRedirectUri = escapeHtml(redirectUri);
+    const safeState = escapeHtml(state || '');
+    
     // Generate authorization code
     const authCode = crypto.randomBytes(32).toString('hex');
     
     // In a real implementation, store the auth code with expiration
     // and associate it with the client and PKCE challenge
     
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>OAuth2 Authorization</title></head>
-      <body>
-        <h2>Airtable MCP Server - OAuth2 Authorization</h2>
-        <p>Client ID: ${clientId}</p>
-        <p>Redirect URI: ${redirectUri}</p>
-        <div style="margin: 20px 0;">
-          <button onclick="authorize()" style="background: #18BFFF; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-            Authorize Application
-          </button>
-          <button onclick="deny()" style="background: #ff4444; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-            Deny Access
-          </button>
-        </div>
-        <script>
-          function authorize() {
-            const url = '${redirectUri}?code=${authCode}&state=${state || ''}';
-            window.location.href = url;
-          }
-          function deny() {
-            const url = '${redirectUri}?error=access_denied&state=${state || ''}';
-            window.location.href = url;
-          }
-        </script>
-      </body>
-      </html>
-    `);
+    res.writeHead(200, { 
+      'Content-Type': 'text/html',
+      'Content-Security-Policy': "default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'",
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY'
+    });
+    
+    res.end(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OAuth2 Authorization</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <h2>Airtable MCP Server - OAuth2 Authorization</h2>
+  <p>Client ID: ${safeClientId}</p>
+  <p>Redirect URI: ${safeRedirectUri}</p>
+  <div style="margin: 20px 0;">
+    <button onclick="authorize()" style="background: #18BFFF; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+      Authorize Application
+    </button>
+    <button onclick="deny()" style="background: #ff4444; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+      Deny Access
+    </button>
+  </div>
+  <script>
+    function authorize() {
+      const baseUrl = ${JSON.stringify(redirectUri)};
+      const code = ${JSON.stringify(authCode)};
+      const state = ${JSON.stringify(state || '')};
+      const url = baseUrl + '?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state);
+      window.location.href = url;
+    }
+    function deny() {
+      const baseUrl = ${JSON.stringify(redirectUri)};
+      const state = ${JSON.stringify(state || '')};
+      const url = baseUrl + '?error=access_denied&state=' + encodeURIComponent(state);
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>`);
     return;
   }
   
   // OAuth2 token endpoint
   if (pathname === '/oauth/token' && req.method === 'POST') {
     let body = '';
-    req.on('data', chunk => body += chunk.toString());
+    req.on('data', chunk => {
+      body += chunk.toString();
+      // Prevent DoS by limiting body size
+      if (body.length > 10000) {
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'payload_too_large', error_description: 'Request body too large' }));
+        return;
+      }
+    });
     
     req.on('end', () => {
       try {
         const params = querystring.parse(body);
-        const grantType = params.grant_type;
-        const code = params.code;
-        const codeVerifier = params.code_verifier;
-        const clientId = params.client_id;
+        const grantType = sanitizeInput(params.grant_type);
+        const code = sanitizeInput(params.code);
+        const codeVerifier = sanitizeInput(params.code_verifier);
+        const clientId = sanitizeInput(params.client_id);
+        
+        // Validate required parameters
+        if (!grantType || !code || !clientId) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'invalid_request',
+            error_description: 'Missing required parameters'
+          }));
+          return;
+        }
         
         // In a real implementation, verify the authorization code and PKCE
         if (grantType === 'authorization_code' && code) {
@@ -427,7 +503,11 @@ const server = http.createServer(async (req, res) => {
           const accessToken = crypto.randomBytes(32).toString('hex');
           const refreshToken = crypto.randomBytes(32).toString('hex');
           
-          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.writeHead(200, { 
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+            'Pragma': 'no-cache'
+          });
           res.end(JSON.stringify({
             access_token: accessToken,
             token_type: 'Bearer',
@@ -438,11 +518,12 @@ const server = http.createServer(async (req, res) => {
         } else {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
-            error: 'invalid_request',
+            error: 'invalid_grant',
             error_description: 'Invalid grant type or authorization code'
           }));
         }
       } catch (error) {
+        log(LOG_LEVELS.WARN, 'OAuth token request parsing failed', { error: error.message });
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           error: 'invalid_request',
@@ -507,7 +588,7 @@ const server = http.createServer(async (req, res) => {
                 },
                 serverInfo: {
                   name: 'Airtable MCP Server Enhanced',
-                  version: '2.2.0',
+                  version: '2.2.1',
                   description: 'Complete MCP 2024-11-05 server with Prompts, Sampling, Roots, Logging, and OAuth2'
                 }
               }
