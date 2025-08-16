@@ -3,13 +3,21 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-1.6.0-green)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-2.2.1-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![Security](https://img.shields.io/badge/Security-Enhanced-green)](https://github.com/rashidazarang/airtable-mcp)
+[![Protocol](https://img.shields.io/badge/Protocol-2024--11--05-success)](https://modelcontextprotocol.io/)
 
-A Model Context Protocol (MCP) server that enables AI assistants like Claude to interact with your Airtable bases. Query, create, update, and delete records using natural language through a secure, standardized interface.
+🏆 **Complete MCP 2024-11-05 Implementation** - A production-ready Model Context Protocol server that enables AI assistants like Claude to interact with your Airtable bases through a secure, feature-complete interface.
 
-## 🔒 Security Notice
+## 🚀 Latest: Enhanced v2.2.1
 
-**Important**: Version 1.6.0 adds batch operations and attachment management with 33 total tools. Complete Airtable API coverage with advanced features.
+**Complete MCP Protocol Support** with enterprise security:
+- ✅ **Prompts** - 4 AI-powered templates for data analysis
+- ✅ **Sampling** - LLM integration for intelligent operations  
+- ✅ **Roots** - Filesystem boundary management
+- ✅ **Logging** - Dynamic structured logging
+- ✅ **OAuth2** - PKCE authentication flow
+- ✅ **Security** - XSS protection, input validation, CSP headers
 
 ## ✨ Features
 
@@ -26,6 +34,8 @@ A Model Context Protocol (MCP) server that enables AI assistants like Claude to 
 - 📎 **Attachment Management** - Upload files via URLs to attachment fields
 - ⚡ **Batch Operations** - Create, update, delete up to 10 records at once
 - 👥 **Collaboration Tools** - Manage base collaborators and shared views
+- 🤖 **AI Integration** - Prompts and sampling for intelligent data operations
+- 🔐 **Enterprise Security** - OAuth2, rate limiting, comprehensive validation
 
 ## 📋 Prerequisites
 
@@ -238,6 +248,14 @@ Once configured, you can interact with your Airtable data naturally:
 | `list_collaborators` | View base collaborators and their permission levels |
 | `list_shares` | List shared views and their public configurations |
 
+### 🤖 AI Integration (4 prompts) - **New in v2.2.0**
+| Prompt | Description |
+|--------|-------------|
+| `analyze_data` | AI-powered data analysis with trends and insights |
+| `create_report` | Generate comprehensive reports with AI assistance |
+| `data_insights` | Discover hidden correlations and patterns |
+| `optimize_workflow` | Get AI recommendations for workflow improvements |
+
 ## 🔧 Advanced Configuration
 
 ### Using with Smithery Cloud
@@ -346,6 +364,8 @@ lsof -ti:8010 | xargs kill -9
 
 ## 📦 Version History
 
+- **v2.2.1** (2025-08-16) - 🔒 **Security release**: Fixed XSS and format string vulnerabilities
+- **v2.2.0** (2025-08-16) - 🏆 **Major release**: Complete MCP 2024-11-05 protocol implementation
 - **v1.6.0** (2025-08-15) - 🎆 **Major release**: Added batch operations & attachment management (33 total tools)
 - **v1.5.0** (2025-08-15) - Added comprehensive schema management (23 total tools)
 - **v1.4.0** (2025-08-14) - Added webhook support and enhanced CRUD operations (12 tools)
@@ -374,4 +394,4 @@ MIT License - see [LICENSE](./LICENSE) file for details
 
 ---
 
-**Version**: 1.2.4 | **Status**: ✅ Production Ready | **Last Updated**: August 14, 2025
+**Version**: 2.2.1 | **Status**: ✅ Production Ready | **MCP Protocol**: 2024-11-05 Complete | **Last Updated**: August 16, 2025
