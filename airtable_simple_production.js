@@ -262,11 +262,11 @@ const TOOLS_SCHEMA = [
   }
 ];
 
-// Prompts schema - AI-powered templates for common Airtable operations
+// Enhanced AI-powered prompts for intelligent Airtable operations
 const PROMPTS_SCHEMA = [
   {
     name: 'analyze_data',
-    description: 'Analyze data patterns and provide insights from Airtable records',
+    description: 'Advanced AI data analysis with statistical insights, pattern recognition, and predictive modeling',
     arguments: [
       {
         name: 'table',
@@ -275,19 +275,29 @@ const PROMPTS_SCHEMA = [
       },
       {
         name: 'analysis_type',
-        description: 'Type of analysis (trends, summary, patterns, insights)',
+        description: 'Type of analysis (trends, statistical, patterns, predictive, anomaly_detection, correlation_matrix)',
         required: false
       },
       {
         name: 'field_focus',
         description: 'Specific fields to focus the analysis on',
         required: false
+      },
+      {
+        name: 'time_dimension',
+        description: 'Time field for temporal analysis',
+        required: false
+      },
+      {
+        name: 'confidence_level',
+        description: 'Statistical confidence level (0.90, 0.95, 0.99)',
+        required: false
       }
     ]
   },
   {
     name: 'create_report',
-    description: 'Generate a comprehensive report based on Airtable data',
+    description: 'Generate intelligent reports with AI-powered insights, visualizations, and actionable recommendations',
     arguments: [
       {
         name: 'table',
@@ -296,19 +306,29 @@ const PROMPTS_SCHEMA = [
       },
       {
         name: 'report_type',
-        description: 'Type of report (summary, detailed, dashboard, metrics)',
+        description: 'Type of report (executive_summary, operational_dashboard, analytical_deep_dive, performance_metrics, predictive_forecast)',
         required: false
       },
       {
         name: 'time_period',
-        description: 'Time period for the report (if applicable)',
+        description: 'Time period for analysis (last_7_days, last_30_days, last_quarter, year_to_date, custom)',
+        required: false
+      },
+      {
+        name: 'stakeholder_level',
+        description: 'Target audience (executive, manager, analyst, operational)',
+        required: false
+      },
+      {
+        name: 'include_recommendations',
+        description: 'Include AI-generated actionable recommendations (true/false)',
         required: false
       }
     ]
   },
   {
     name: 'data_insights',
-    description: 'Discover hidden insights and correlations in your Airtable data',
+    description: 'Discover hidden patterns, correlations, and business insights using advanced AI algorithms',
     arguments: [
       {
         name: 'tables',
@@ -317,23 +337,214 @@ const PROMPTS_SCHEMA = [
       },
       {
         name: 'insight_type',
-        description: 'Type of insights to find (correlations, outliers, trends, predictions)',
+        description: 'Type of insights (correlations, outliers, trends, predictions, segmentation, attribution, churn_analysis)',
+        required: false
+      },
+      {
+        name: 'business_context',
+        description: 'Business domain context (sales, marketing, operations, finance, customer_success)',
+        required: false
+      },
+      {
+        name: 'insight_depth',
+        description: 'Analysis depth (surface, moderate, deep, comprehensive)',
         required: false
       }
     ]
   },
   {
     name: 'optimize_workflow',
-    description: 'Suggest workflow optimizations based on your Airtable usage patterns',
+    description: 'AI-powered workflow optimization with automation recommendations and efficiency improvements',
     arguments: [
       {
         name: 'base_overview',
-        description: 'Overview of the base structure and usage',
+        description: 'Overview of the base structure and current workflows',
         required: false
       },
       {
         name: 'optimization_focus',
-        description: 'Focus area (automation, fields, views, collaboration)',
+        description: 'Focus area (automation, data_quality, collaboration, performance, integration, user_experience)',
+        required: false
+      },
+      {
+        name: 'current_pain_points',
+        description: 'Known issues or bottlenecks in current workflow',
+        required: false
+      },
+      {
+        name: 'team_size',
+        description: 'Number of users working with this base',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'smart_schema_design',
+    description: 'AI-assisted database schema optimization and field relationship analysis',
+    arguments: [
+      {
+        name: 'use_case',
+        description: 'Primary use case (crm, project_management, inventory, content_management, hr, finance)',
+        required: true
+      },
+      {
+        name: 'data_volume',
+        description: 'Expected data volume (small, medium, large, enterprise)',
+        required: false
+      },
+      {
+        name: 'integration_needs',
+        description: 'External systems to integrate with',
+        required: false
+      },
+      {
+        name: 'compliance_requirements',
+        description: 'Data compliance needs (gdpr, hipaa, sox, none)',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'data_quality_audit',
+    description: 'Comprehensive AI-powered data quality assessment with cleansing recommendations',
+    arguments: [
+      {
+        name: 'tables',
+        description: 'Tables to audit (comma-separated or "all")',
+        required: true
+      },
+      {
+        name: 'quality_dimensions',
+        description: 'Quality aspects to check (completeness, accuracy, consistency, validity, uniqueness, timeliness)',
+        required: false
+      },
+      {
+        name: 'severity_threshold',
+        description: 'Minimum severity level to report (low, medium, high, critical)',
+        required: false
+      },
+      {
+        name: 'auto_fix_suggestions',
+        description: 'Include automated fix suggestions (true/false)',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'predictive_analytics',
+    description: 'Advanced predictive modeling and forecasting using historical Airtable data',
+    arguments: [
+      {
+        name: 'table',
+        description: 'Table containing historical data',
+        required: true
+      },
+      {
+        name: 'target_field',
+        description: 'Field to predict or forecast',
+        required: true
+      },
+      {
+        name: 'prediction_horizon',
+        description: 'Forecast period (next_week, next_month, next_quarter, next_year)',
+        required: false
+      },
+      {
+        name: 'model_type',
+        description: 'Prediction model (trend_analysis, seasonal_forecast, regression, classification, time_series)',
+        required: false
+      },
+      {
+        name: 'feature_fields',
+        description: 'Fields to use as predictive features',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'natural_language_query',
+    description: 'Process natural language questions about your data and provide intelligent answers',
+    arguments: [
+      {
+        name: 'question',
+        description: 'Natural language question about your data',
+        required: true
+      },
+      {
+        name: 'context_tables',
+        description: 'Tables that might contain relevant data',
+        required: false
+      },
+      {
+        name: 'response_format',
+        description: 'Desired response format (narrative, data_summary, visualization_suggestion, action_items)',
+        required: false
+      },
+      {
+        name: 'include_confidence',
+        description: 'Include confidence scores for answers (true/false)',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'smart_data_transformation',
+    description: 'AI-assisted data transformation, cleaning, and enrichment with intelligent suggestions',
+    arguments: [
+      {
+        name: 'source_table',
+        description: 'Source table for transformation',
+        required: true
+      },
+      {
+        name: 'transformation_goal',
+        description: 'Goal (normalize, standardize, enrich, cleanse, aggregate, pivot)',
+        required: true
+      },
+      {
+        name: 'target_format',
+        description: 'Desired output format or structure',
+        required: false
+      },
+      {
+        name: 'quality_rules',
+        description: 'Data quality rules to apply during transformation',
+        required: false
+      },
+      {
+        name: 'preserve_history',
+        description: 'Maintain audit trail of changes (true/false)',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'automation_recommendations',
+    description: 'Generate intelligent automation suggestions based on workflow patterns and data analysis',
+    arguments: [
+      {
+        name: 'workflow_description',
+        description: 'Description of current manual processes',
+        required: false
+      },
+      {
+        name: 'automation_scope',
+        description: 'Scope (single_table, multi_table, cross_base, external_integration)',
+        required: false
+      },
+      {
+        name: 'frequency_patterns',
+        description: 'How often tasks are performed',
+        required: false
+      },
+      {
+        name: 'complexity_tolerance',
+        description: 'Acceptable automation complexity (simple, moderate, advanced)',
+        required: false
+      },
+      {
+        name: 'integration_capabilities',
+        description: 'Available integration tools (zapier, make, custom_api, native_automations)',
         required: false
       }
     ]
@@ -379,7 +590,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       status: 'healthy',
-      version: '2.2.3',
+      version: '3.0.0',
       timestamp: new Date().toISOString(),
       uptime: process.uptime()
     }));
@@ -619,9 +830,9 @@ const server = http.createServer(async (req, res) => {
                   logging: {}
                 },
                 serverInfo: {
-                  name: 'Airtable MCP Server Enhanced',
-                  version: '2.2.3',
-                  description: 'Complete MCP 2024-11-05 server with Prompts, Sampling, Roots, Logging, and OAuth2'
+                  name: 'Airtable MCP Server - AI Agent Enhanced',
+                  version: '3.0.0',
+                  description: 'Advanced AI-powered MCP server with 10 intelligent prompt templates, predictive analytics, and enterprise automation capabilities'
                 }
               }
             };
@@ -815,7 +1026,7 @@ async function handleToolCall(request) {
   }
 }
 
-// Prompt handlers
+// Enhanced AI-powered prompt handlers
 async function handlePromptGet(request) {
   const promptName = request.params.name;
   const promptArgs = request.params.arguments || {};
@@ -830,74 +1041,400 @@ async function handlePromptGet(request) {
     
     switch (promptName) {
       case 'analyze_data':
-        const { table, analysis_type = 'summary', field_focus } = promptArgs;
+        const { table, analysis_type = 'statistical', field_focus, time_dimension, confidence_level = '0.95' } = promptArgs;
         messages = [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Please analyze the data in table "${table}". 
-                     Analysis type: ${analysis_type}
-                     ${field_focus ? `Focus on fields: ${field_focus}` : ''}
-                     
-                     First, list the tables and their schemas, then retrieve sample records from "${table}" 
-                     and provide insights based on the ${analysis_type} analysis type.`
+              text: `🤖 ADVANCED DATA ANALYSIS REQUEST
+
+**Table**: ${table}
+**Analysis Type**: ${analysis_type}
+**Confidence Level**: ${confidence_level}
+${field_focus ? `**Focus Fields**: ${field_focus}` : ''}
+${time_dimension ? `**Time Dimension**: ${time_dimension}` : ''}
+
+**Instructions**:
+1. First, examine the table schema and structure using list_tables with include_schema=true
+2. Retrieve representative sample data using list_records with appropriate filters
+3. Perform ${analysis_type} analysis with statistical rigor
+4. Generate insights with confidence intervals and significance testing
+5. Provide actionable recommendations based on findings
+
+**Expected Deliverables**:
+- Statistical summary with key metrics
+- Pattern identification and trend analysis
+- Anomaly detection if applicable
+- Predictive insights where relevant
+- Visualization recommendations
+- Business impact assessment
+
+Please use the available Airtable tools to gather data and provide comprehensive ${analysis_type} analysis.`
             }
           }
         ];
         break;
         
       case 'create_report':
-        const { table: reportTable, report_type = 'summary', time_period } = promptArgs;
+        const { table: reportTable, report_type = 'executive_summary', time_period = 'last_30_days', stakeholder_level = 'manager', include_recommendations = 'true' } = promptArgs;
         messages = [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Create a ${report_type} report for table "${reportTable}".
-                     ${time_period ? `Time period: ${time_period}` : ''}
-                     
-                     Please gather the table schema and recent records, then generate a comprehensive 
-                     ${report_type} report with key metrics, trends, and actionable insights.`
+              text: `📊 INTELLIGENT REPORT GENERATION
+
+**Target Table**: ${reportTable}
+**Report Type**: ${report_type}
+**Time Period**: ${time_period}
+**Stakeholder Level**: ${stakeholder_level}
+**Include Recommendations**: ${include_recommendations}
+
+**Report Generation Process**:
+1. Analyze table structure and data types
+2. Extract relevant data for specified time period
+3. Calculate key performance indicators
+4. Identify trends and patterns
+5. Generate visualizations suggestions
+6. Create ${stakeholder_level}-appropriate narrative
+
+**Report Sections**:
+- Executive Summary (key findings)
+- Data Overview and Quality Assessment
+- Trend Analysis and Patterns
+- Performance Metrics and KPIs
+- Risk Assessment and Opportunities
+${include_recommendations === 'true' ? '- AI-Generated Recommendations' : ''}
+- Next Steps and Action Items
+
+Please gather the necessary data and create a comprehensive ${report_type} tailored for ${stakeholder_level} level stakeholders.`
             }
           }
         ];
         break;
         
       case 'data_insights':
-        const { tables, insight_type = 'correlations' } = promptArgs;
+        const { tables, insight_type = 'correlations', business_context = 'general', insight_depth = 'moderate' } = promptArgs;
         messages = [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Discover ${insight_type} insights across these tables: ${tables}
-                     
-                     Please examine the data structures and content to identify:
-                     - ${insight_type} patterns
-                     - Unexpected relationships
-                     - Optimization opportunities
-                     - Data quality insights`
+              text: `🔍 ADVANCED DATA INSIGHTS DISCOVERY
+
+**Target Tables**: ${tables}
+**Insight Type**: ${insight_type}
+**Business Context**: ${business_context}
+**Analysis Depth**: ${insight_depth}
+
+**Discovery Framework**:
+1. Multi-table schema analysis and relationship mapping
+2. Cross-table data correlation analysis
+3. Pattern recognition using ${business_context} domain knowledge
+4. Statistical significance testing
+5. Business impact quantification
+
+**Insight Categories**:
+- ${insight_type} analysis with statistical validation
+- Hidden patterns and unexpected relationships
+- Segmentation opportunities
+- Predictive indicators
+- Data quality insights
+- Business optimization opportunities
+
+**${business_context.toUpperCase()} CONTEXT ANALYSIS**:
+${business_context === 'sales' ? '- Revenue drivers and conversion patterns\n- Customer lifetime value indicators\n- Sales cycle optimization opportunities' : ''}
+${business_context === 'marketing' ? '- Campaign effectiveness and attribution\n- Customer segmentation insights\n- Channel performance analysis' : ''}
+${business_context === 'operations' ? '- Process efficiency metrics\n- Resource utilization patterns\n- Bottleneck identification' : ''}
+
+Please conduct ${insight_depth} analysis across the specified tables and provide actionable business insights.`
             }
           }
         ];
         break;
         
       case 'optimize_workflow':
-        const { base_overview, optimization_focus = 'automation' } = promptArgs;
+        const { base_overview, optimization_focus = 'automation', current_pain_points, team_size } = promptArgs;
         messages = [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Analyze the current Airtable setup and suggest ${optimization_focus} optimizations.
-                     ${base_overview ? `Base overview: ${base_overview}` : ''}
-                     
-                     Please review the table structures, field types, and relationships to recommend:
-                     - ${optimization_focus} improvements
-                     - Best practice implementations
-                     - Performance enhancements
-                     - Workflow streamlining opportunities`
+              text: `⚡ AI-POWERED WORKFLOW OPTIMIZATION
+
+**Optimization Focus**: ${optimization_focus}
+**Team Size**: ${team_size || 'Not specified'}
+${base_overview ? `**Base Overview**: ${base_overview}` : ''}
+${current_pain_points ? `**Current Pain Points**: ${current_pain_points}` : ''}
+
+**Optimization Analysis**:
+1. Workflow pattern analysis and bottleneck identification
+2. Automation opportunity assessment
+3. User experience and efficiency evaluation
+4. Integration and scaling considerations
+5. ROI analysis for proposed improvements
+
+**${optimization_focus.toUpperCase()} OPTIMIZATION**:
+${optimization_focus === 'automation' ? '- Identify repetitive manual tasks\n- Suggest automation workflows\n- Estimate time savings and ROI' : ''}
+${optimization_focus === 'data_quality' ? '- Data validation and cleansing rules\n- Consistency and accuracy improvements\n- Quality monitoring systems' : ''}
+${optimization_focus === 'collaboration' ? '- Team workflow improvements\n- Permission and access optimization\n- Communication enhancement strategies' : ''}
+
+**Deliverables**:
+- Workflow efficiency assessment
+- Prioritized improvement recommendations
+- Implementation roadmap with timelines
+- Cost-benefit analysis
+- Change management considerations
+
+Please analyze the current setup and provide comprehensive ${optimization_focus} optimization recommendations.`
+            }
+          }
+        ];
+        break;
+
+      case 'smart_schema_design':
+        const { use_case, data_volume = 'medium', integration_needs, compliance_requirements = 'none' } = promptArgs;
+        messages = [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `🏗️ AI-ASSISTED SCHEMA OPTIMIZATION
+
+**Use Case**: ${use_case}
+**Data Volume**: ${data_volume}
+**Compliance**: ${compliance_requirements}
+${integration_needs ? `**Integrations**: ${integration_needs}` : ''}
+
+**Schema Design Analysis**:
+1. Current schema evaluation for ${use_case} best practices
+2. Field type and relationship optimization
+3. Performance and scalability assessment
+4. Compliance requirement implementation
+5. Integration compatibility review
+
+**${use_case.toUpperCase()} OPTIMIZATION**:
+${use_case === 'crm' ? '- Customer lifecycle tracking\n- Sales pipeline optimization\n- Contact relationship mapping' : ''}
+${use_case === 'project_management' ? '- Task dependency modeling\n- Resource allocation tracking\n- Timeline and milestone management' : ''}
+${use_case === 'inventory' ? '- Stock level monitoring\n- Supplier relationship tracking\n- Cost and pricing optimization' : ''}
+
+**Recommendations**:
+- Optimal field types and relationships
+- Indexing and performance suggestions
+- Data validation and integrity rules
+- Automation and workflow triggers
+- Scaling and maintenance considerations
+
+Please analyze the current schema and provide ${use_case}-optimized recommendations.`
+            }
+          }
+        ];
+        break;
+
+      case 'data_quality_audit':
+        const { tables: auditTables, quality_dimensions = 'completeness,accuracy,consistency', severity_threshold = 'medium', auto_fix_suggestions = 'true' } = promptArgs;
+        messages = [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `🔍 COMPREHENSIVE DATA QUALITY AUDIT
+
+**Tables to Audit**: ${auditTables}
+**Quality Dimensions**: ${quality_dimensions}
+**Severity Threshold**: ${severity_threshold}
+**Auto-Fix Suggestions**: ${auto_fix_suggestions}
+
+**Audit Framework**:
+1. Data completeness analysis (missing values, empty fields)
+2. Accuracy assessment (format validation, range checks)
+3. Consistency evaluation (cross-field validation, duplicates)
+4. Validity verification (data type compliance, constraints)
+5. Uniqueness analysis (duplicate detection, key integrity)
+6. Timeliness review (data freshness, update patterns)
+
+**Quality Assessment Process**:
+- Statistical analysis of data distribution
+- Pattern recognition for anomalies
+- Cross-table consistency validation
+- Historical trend analysis
+- Business rule compliance checking
+
+**Deliverables**:
+- Quality score by dimension and table
+- Detailed issue identification and classification
+- Impact assessment and prioritization
+${auto_fix_suggestions === 'true' ? '- Automated fix suggestions and scripts' : ''}
+- Data governance recommendations
+- Monitoring and maintenance strategies
+
+Please conduct a thorough data quality audit focusing on ${quality_dimensions} dimensions.`
+            }
+          }
+        ];
+        break;
+
+      case 'predictive_analytics':
+        const { table: predTable, target_field, prediction_horizon = 'next_month', model_type = 'trend_analysis', feature_fields } = promptArgs;
+        messages = [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `🔮 ADVANCED PREDICTIVE ANALYTICS
+
+**Source Table**: ${predTable}
+**Target Field**: ${target_field}
+**Prediction Horizon**: ${prediction_horizon}
+**Model Type**: ${model_type}
+${feature_fields ? `**Feature Fields**: ${feature_fields}` : ''}
+
+**Predictive Modeling Process**:
+1. Historical data analysis and trend identification
+2. Feature engineering and variable selection
+3. Model development using ${model_type} approach
+4. Validation and accuracy assessment
+5. Forecast generation for ${prediction_horizon}
+6. Confidence intervals and uncertainty quantification
+
+**${model_type.toUpperCase()} ANALYSIS**:
+${model_type === 'time_series' ? '- Seasonal pattern detection\n- Trend decomposition\n- Cyclical behavior analysis' : ''}
+${model_type === 'regression' ? '- Variable relationship modeling\n- Predictive factor identification\n- Statistical significance testing' : ''}
+${model_type === 'classification' ? '- Category prediction modeling\n- Feature importance analysis\n- Classification accuracy metrics' : ''}
+
+**Outputs**:
+- Historical pattern analysis
+- Predictive model performance metrics
+- Forecast values with confidence intervals
+- Key influencing factors identification
+- Model limitations and assumptions
+- Actionable insights and recommendations
+
+Please develop a ${model_type} model to predict ${target_field} over ${prediction_horizon}.`
+            }
+          }
+        ];
+        break;
+
+      case 'natural_language_query':
+        const { question, context_tables, response_format = 'narrative', include_confidence = 'true' } = promptArgs;
+        messages = [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `🗣️ NATURAL LANGUAGE DATA QUERY
+
+**Question**: "${question}"
+${context_tables ? `**Context Tables**: ${context_tables}` : ''}
+**Response Format**: ${response_format}
+**Include Confidence**: ${include_confidence}
+
+**Query Processing Framework**:
+1. Question analysis and intent recognition
+2. Relevant table and field identification
+3. Data retrieval strategy formulation
+4. Analysis execution and result compilation
+5. Natural language response generation
+
+**Analysis Approach**:
+- Semantic understanding of the question
+- Automatic table and field mapping
+- Intelligent data filtering and aggregation
+- Statistical analysis where appropriate
+- Context-aware interpretation
+
+**Response Requirements**:
+${response_format === 'narrative' ? '- Conversational, easy-to-understand explanation\n- Supporting data and evidence\n- Contextual insights and implications' : ''}
+${response_format === 'data_summary' ? '- Structured data summary\n- Key metrics and statistics\n- Trend identification' : ''}
+${response_format === 'visualization_suggestion' ? '- Chart and graph recommendations\n- Data visualization best practices\n- Tool-specific guidance' : ''}
+${include_confidence === 'true' ? '\n- Confidence scores for answers\n- Data quality indicators\n- Uncertainty acknowledgment' : ''}
+
+Please analyze the available data and provide a comprehensive answer to: "${question}"`
+            }
+          }
+        ];
+        break;
+
+      case 'smart_data_transformation':
+        const { source_table, transformation_goal, target_format, quality_rules, preserve_history = 'true' } = promptArgs;
+        messages = [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `🔄 INTELLIGENT DATA TRANSFORMATION
+
+**Source Table**: ${source_table}
+**Transformation Goal**: ${transformation_goal}
+${target_format ? `**Target Format**: ${target_format}` : ''}
+${quality_rules ? `**Quality Rules**: ${quality_rules}` : ''}
+**Preserve History**: ${preserve_history}
+
+**Transformation Framework**:
+1. Source data analysis and quality assessment
+2. Transformation strategy development
+3. Data mapping and conversion rules
+4. Quality validation and error handling
+5. Output optimization and validation
+
+**${transformation_goal.toUpperCase()} PROCESS**:
+${transformation_goal === 'normalize' ? '- Database normalization principles\n- Redundancy elimination\n- Relationship optimization' : ''}
+${transformation_goal === 'standardize' ? '- Format standardization\n- Value normalization\n- Consistency enforcement' : ''}
+${transformation_goal === 'enrich' ? '- Data augmentation strategies\n- External data integration\n- Value-added field creation' : ''}
+${transformation_goal === 'cleanse' ? '- Data validation and correction\n- Duplicate removal\n- Missing value handling' : ''}
+
+**Deliverables**:
+- Transformation execution plan
+- Data mapping specifications
+- Quality validation results
+- Performance optimization recommendations
+${preserve_history === 'true' ? '- Change audit trail and versioning' : ''}
+- Post-transformation validation
+
+Please analyze the source data and execute ${transformation_goal} transformation with intelligent optimization.`
+            }
+          }
+        ];
+        break;
+
+      case 'automation_recommendations':
+        const { workflow_description, automation_scope = 'single_table', frequency_patterns, complexity_tolerance = 'moderate', integration_capabilities } = promptArgs;
+        messages = [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `🤖 INTELLIGENT AUTOMATION RECOMMENDATIONS
+
+**Automation Scope**: ${automation_scope}
+**Complexity Tolerance**: ${complexity_tolerance}
+${workflow_description ? `**Current Workflow**: ${workflow_description}` : ''}
+${frequency_patterns ? `**Frequency Patterns**: ${frequency_patterns}` : ''}
+${integration_capabilities ? `**Integration Tools**: ${integration_capabilities}` : ''}
+
+**Automation Analysis Framework**:
+1. Workflow pattern analysis and task identification
+2. Automation opportunity assessment and prioritization
+3. Technical feasibility and complexity evaluation
+4. ROI calculation and benefit quantification
+5. Implementation roadmap development
+
+**${automation_scope.toUpperCase()} AUTOMATION**:
+${automation_scope === 'single_table' ? '- Field auto-population rules\n- Data validation automation\n- Notification triggers' : ''}
+${automation_scope === 'multi_table' ? '- Cross-table data synchronization\n- Workflow orchestration\n- Complex business logic automation' : ''}
+${automation_scope === 'external_integration' ? '- API integration strategies\n- Data pipeline automation\n- Third-party tool connectivity' : ''}
+
+**Recommendations**:
+- High-impact automation opportunities
+- Implementation complexity assessment
+- Cost-benefit analysis with ROI projections
+- Technical requirements and dependencies
+- Risk assessment and mitigation strategies
+- Success metrics and monitoring approach
+
+Please analyze the workflow patterns and provide ${complexity_tolerance}-level automation recommendations for ${automation_scope} scope.`
             }
           }
         ];
