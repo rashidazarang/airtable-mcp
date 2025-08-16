@@ -379,7 +379,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       status: 'healthy',
-      version: '2.2.2',
+      version: '2.2.3',
       timestamp: new Date().toISOString(),
       uptime: process.uptime()
     }));
@@ -409,10 +409,14 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     
-    // Sanitize all user inputs for HTML output
-    const safeClientId = escapeHtml(clientId);
-    const safeRedirectUri = escapeHtml(redirectUri);
-    const safeState = escapeHtml(state || '');
+    // Create safe copies of all variables for JavaScript use
+    const safeRedirectUri = redirectUri.slice(0, 2000); // Limit length
+    const safeState = (state || '').slice(0, 200); // Limit length
+    const safeClientId = clientId.slice(0, 200); // Limit length
+    
+    // Sanitize for HTML display only
+    const displayClientId = escapeHtml(safeClientId);
+    const displayRedirectUri = escapeHtml(safeRedirectUri);
     
     // Generate authorization code
     const authCode = crypto.randomBytes(32).toString('hex');
@@ -429,7 +433,8 @@ const server = http.createServer(async (req, res) => {
       'Referrer-Policy': 'no-referrer'
     });
     
-    res.end(`<!DOCTYPE html>
+    // Build HTML with proper escaping and separation of concerns
+    const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -438,8 +443,8 @@ const server = http.createServer(async (req, res) => {
 </head>
 <body>
   <h2>Airtable MCP Server - OAuth2 Authorization</h2>
-  <p>Client ID: ${safeClientId}</p>
-  <p>Redirect URI: ${safeRedirectUri}</p>
+  <p>Client ID: ${displayClientId}</p>
+  <p>Redirect URI: ${displayRedirectUri}</p>
   <div style="margin: 20px 0;">
     <button onclick="authorize()" style="background: #18BFFF; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
       Authorize Application
@@ -449,20 +454,21 @@ const server = http.createServer(async (req, res) => {
     </button>
   </div>
   <script>
-    // Use validated and sanitized values to prevent XSS
+    // All variables are safely JSON encoded to prevent XSS
     (function() {
-      const baseUrl = ${JSON.stringify(redirectUri.slice(0, 2000))};
-      const code = ${JSON.stringify(authCode)};
-      const state = ${JSON.stringify((state || '').slice(0, 200))};
+      var config = ${JSON.stringify({
+        redirectUri: safeRedirectUri,
+        code: authCode,
+        state: safeState
+      })};
       
       window.authorize = function() {
         try {
-          // Additional validation in JavaScript
-          const url = new URL(baseUrl);
-          if (!['http:', 'https:'].includes(url.protocol)) {
+          var url = new URL(config.redirectUri);
+          if (url.protocol !== 'http:' && url.protocol !== 'https:') {
             throw new Error('Invalid protocol');
           }
-          const finalUrl = baseUrl + '?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state);
+          var finalUrl = config.redirectUri + '?code=' + encodeURIComponent(config.code) + '&state=' + encodeURIComponent(config.state);
           window.location.href = finalUrl;
         } catch (e) {
           console.error('Authorization failed:', e);
@@ -472,12 +478,11 @@ const server = http.createServer(async (req, res) => {
       
       window.deny = function() {
         try {
-          // Additional validation in JavaScript
-          const url = new URL(baseUrl);
-          if (!['http:', 'https:'].includes(url.protocol)) {
+          var url = new URL(config.redirectUri);
+          if (url.protocol !== 'http:' && url.protocol !== 'https:') {
             throw new Error('Invalid protocol');
           }
-          const finalUrl = baseUrl + '?error=access_denied&state=' + encodeURIComponent(state);
+          var finalUrl = config.redirectUri + '?error=access_denied&state=' + encodeURIComponent(config.state);
           window.location.href = finalUrl;
         } catch (e) {
           console.error('Denial failed:', e);
@@ -487,7 +492,9 @@ const server = http.createServer(async (req, res) => {
     })();
   </script>
 </body>
-</html>`);
+</html>`;
+
+    res.end(htmlContent);
     return;
   }
   
@@ -613,7 +620,7 @@ const server = http.createServer(async (req, res) => {
                 },
                 serverInfo: {
                   name: 'Airtable MCP Server Enhanced',
-                  version: '2.2.2',
+                  version: '2.2.3',
                   description: 'Complete MCP 2024-11-05 server with Prompts, Sampling, Roots, Logging, and OAuth2'
                 }
               }
