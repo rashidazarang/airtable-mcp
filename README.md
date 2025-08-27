@@ -334,7 +334,7 @@ const insights = await server.handlePromptGet('analyze_data', analysis);
 | `list_collaborators` | View base collaborators and their permission levels |
 | `list_shares` | List shared views and their public configurations |
 
-### 🤖 AI Intelligence Suite (10 prompts) - **Revolutionary v3.0.0**
+### 🤖 AI Intelligence Suite (10 prompts) - **New in v3.0.0**
 | Prompt | Description | Enterprise Features |
 |--------|-------------|-------------------|
 | `analyze_data` | Advanced statistical analysis with ML insights | Confidence intervals, anomaly detection |
