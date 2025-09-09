@@ -20,10 +20,31 @@ if TOKEN == 'YOUR_AIRTABLE_TOKEN_HERE' or BASE_ID == 'YOUR_BASE_ID_HERE':
     print("         export AIRTABLE_BASE_ID=your_base_id_here")
     sys.exit(1)
 
+# Validate BASE_ID format to prevent injection
+if not all(c.isalnum() or c in '-_' for c in BASE_ID):
+    print(f"Error: Invalid BASE_ID format: {BASE_ID}")
+    print("BASE_ID should only contain alphanumeric characters, hyphens, and underscores")
+    sys.exit(1)
+
+# Validate TOKEN format (basic check)
+if not TOKEN or len(TOKEN) < 10:
+    print("Error: Invalid AIRTABLE_TOKEN format")
+    sys.exit(1)
+
 # Helper function to directly make Airtable API calls
-def api_call(endpoint, token=TOKEN):
-    """Make a direct Airtable API call to test API access"""
+def api_call(endpoint, token=None):
+    """Make a direct Airtable API call to test API access
+    
+    Args:
+        endpoint: The API endpoint path (will be validated)
+        token: The API token (will use global TOKEN if not provided)
+    """
     import requests
+    from urllib.parse import quote
+    
+    # Use global token if not provided
+    if token is None:
+        token = TOKEN
     
     # Validate and sanitize the endpoint to prevent injection
     if not isinstance(endpoint, str):
@@ -34,14 +55,25 @@ def api_call(endpoint, token=TOKEN):
     if not all(c.isalnum() or c in '/-_' for c in endpoint):
         raise ValueError(f"Invalid endpoint format: {endpoint}")
     
+    # Additional validation: no double slashes, no dots (path traversal)
+    if '//' in endpoint or '..' in endpoint:
+        raise ValueError(f"Invalid endpoint format: {endpoint}")
+    
+    # Validate token format
+    if not token or not isinstance(token, str) or len(token) < 10:
+        raise ValueError("Invalid token format")
+    
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
     
     # Use proper URL construction to prevent injection
+    # Each part is validated separately
     base_url = "https://api.airtable.com/v0"
-    url = f"{base_url}/{endpoint.lstrip('/')}"
+    # Remove leading/trailing slashes and construct safely
+    clean_endpoint = endpoint.strip('/')
+    url = f"{base_url}/{clean_endpoint}"
     
     try:
         response = requests.get(url, headers=headers)
@@ -66,8 +98,11 @@ async def main():
             print(f"{i+1}. {base['name']} (ID: {base['id']})")
     
     # List tables in the specified base
+    # Construct endpoint safely without string interpolation vulnerabilities
     print(f"\nListing tables in base {BASE_ID}:")
-    result = api_call(f"meta/bases/{BASE_ID}/tables")
+    # BASE_ID is already validated, but we'll construct the path safely
+    endpoint = "meta/bases/" + BASE_ID + "/tables"
+    result = api_call(endpoint)
     if "error" in result:
         print(f"Error: {result['error']}")
     else:
