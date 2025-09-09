@@ -295,29 +295,16 @@ export interface RootDirectory {
 }
 
 // ============================================================================
-// Error Types
+// Error Types (defined in errors.ts)
 // ============================================================================
 
-export class AirtableError extends Error {
-  public code: string;
-  public statusCode?: number;
-  
-  constructor(message: string, code: string, statusCode?: number) {
-    super(message);
-    this.name = 'AirtableError';
-    this.code = code;
-    this.statusCode = statusCode;
-  }
+export interface AirtableError extends Error {
+  code: string;
+  statusCode?: number;
 }
 
-export class ValidationError extends Error {
-  public field: string;
-  
-  constructor(message: string, field: string) {
-    super(message);
-    this.name = 'ValidationError';
-    this.field = field;
-  }
+export interface ValidationError extends Error {
+  field: string;
 }
 
 // ============================================================================

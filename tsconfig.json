@@ -26,13 +26,15 @@
     "noUncheckedIndexedAccess": true
   },
   "include": [
-    "src/**/*"
+    "src/typescript/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "types",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "src/javascript/**/*",
+    "src/python/**/*"
   ]
 }

@@ -3,13 +3,13 @@
  * Comprehensive type-safe testing with enterprise validation
  */
 
-import {
-  ValidationError,
-  AirtableError,
+import type {
   ListRecordsInput,
   CreateRecordInput,
   AnalyzeDataPrompt
-} from '../types/index';
+} from './index';
+
+import { ValidationError, AirtableError } from './errors';
 
 // import { AirtableMCPServer } from './airtable-mcp-server';
 

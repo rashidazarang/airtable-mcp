@@ -23,7 +23,7 @@ import * as path from 'path';
 import { config } from 'dotenv';
 
 // Type imports
-import {
+import type {
   MCPRequest,
   MCPResponse,
   MCPServerInfo,
@@ -31,28 +31,29 @@ import {
   AuthConfig,
   ToolSchema,
   PromptSchema,
-  AirtableError,
-  ValidationError,
   RootDirectory
-} from '../types/index';
+} from './index';
 
-import {
-  AI_PROMPT_TEMPLATES,
+import type {
   AnalyzeDataPrompt,
   CreateReportPrompt,
   PredictiveAnalyticsPrompt,
   NaturalLanguageQueryPrompt
-} from '../types/ai-prompts';
+} from './ai-prompts';
 
-import {
-  COMPLETE_TOOL_SCHEMAS,
+import type {
   ToolResponse,
   ListTablesInput,
   ListRecordsInput,
   CreateRecordInput,
   UpdateRecordInput,
   DeleteRecordInput
-} from '../types/tools';
+} from './tools';
+
+// Runtime imports
+import { AirtableError, ValidationError } from './errors';
+import { COMPLETE_TOOL_SCHEMAS } from './tools-schemas';
+import { AI_PROMPT_TEMPLATES } from './prompt-templates';
 
 // Load environment variables
 const envPath = path.join(__dirname, '..', '.env');
