@@ -636,26 +636,39 @@ const server = http.createServer(async (req, res) => {
     // and associate it with the client and PKCE challenge
     
     res.writeHead(200, { 
-      'Content-Type': 'text/html',
+      'Content-Type': 'text/html; charset=utf-8',
       'Content-Security-Policy': "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';",
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
       'X-XSS-Protection': '1; mode=block',
-      'Referrer-Policy': 'no-referrer'
+      'Referrer-Policy': 'no-referrer',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, private'
     });
     
-    // Build HTML with proper escaping and separation of concerns
+    // Safely encode data for embedding in HTML attributes and JavaScript
+    // This prevents XSS by encoding any potentially dangerous characters
+    const safeJsonConfig = JSON.stringify({
+      redirectUri: safeRedirectUri,
+      code: authCode,
+      state: safeState,
+      clientId: displayClientId,
+      displayRedirectUri: displayRedirectUri
+    }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/'/g, '\\u0027').replace(/"/g, '\\u0022');
+    
+    // Build HTML with all dynamic content properly escaped
+    // Using template literals but with pre-escaped content only
     const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>OAuth2 Authorization</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline';">
 </head>
 <body>
   <h2>Airtable MCP Server - OAuth2 Authorization</h2>
-  <p>Client ID: ${displayClientId}</p>
-  <p>Redirect URI: ${displayRedirectUri}</p>
+  <p>Client ID: <span id="client-id"></span></p>
+  <p>Redirect URI: <span id="redirect-uri"></span></p>
   <div style="margin: 20px 0;">
     <button onclick="authorize()" style="background: #18BFFF; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
       Authorize Application
@@ -665,13 +678,16 @@ const server = http.createServer(async (req, res) => {
     </button>
   </div>
   <script>
-    // All variables are safely JSON encoded to prevent XSS
+    // Parse safely encoded JSON config
     (function() {
-      var config = ${JSON.stringify({
-        redirectUri: safeRedirectUri,
-        code: authCode,
-        state: safeState
-      })};
+      // Config is safely encoded to prevent XSS
+      var config = ${safeJsonConfig};
+      
+      // Safely set text content (not innerHTML) to prevent XSS
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('client-id').textContent = config.clientId;
+        document.getElementById('redirect-uri').textContent = config.displayRedirectUri;
+      });
       
       window.authorize = function() {
         try {
@@ -705,7 +721,8 @@ const server = http.createServer(async (req, res) => {
 </body>
 </html>`;
 
-    res.end(htmlContent);
+    // Write response with explicit UTF-8 encoding
+    res.end(htmlContent, 'utf8');
     return;
   }
   

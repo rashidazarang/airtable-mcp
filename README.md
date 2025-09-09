@@ -3,15 +3,15 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-3.2.3-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-3.2.4-blue)](https://github.com/rashidazarang/airtable-mcp)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![AI Agent](https://img.shields.io/badge/AI_Agent-Enhanced-purple)](https://github.com/rashidazarang/airtable-mcp)
 [![Security](https://img.shields.io/badge/Security-Enterprise-green)](https://github.com/rashidazarang/airtable-mcp)
 [![Protocol](https://img.shields.io/badge/Protocol-2024--11--05-success)](https://modelcontextprotocol.io/)
 
-🤖 **Revolutionary AI Agent v3.2.3** - Advanced AI-powered Airtable MCP server with **fixed TypeScript architecture**, world-class project organization, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
+🤖 **Revolutionary AI Agent v3.2.4** - Advanced AI-powered Airtable MCP server with **fixed TypeScript architecture**, world-class project organization, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
 
-## 🚀 Latest: v3.2.3 - Complete Security Fix & TypeScript Architecture
+## 🚀 Latest: v3.2.4 - XSS Security Fix & Complete Protection
 
 **Major Improvements** with full backward compatibility:
 - 🔧 **TypeScript Architecture Fixed** - Resolved compilation issues, proper separation of types and runtime code
@@ -544,4 +544,4 @@ MIT License - see [LICENSE](./LICENSE) file for details
 
 ---
 
-**Version**: 3.2.3 | **Status**: 🔷 TypeScript Fixed + 🤖 AI Agent | **MCP Protocol**: 2024-11-05 Complete | **Type Safety**: Enterprise-Grade | **Intelligence**: 10 AI Prompts | **Security**: Fully Patched | **Last Updated**: September 9, 2025
+**Version**: 3.2.4 | **Status**: 🔷 TypeScript Fixed + 🤖 AI Agent | **MCP Protocol**: 2024-11-05 Complete | **Type Safety**: Enterprise-Grade | **Intelligence**: 10 AI Prompts | **Security**: Fully Patched (XSS Fixed) | **Last Updated**: September 9, 2025

@@ -1,6 +1,6 @@
 # Smithery.ai configuration
 name: "@rashidazarang/airtable-mcp"
-version: "3.2.3"
+version: "3.2.4"
 description: "Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Claude Desktop and other Claude-powered editors."
 
 startCommand:
