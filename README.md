@@ -3,23 +3,25 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-3.1.0-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-3.2.1-blue)](https://github.com/rashidazarang/airtable-mcp)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![AI Agent](https://img.shields.io/badge/AI_Agent-Enhanced-purple)](https://github.com/rashidazarang/airtable-mcp)
 [![Security](https://img.shields.io/badge/Security-Enterprise-green)](https://github.com/rashidazarang/airtable-mcp)
 [![Protocol](https://img.shields.io/badge/Protocol-2024--11--05-success)](https://modelcontextprotocol.io/)
 
-🤖 **Revolutionary AI Agent v3.1.0** - Advanced AI-powered Airtable MCP server with **TypeScript support**, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
+🤖 **Revolutionary AI Agent v3.2.1** - Advanced AI-powered Airtable MCP server with **fixed TypeScript architecture**, world-class project organization, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
 
-## 🚀 Latest: TypeScript Support v3.1.0
+## 🚀 Latest: v3.2.1 - Critical TypeScript Fix & Security Update
 
-**Enterprise-Grade Type Safety** with full backward compatibility:
+**Major Improvements** with full backward compatibility:
+- 🔧 **TypeScript Architecture Fixed** - Resolved compilation issues, proper separation of types and runtime code
+- 📁 **World-Class Organization** - Restructured project with src/typescript, src/javascript, src/python
+- 🔒 **Security Fix** - Patched command injection vulnerability in test client
 - 🔷 **TypeScript Implementation** - Complete type-safe server with strict validation
 - 📘 **Comprehensive Type Definitions** - All 33 tools and 10 AI prompts fully typed
 - 🛡️ **Compile-Time Safety** - Catch errors before runtime with advanced type checking
 - 🎯 **Developer Experience** - IntelliSense, auto-completion, and refactoring support
 - 🔄 **Dual Distribution** - Use with JavaScript or TypeScript, your choice
-- 📖 **Type Documentation** - Self-documenting APIs through comprehensive type definitions
 
 ## 🤖 AI Intelligence Suite
 
@@ -503,6 +505,24 @@ lsof -ti:8010 | xargs kill -9
 - **v1.2.3** (2025-08-11) - Bug fixes and error handling
 - **v1.2.2** (2025-08-10) - Initial stable release
 
+## 📂 Project Structure
+
+```
+airtable-mcp/
+├── src/                    # Source code
+│   ├── index.js           # Main entry point
+│   ├── typescript/        # TypeScript implementation
+│   ├── javascript/        # JavaScript implementation
+│   └── python/            # Python implementation
+├── dist/                  # Compiled TypeScript output
+├── docs/                  # Documentation
+│   ├── guides/           # User guides
+│   └── releases/         # Release notes
+├── tests/                # Test files
+├── examples/             # Usage examples
+└── types/                # TypeScript type definitions
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
@@ -524,4 +544,4 @@ MIT License - see [LICENSE](./LICENSE) file for details
 
 ---
 
-**Version**: 3.1.0 | **Status**: 🔷 TypeScript + 🤖 AI Agent | **MCP Protocol**: 2024-11-05 Complete | **Type Safety**: Enterprise-Grade | **Intelligence**: 10 AI Prompts | **Last Updated**: August 16, 2025
+**Version**: 3.2.1 | **Status**: 🔷 TypeScript Fixed + 🤖 AI Agent | **MCP Protocol**: 2024-11-05 Complete | **Type Safety**: Enterprise-Grade | **Intelligence**: 10 AI Prompts | **Security**: Patched | **Last Updated**: September 9, 2025

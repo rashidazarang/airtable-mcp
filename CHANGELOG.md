@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.2] - 2025-09-09
+
+### Security Fix
+- **Critical**: Fixed command injection vulnerability in `test_client.py`
+  - Added input validation for API endpoints
+  - Removed unused subprocess import
+  - Sanitized endpoint parameters to prevent injection attacks
+
+### Changed
+- Updated README with latest version information
+- Added project structure documentation
+
 ## [3.2.1] - 2025-09-09
 
 ### Critical Fix - TypeScript Architecture

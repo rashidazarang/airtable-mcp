@@ -1,6 +1,6 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Advanced AI-powered Airtable MCP server with TypeScript support, intelligent analytics, predictive modeling, and enterprise automation capabilities",
   "main": "dist/index.js",
   "exports": {

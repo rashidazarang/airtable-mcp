@@ -6,9 +6,9 @@ import asyncio
 import json
 import os
 import sys
-import subprocess
 import time
 from typing import Dict, Any
+from urllib.parse import quote
 
 # Load credentials from environment variables
 TOKEN = os.environ.get('AIRTABLE_TOKEN', 'YOUR_AIRTABLE_TOKEN_HERE')
@@ -24,11 +24,24 @@ if TOKEN == 'YOUR_AIRTABLE_TOKEN_HERE' or BASE_ID == 'YOUR_BASE_ID_HERE':
 def api_call(endpoint, token=TOKEN):
     """Make a direct Airtable API call to test API access"""
     import requests
+    
+    # Validate and sanitize the endpoint to prevent injection
+    if not isinstance(endpoint, str):
+        raise ValueError("Endpoint must be a string")
+    
+    # Remove any potentially dangerous characters and validate format
+    # Airtable endpoints should only contain alphanumeric, /, -, and _
+    if not all(c.isalnum() or c in '/-_' for c in endpoint):
+        raise ValueError(f"Invalid endpoint format: {endpoint}")
+    
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
-    url = f"https://api.airtable.com/v0/{endpoint}"
+    
+    # Use proper URL construction to prevent injection
+    base_url = "https://api.airtable.com/v0"
+    url = f"{base_url}/{endpoint.lstrip('/')}"
     
     try:
         response = requests.get(url, headers=headers)
