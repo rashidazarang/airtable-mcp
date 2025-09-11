@@ -294,6 +294,101 @@ async def set_base_id(base_id: str) -> str:
     return f"Base ID set to: {base_id}"
 
 
+# Resources implementation for MCP protocol
+@mcp.resource("airtable://base/{base_id}")
+async def get_base_resource(base_id: str) -> Dict:
+    """Get base metadata as a resource"""
+    if not server_state["token"]:
+        return {"error": "No Airtable API token provided"}
+    
+    result = await api_call(f"meta/bases/{base_id}/tables")
+    if "error" in result:
+        return {"error": result["error"]}
+    
+    tables = result.get("tables", [])
+    return {
+        "base_id": base_id,
+        "tables_count": len(tables),
+        "tables": [{"id": t["id"], "name": t["name"]} for t in tables]
+    }
+
+
+@mcp.resource("airtable://base/{base_id}/table/{table_name}")
+async def get_table_resource(base_id: str, table_name: str) -> Dict:
+    """Get table data as a resource"""
+    if not server_state["token"]:
+        return {"error": "No Airtable API token provided"}
+    
+    result = await api_call(f"{base_id}/{table_name}", params={"maxRecords": 100})
+    if "error" in result:
+        return {"error": result["error"]}
+    
+    records = result.get("records", [])
+    return {
+        "base_id": base_id,
+        "table_name": table_name,
+        "records_count": len(records),
+        "records": records
+    }
+
+
+# Roots implementation for filesystem access
+@mcp.rpc_method("roots/list")
+async def roots_list() -> Dict:
+    """List available filesystem roots for data import/export"""
+    roots = [
+        {
+            "uri": "file:///tmp/airtable-exports",
+            "name": "Airtable Exports Directory"
+        }
+    ]
+    return {"roots": roots}
+
+
+# Resources list implementation
+@mcp.rpc_method("resources/list")
+async def resources_list() -> Dict:
+    """List available Airtable resources"""
+    resources = []
+    
+    if server_state["base_id"]:
+        # Add base resource
+        resources.append({
+            "uri": f"airtable://base/{server_state['base_id']}",
+            "name": "Current Airtable Base",
+            "mimeType": "application/json"
+        })
+        
+        # Try to add table resources if we have access
+        if server_state["token"]:
+            result = await api_call(f"meta/bases/{server_state['base_id']}/tables")
+            if "tables" in result:
+                for table in result.get("tables", []):
+                    resources.append({
+                        "uri": f"airtable://base/{server_state['base_id']}/table/{table['name']}",
+                        "name": f"Table: {table['name']}",
+                        "mimeType": "application/json"
+                    })
+    
+    return {"resources": resources}
+
+
+# Resources read implementation
+@mcp.rpc_method("resources/read")
+async def resources_read(uri: str) -> Dict:
+    """Read a specific resource by URI"""
+    if uri.startswith("airtable://base/"):
+        parts = uri.replace("airtable://base/", "").split("/table/")
+        if len(parts) == 2:
+            base_id, table_name = parts
+            return await get_table_resource(base_id, table_name)
+        elif len(parts) == 1:
+            base_id = parts[0]
+            return await get_base_resource(base_id)
+    
+    return {"error": f"Unknown resource URI: {uri}"}
+
+
 def main():
     """Run the MCP server"""
     try:
