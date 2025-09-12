@@ -288,6 +288,45 @@ async def update_records(table_name: str, records_json: str) -> str:
 
 
 @mcp.tool()
+async def delete_records(table_name: str, record_ids: str) -> str:
+    """Delete records from a table by their IDs (comma-separated or JSON array)"""
+    if not server_state["token"]:
+        return "Please provide an Airtable API token to delete records."
+    
+    base = server_state["base_id"]
+    
+    if not base:
+        return "Error: No base ID set. Please set a base ID."
+    
+    try:
+        # Handle both comma-separated and JSON array formats
+        if record_ids.startswith("["):
+            ids_list = json.loads(record_ids)
+        else:
+            ids_list = [rid.strip() for rid in record_ids.split(",")]
+        
+        # Delete records in batches of 10 (Airtable API limit)
+        deleted_count = 0
+        for i in range(0, len(ids_list), 10):
+            batch = ids_list[i:i+10]
+            params = {"records[]": batch}
+            
+            result = await api_call(f"{base}/{table_name}", method="DELETE", params=params)
+            
+            if "error" in result:
+                return f"Error deleting records: {result['error']}"
+            
+            deleted_count += len(result.get("records", []))
+        
+        return f"Successfully deleted {deleted_count} records."
+        
+    except json.JSONDecodeError:
+        return "Error: Invalid format for record_ids. Use comma-separated IDs or JSON array."
+    except Exception as e:
+        return f"Error deleting records: {str(e)}"
+
+
+@mcp.tool()
 async def set_base_id(base_id: str) -> str:
     """Set the current Airtable base ID"""
     server_state["base_id"] = base_id
@@ -345,17 +384,198 @@ async def roots_list() -> Dict:
     return {"roots": roots}
 
 
+# Prompts implementation for guided interactions
+@mcp.rpc_method("prompts/list")
+async def prompts_list() -> Dict:
+    """List available prompt templates"""
+    prompts = [
+        {
+            "name": "analyze_base",
+            "description": "Analyze an Airtable base structure and suggest optimizations",
+            "arguments": [
+                {
+                    "name": "base_id",
+                    "description": "The Airtable base ID to analyze",
+                    "required": True
+                }
+            ]
+        },
+        {
+            "name": "create_table_schema",
+            "description": "Generate a table schema based on requirements",
+            "arguments": [
+                {
+                    "name": "requirements",
+                    "description": "Description of the table requirements",
+                    "required": True
+                },
+                {
+                    "name": "table_name",
+                    "description": "Name for the new table",
+                    "required": True
+                }
+            ]
+        },
+        {
+            "name": "data_migration",
+            "description": "Plan data migration between tables or bases",
+            "arguments": [
+                {
+                    "name": "source",
+                    "description": "Source table/base identifier",
+                    "required": True
+                },
+                {
+                    "name": "destination",
+                    "description": "Destination table/base identifier",
+                    "required": True
+                }
+            ]
+        }
+    ]
+    return {"prompts": prompts}
+
+
+@mcp.rpc_method("prompts/get")
+async def prompts_get(name: str, arguments: Optional[Dict] = None) -> Dict:
+    """Get a specific prompt template with filled arguments"""
+    
+    prompts_templates = {
+        "analyze_base": """Analyze the Airtable base '{base_id}' and provide:
+1. Overview of all tables and their relationships
+2. Data quality assessment
+3. Performance optimization suggestions
+4. Schema improvement recommendations
+5. Automation opportunities""",
+        
+        "create_table_schema": """Create a table schema for '{table_name}' with these requirements:
+{requirements}
+
+Please provide:
+1. Field definitions with appropriate types
+2. Validation rules
+3. Linked record relationships
+4. Views and filters setup
+5. Sample data structure""",
+        
+        "data_migration": """Plan a data migration from '{source}' to '{destination}':
+1. Analyze source structure
+2. Map fields between source and destination
+3. Identify data transformation needs
+4. Handle relationship mappings
+5. Provide migration script
+6. Include validation steps"""
+    }
+    
+    if name not in prompts_templates:
+        return {"error": f"Unknown prompt: {name}"}
+    
+    template = prompts_templates[name]
+    
+    if arguments:
+        try:
+            prompt = template.format(**arguments)
+        except KeyError as e:
+            return {"error": f"Missing required argument: {e}"}
+    else:
+        prompt = template
+    
+    return {
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    }
+
+
+# Sampling implementation for completion suggestions
+@mcp.rpc_method("completion/complete")
+async def completion_complete(ref: Dict, argument: Dict, partial: str) -> Dict:
+    """Provide completion suggestions for partial inputs"""
+    
+    completions = []
+    
+    # Handle tool argument completions
+    if ref.get("type") == "ref/tool":
+        tool_name = ref.get("name")
+        arg_name = argument.get("name")
+        
+        if tool_name == "list_tables" and arg_name == "base_id":
+            # Suggest recent base IDs
+            if server_state["base_id"]:
+                completions.append({
+                    "value": server_state["base_id"],
+                    "label": "Current base",
+                    "insertText": server_state["base_id"]
+                })
+        
+        elif tool_name == "list_records" and arg_name == "filter_formula":
+            # Suggest common filter formulas
+            formulas = [
+                "{Status} = 'Active'",
+                "NOT({Completed})",
+                "AND({Priority} = 'High', {Status} = 'Open')",
+                "OR({Assigned} = 'Me', {Assigned} = BLANK())",
+                "DATETIME_DIFF(TODAY(), {DueDate}, 'days') < 7"
+            ]
+            for formula in formulas:
+                if not partial or partial.lower() in formula.lower():
+                    completions.append({
+                        "value": formula,
+                        "label": formula,
+                        "insertText": formula
+                    })
+        
+        elif tool_name in ["create_records", "update_records"] and arg_name == "records_json":
+            # Suggest JSON templates
+            templates = [
+                '{"Name": "New Item", "Status": "Active"}',
+                '[{"Name": "Item 1"}, {"Name": "Item 2"}]',
+                '{"id": "rec123", "fields": {"Status": "Updated"}}'
+            ]
+            for template in templates:
+                completions.append({
+                    "value": template,
+                    "label": f"Template: {template[:30]}...",
+                    "insertText": template
+                })
+    
+    return {
+        "completion": {
+            "values": completions[:10]  # Limit to 10 suggestions
+        }
+    }
+
+
 # Resources list implementation
 @mcp.rpc_method("resources/list")
 async def resources_list() -> Dict:
     """List available Airtable resources"""
     resources = []
     
+    # Add resource templates even without a base configured
+    resources.append({
+        "uri": "airtable://templates/base-schema",
+        "name": "Base Schema Template",
+        "description": "Template for creating base schemas",
+        "mimeType": "application/json"
+    })
+    
+    resources.append({
+        "uri": "airtable://templates/automation-scripts",
+        "name": "Automation Scripts",
+        "description": "Common Airtable automation scripts",
+        "mimeType": "text/javascript"
+    })
+    
     if server_state["base_id"]:
         # Add base resource
         resources.append({
             "uri": f"airtable://base/{server_state['base_id']}",
             "name": "Current Airtable Base",
+            "description": f"Base ID: {server_state['base_id']}",
             "mimeType": "application/json"
         })
         
@@ -364,9 +584,11 @@ async def resources_list() -> Dict:
             result = await api_call(f"meta/bases/{server_state['base_id']}/tables")
             if "tables" in result:
                 for table in result.get("tables", []):
+                    fields_count = len(table.get("fields", []))
                     resources.append({
                         "uri": f"airtable://base/{server_state['base_id']}/table/{table['name']}",
                         "name": f"Table: {table['name']}",
+                        "description": f"{fields_count} fields, ID: {table['id']}",
                         "mimeType": "application/json"
                     })
     
@@ -377,14 +599,112 @@ async def resources_list() -> Dict:
 @mcp.rpc_method("resources/read")
 async def resources_read(uri: str) -> Dict:
     """Read a specific resource by URI"""
-    if uri.startswith("airtable://base/"):
+    
+    # Handle template resources
+    if uri == "airtable://templates/base-schema":
+        return {
+            "contents": [
+                {
+                    "uri": uri,
+                    "mimeType": "application/json",
+                    "text": json.dumps({
+                        "tables": [
+                            {
+                                "name": "Projects",
+                                "fields": [
+                                    {"name": "Name", "type": "singleLineText"},
+                                    {"name": "Status", "type": "singleSelect", "options": ["Planning", "Active", "Complete"]},
+                                    {"name": "Start Date", "type": "date"},
+                                    {"name": "End Date", "type": "date"},
+                                    {"name": "Owner", "type": "collaborator"},
+                                    {"name": "Tasks", "type": "linkedRecords"}
+                                ]
+                            },
+                            {
+                                "name": "Tasks",
+                                "fields": [
+                                    {"name": "Title", "type": "singleLineText"},
+                                    {"name": "Description", "type": "multilineText"},
+                                    {"name": "Project", "type": "linkedRecords"},
+                                    {"name": "Assignee", "type": "collaborator"},
+                                    {"name": "Priority", "type": "singleSelect", "options": ["Low", "Medium", "High"]},
+                                    {"name": "Complete", "type": "checkbox"}
+                                ]
+                            }
+                        ]
+                    }, indent=2)
+                }
+            ]
+        }
+    
+    elif uri == "airtable://templates/automation-scripts":
+        return {
+            "contents": [
+                {
+                    "uri": uri,
+                    "mimeType": "text/javascript",
+                    "text": """// Common Airtable Automation Scripts
+
+// 1. Send notification when record matches condition
+function notifyOnCondition(record) {
+    if (record.getCellValue('Status') === 'Urgent') {
+        // Send notification logic here
+        console.log('Urgent task:', record.getCellValue('Name'));
+    }
+}
+
+// 2. Auto-calculate fields
+function calculateFields(record) {
+    const startDate = record.getCellValue('Start Date');
+    const endDate = record.getCellValue('End Date');
+    if (startDate && endDate) {
+        const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        return { 'Duration (days)': duration };
+    }
+}
+
+// 3. Bulk update records
+async function bulkUpdate(table, condition, updates) {
+    const query = await table.selectRecordsAsync();
+    const recordsToUpdate = query.records.filter(condition);
+    
+    const updatePromises = recordsToUpdate.map(record => 
+        table.updateRecordAsync(record.id, updates)
+    );
+    
+    await Promise.all(updatePromises);
+}"""
+                }
+            ]
+        }
+    
+    # Handle base and table resources
+    elif uri.startswith("airtable://base/"):
         parts = uri.replace("airtable://base/", "").split("/table/")
         if len(parts) == 2:
             base_id, table_name = parts
-            return await get_table_resource(base_id, table_name)
+            result = await get_table_resource(base_id, table_name)
+            return {
+                "contents": [
+                    {
+                        "uri": uri,
+                        "mimeType": "application/json",
+                        "text": json.dumps(result, indent=2)
+                    }
+                ]
+            }
         elif len(parts) == 1:
             base_id = parts[0]
-            return await get_base_resource(base_id)
+            result = await get_base_resource(base_id)
+            return {
+                "contents": [
+                    {
+                        "uri": uri,
+                        "mimeType": "application/json",
+                        "text": json.dumps(result, indent=2)
+                    }
+                ]
+            }
     
     return {"error": f"Unknown resource URI: {uri}"}
 
