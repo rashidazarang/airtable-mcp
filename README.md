@@ -3,15 +3,25 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-3.2.4-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-3.2.5-blue)](https://github.com/rashidazarang/airtable-mcp)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![AI Agent](https://img.shields.io/badge/AI_Agent-Enhanced-purple)](https://github.com/rashidazarang/airtable-mcp)
 [![Security](https://img.shields.io/badge/Security-Enterprise-green)](https://github.com/rashidazarang/airtable-mcp)
 [![Protocol](https://img.shields.io/badge/Protocol-2024--11--05-success)](https://modelcontextprotocol.io/)
 
-🤖 **Revolutionary AI Agent v3.2.4** - Advanced AI-powered Airtable MCP server with **fixed TypeScript architecture**, world-class project organization, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
+🤖 **Revolutionary AI Agent v3.2.5** - Advanced AI-powered Airtable MCP server with **fixed TypeScript architecture**, world-class project organization, comprehensive intelligence capabilities, predictive analytics, and enterprise automation features.
 
-## 🚀 Latest: v3.2.4 - XSS Security Fix & Complete Protection
+## 🚀 Latest: v3.2.5 - Optional Base ID & Enhanced Multi-Base Support
+
+**Major Improvements** with full backward compatibility:
+- 🔓 **Optional Base ID** - Start without specifying a base, discover them using `list_bases` tool
+- 🔍 **Enhanced Base Discovery** - New `list_bases` tool fully implemented in TypeScript
+- 🎯 **Dynamic Base Selection** - Specify base IDs per tool call, no startup requirement
+- ✅ **Fixed Issue #9** - Resolved "base required at startup" limitation
+- 🔧 **Improved Governance** - Smart base allowlist handling for multi-base workflows
+- 📦 **Full STDIO Support** - Confirmed compatibility with Claude Desktop/Code
+
+## 📋 Previous: v3.2.4 - XSS Security Fix & Complete Protection
 
 **Major Improvements** with full backward compatibility:
 - 🔧 **TypeScript Architecture Fixed** - Resolved compilation issues, proper separation of types and runtime code
@@ -111,8 +121,13 @@ Create a `.env` file in your project directory:
 
 ```env
 AIRTABLE_TOKEN=your_personal_access_token_here
-AIRTABLE_BASE_ID=your_base_id_here
+AIRTABLE_BASE_ID=your_base_id_here  # OPTIONAL - can be discovered using list_bases tool
 ```
+
+**New in v3.2.5**: The `AIRTABLE_BASE_ID` is now **optional**! You can:
+- Start without a base ID and use the `list_bases` tool to discover your accessible bases
+- Specify base IDs dynamically in each tool call
+- Set a default base for convenience (recommended)
 
 **Security Note**: Never commit `.env` files to version control!
 
@@ -130,14 +145,10 @@ Add to your Claude Desktop configuration file with TypeScript binary:
   "mcpServers": {
     "airtable-typescript": {
       "command": "npx",
-      "args": [
-        "@rashidazarang/airtable-mcp",
-        "--token",
-        "YOUR_AIRTABLE_TOKEN",
-        "--base",
-        "YOUR_BASE_ID"
-      ],
+      "args": ["@rashidazarang/airtable-mcp"],
       "env": {
+        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN",
+        "AIRTABLE_BASE_ID": "YOUR_BASE_ID",
         "NODE_ENV": "production",
         "LOG_LEVEL": "INFO"
       }
@@ -146,31 +157,14 @@ Add to your Claude Desktop configuration file with TypeScript binary:
 }
 ```
 
+**Note**: `AIRTABLE_BASE_ID` is optional. Omit it to discover bases using `list_bases` tool.
+
 #### 📦 JavaScript Configuration (Standard)
 
 Add to your Claude Desktop configuration file:
 
 **MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "airtable": {
-      "command": "npx",
-      "args": [
-        "@rashidazarang/airtable-mcp",
-        "--token",
-        "YOUR_AIRTABLE_TOKEN",
-        "--base",
-        "YOUR_BASE_ID"
-      ]
-    }
-  }
-}
-```
-
-#### For Environment Variables (More Secure)
 
 ```json
 {
@@ -186,6 +180,28 @@ Add to your Claude Desktop configuration file:
   }
 }
 ```
+
+**Note**: `AIRTABLE_BASE_ID` is optional. Omit it to discover bases using `list_bases` tool.
+
+#### Configuration Without Base ID (New!)
+
+Start without specifying a base and discover them dynamically:
+
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "npx",
+      "args": ["@rashidazarang/airtable-mcp"],
+      "env": {
+        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN"
+      }
+    }
+  }
+}
+```
+
+Then use the `list_bases` tool to discover your accessible bases!
 
 ### Step 5: Restart Your MCP Client
 
@@ -229,6 +245,7 @@ const insights = await server.handlePromptGet('analyze_data', analysis);
 
 **Basic Operations**
 ```
+"List all my accessible Airtable bases"
 "Show me all records in the Projects table"
 "Create a new task with priority 'High' and due date tomorrow"
 "Update the status of task ID rec123 to 'Completed'"

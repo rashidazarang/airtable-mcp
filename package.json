@@ -1,16 +1,16 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "Advanced AI-powered Airtable MCP server with TypeScript support, intelligent analytics, predictive modeling, and enterprise automation capabilities",
-  "main": "dist/index.js",
+  "main": "dist/typescript/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/typescript/index.js",
+      "require": "./dist/typescript/index.js",
+      "types": "./types/typescript/index.d.ts"
     },
-    "./types": "./dist/types/index.d.ts",
-    "./types/*": "./dist/types/*.d.ts"
+    "./types": "./types/typescript/app/types.d.ts",
+    "./types/*": "./types/typescript/**/*.d.ts"
   },
   "bin": {
     "airtable-mcp": "./bin/airtable-mcp.js",
@@ -21,7 +21,7 @@
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
-    "start": "node dist/index.js",
+    "start": "node dist/typescript/airtable-mcp-server.js",
     "start:dev": "ts-node src/typescript/airtable-mcp-server.ts",
     "start:js": "node src/javascript/airtable_simple_production.js",
     "start:python": "python3 src/python/inspector_server.py",
@@ -36,7 +36,7 @@
     "format:check": "prettier --check \"src/**/*.{js,ts,json,md}\"",
     "dev": "nodemon --watch src --exec ts-node src/typescript/airtable-mcp-server.ts",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run test && npm run build"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "airtable",
@@ -53,19 +53,21 @@
   ],
   "files": [
     "dist/",
+    "types/",
     "bin/",
     "README.md",
     "LICENSE",
     "package.json",
     "tsconfig.json"
   ],
-  "types": "dist/index.d.ts",
+  "types": "types/typescript/index.d.ts",
   "author": "Rashid Azarang",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.19.1",
     "@smithery/cli": "^1.0.0",
-    "airtable": "^0.12.2",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
@@ -83,7 +85,7 @@
     "typescript": "^5.3.0"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",

@@ -23,7 +23,8 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "types": []
   },
   "include": [
     "src/typescript/**/*"
@@ -35,6 +36,9 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "src/javascript/**/*",
-    "src/python/**/*"
+    "src/python/**/*",
+    "src/typescript/prompt-templates.ts",
+    "src/typescript/tools-schemas.ts",
+    "src/typescript/**/*.d.ts"
   ]
 }

@@ -2,43 +2,23 @@
 
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
-// Find the Python interpreter
-const getPythonPath = () => {
-  try {
-    const whichPython = require('child_process').execSync('which python3.10').toString().trim();
-    return whichPython;
-  } catch (e) {
-    try {
-      const whichPython = require('child_process').execSync('which python3').toString().trim();
-      return whichPython;
-    } catch (e) {
-      return 'python';
-    }
-  }
-};
+const distServer = path.join(__dirname, '..', 'dist', 'typescript', 'airtable-mcp-server.js');
 
-const pythonPath = getPythonPath();
-const serverScript = path.join(__dirname, '..', 'airtable_mcp', 'src', 'server.py');
+if (!fs.existsSync(distServer)) {
+  console.error('Airtable MCP: compiled server not found.');
+  console.error('Run `npm install && npm run build` and try again.');
+  process.exit(1);
+}
 
-// Get the arguments
 const args = process.argv.slice(2);
-
-// Construct the full command
-const serverProcess = spawn(pythonPath, [serverScript, ...args], {
+const child = spawn(process.execPath, [distServer, ...args], {
   stdio: 'inherit',
+  env: process.env,
 });
 
-// Handle process exit
-serverProcess.on('close', (code) => {
-  process.exit(code);
-});
+child.on('close', (code) => process.exit(code));
 
-// Handle signals
-process.on('SIGINT', () => {
-  serverProcess.kill('SIGINT');
-});
-
-process.on('SIGTERM', () => {
-  serverProcess.kill('SIGTERM');
-}); 
+process.on('SIGINT', () => child.kill('SIGINT'));
+process.on('SIGTERM', () => child.kill('SIGTERM'));
