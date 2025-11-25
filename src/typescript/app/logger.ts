@@ -52,7 +52,7 @@ export class Logger {
       ...(Object.keys(metadata).length > 0 ? { metadata } : {})
     };
 
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(output));
+    // Write logs to stderr so we don't corrupt the MCP stdio protocol stream.
+    process.stderr.write(`${JSON.stringify(output)}\n`);
   }
 }
