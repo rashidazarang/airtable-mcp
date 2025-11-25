@@ -11,6 +11,7 @@ import logging
 import requests
 import argparse
 import traceback
+from requests import exceptions as requests_exceptions
 from typing import Optional, Dict, Any, List
 
 try:
@@ -30,6 +31,9 @@ def parse_args():
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("airtable-mcp")
+
+# Network safety defaults
+REQUEST_TIMEOUT_SECONDS = float(os.environ.get("AIRTABLE_REQUEST_TIMEOUT", "30"))
 
 # Parse arguments
 args = parse_args()
@@ -132,18 +136,21 @@ async def api_call(endpoint, method="GET", data=None, params=None):
     
     try:
         if method == "GET":
-            response = requests.get(url, headers=headers, params=params)
+            response = requests.get(url, headers=headers, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
         elif method == "POST":
-            response = requests.post(url, headers=headers, json=data)
+            response = requests.post(url, headers=headers, json=data, timeout=REQUEST_TIMEOUT_SECONDS)
         elif method == "PATCH":
-            response = requests.patch(url, headers=headers, json=data)
+            response = requests.patch(url, headers=headers, json=data, timeout=REQUEST_TIMEOUT_SECONDS)
         elif method == "DELETE":
-            response = requests.delete(url, headers=headers, params=params)
+            response = requests.delete(url, headers=headers, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
         else:
             raise ValueError(f"Unsupported method: {method}")
         
         response.raise_for_status()
         return response.json()
+    except requests_exceptions.Timeout as e:
+        logger.error(f"API call timed out after {REQUEST_TIMEOUT_SECONDS}s: {str(e)}")
+        return {"error": f"Request to Airtable timed out after {REQUEST_TIMEOUT_SECONDS}s"}
     except Exception as e:
         logger.error(f"API call error: {str(e)}")
         return {"error": str(e)}
