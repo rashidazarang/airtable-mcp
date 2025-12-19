@@ -24,7 +24,6 @@
     "start": "node dist/typescript/airtable-mcp-server.js",
     "start:dev": "ts-node src/typescript/airtable-mcp-server.ts",
     "start:js": "node src/javascript/airtable_simple_production.js",
-    "start:python": "python3 src/python/inspector_server.py",
     "test": "jest",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
