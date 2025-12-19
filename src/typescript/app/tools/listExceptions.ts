@@ -12,8 +12,8 @@ export function registerExceptionsTool(server: McpServer, ctx: AppContext): void
     'list_exceptions',
     {
       description: 'List recent exceptions and remediation proposals.',
-      inputSchema: listExceptionsInputSchema.shape,
-      outputSchema: listExceptionsOutputSchema.shape
+      inputSchema: listExceptionsInputSchema.shape as any,
+      outputSchema: listExceptionsOutputSchema.shape as any
     },
     async (args: ListExceptionsInput) => {
       const snapshot = ctx.exceptions.list(args);

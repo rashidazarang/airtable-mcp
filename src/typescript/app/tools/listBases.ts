@@ -22,8 +22,8 @@ export function registerListBasesTool(server: McpServer, ctx: AppContext): void 
     'list_bases',
     {
       description: 'List all accessible Airtable bases with their names, IDs, and permission levels',
-      inputSchema: {},
-      outputSchema: listBasesOutputSchema.shape
+      inputSchema: {} as any,
+      outputSchema: listBasesOutputSchema.shape as any
     },
     async (_args: unknown, _extra: unknown) => {
       try {

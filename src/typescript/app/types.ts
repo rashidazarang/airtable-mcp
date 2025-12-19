@@ -35,7 +35,7 @@ const describeFieldSchema = z
     id: z.string(),
     name: z.string(),
     type: z.string(),
-    options: z.record(z.unknown()).optional()
+    options: z.record(z.string(), z.unknown()).optional()
   })
   .passthrough();
 
@@ -46,7 +46,7 @@ const describeTableSchema = z
     description: z.string().optional(),
     primaryFieldId: z.string().optional(),
     fields: z.array(describeFieldSchema).optional(),
-    views: z.array(z.record(z.unknown())).optional()
+    views: z.array(z.record(z.string(), z.unknown())).optional()
   })
   .passthrough();
 
@@ -59,7 +59,7 @@ export const describeOutputSchema = z
       })
       .passthrough(),
     tables: z.array(describeTableSchema).optional(),
-    views: z.array(z.record(z.unknown())).optional()
+    views: z.array(z.record(z.string(), z.unknown())).optional()
   })
   .strict();
 
@@ -105,7 +105,7 @@ const recordSchema = z
   .object({
     id: z.string(),
     createdTime: z.string().optional(),
-    fields: z.record(z.unknown())
+    fields: z.record(z.string(), z.unknown())
   })
   .strict();
 
@@ -131,7 +131,7 @@ export const createInputSchema = z
       .array(
         z
           .object({
-            fields: z.record(z.unknown())
+            fields: z.record(z.string(), z.unknown())
           })
           .strict()
       )
@@ -196,7 +196,7 @@ export const updateInputSchema = z
         z
           .object({
             id: z.string(),
-            fields: z.record(z.unknown())
+            fields: z.record(z.string(), z.unknown())
           })
           .strict()
       )
@@ -220,7 +220,7 @@ export const upsertInputSchema = z
       .array(
         z
           .object({
-            fields: z.record(z.unknown())
+            fields: z.record(z.string(), z.unknown())
           })
           .strict()
       )
@@ -266,7 +266,7 @@ export const exceptionItemSchema = z
     category: z.enum(['rate_limit', 'validation', 'auth', 'conflict', 'schema_drift', 'other']),
     summary: z.string(),
     details: z.string().optional(),
-    proposedFix: z.record(z.unknown()).optional()
+    proposedFix: z.record(z.string(), z.unknown()).optional()
   })
   .strict();
 

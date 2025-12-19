@@ -69,8 +69,8 @@ export function registerDescribeTool(server: McpServer, ctx: AppContext): void {
     'describe',
     {
       description: 'Describe Airtable base or table schema.',
-      inputSchema: describeInputShape,
-      outputSchema: describeOutputSchema.shape
+      inputSchema: describeInputShape as any,
+      outputSchema: describeOutputSchema.shape as any
     },
     async (args: DescribeInput, _extra: unknown) => {
       try {

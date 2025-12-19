@@ -20,8 +20,8 @@ export function registerUpsertTool(server: McpServer, ctx: AppContext): void {
     'upsert',
     {
       description: 'Upsert Airtable records using performUpsert.fieldsToMergeOn.',
-      inputSchema: upsertInputSchema.shape,
-      outputSchema: upsertOutputSchema.shape
+      inputSchema: upsertInputSchema.shape as any,
+      outputSchema: upsertOutputSchema.shape as any
     },
     async (raw: UpsertInput) => {
       try {

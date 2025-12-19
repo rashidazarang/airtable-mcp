@@ -6,28 +6,8 @@ declare const listBasesOutputSchema: z.ZodObject<{
         id: z.ZodString;
         name: z.ZodString;
         permissionLevel: z.ZodOptional<z.ZodString>;
-    }, "strip", z.ZodTypeAny, {
-        id: string;
-        name: string;
-        permissionLevel?: string | undefined;
-    }, {
-        id: string;
-        name: string;
-        permissionLevel?: string | undefined;
-    }>, "many">;
-}, "strip", z.ZodTypeAny, {
-    bases: {
-        id: string;
-        name: string;
-        permissionLevel?: string | undefined;
-    }[];
-}, {
-    bases: {
-        id: string;
-        name: string;
-        permissionLevel?: string | undefined;
-    }[];
-}>;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
 export type ListBasesOutput = z.infer<typeof listBasesOutputSchema>;
 export declare function registerListBasesTool(server: McpServer, ctx: AppContext): void;
 export {};

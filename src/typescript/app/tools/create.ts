@@ -20,8 +20,8 @@ export function registerCreateTool(server: McpServer, ctx: AppContext): void {
     'create',
     {
       description: 'Create Airtable records (requires diff-before-write via dryRun first).',
-      inputSchema: createInputSchema.shape,
-      outputSchema: createOutputSchema.shape
+      inputSchema: createInputSchema.shape as any,
+      outputSchema: createOutputSchema.shape as any
     },
     async (raw: CreateInput) => {
       try {

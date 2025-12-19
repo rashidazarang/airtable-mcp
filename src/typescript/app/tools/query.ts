@@ -67,8 +67,8 @@ export function registerQueryTool(server: McpServer, ctx: AppContext): void {
     'query',
     {
       description: 'Query Airtable records with filtering, sorting, and pagination.',
-      inputSchema: queryInputShape,
-      outputSchema: queryOutputSchema.shape
+      inputSchema: queryInputShape as any,
+      outputSchema: queryOutputSchema.shape as any
     },
     async (args: QueryInput, _extra: unknown) => {
       try {

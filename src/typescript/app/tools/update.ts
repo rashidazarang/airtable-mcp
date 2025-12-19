@@ -20,8 +20,8 @@ export function registerUpdateTool(server: McpServer, ctx: AppContext): void {
     'update',
     {
       description: 'Update Airtable records (requires diff-before-write via dryRun first).',
-      inputSchema: updateInputSchema.shape,
-      outputSchema: updateOutputSchema.shape
+      inputSchema: updateInputSchema.shape as any,
+      outputSchema: updateOutputSchema.shape as any
     },
     async (raw: UpdateInput) => {
       try {
