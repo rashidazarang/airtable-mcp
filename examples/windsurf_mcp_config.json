@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "AIRTABLE": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@smithery/cli@latest",
+        "run",
+        "@rashidazarang/airtable-mcp",
+        "--token",
+        "YOUR_AIRTABLE_TOKEN",
+        "--base",
+        "YOUR_BASE_ID"
+      ]
+    }
+  }
+} 

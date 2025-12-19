@@ -1,0 +1,27 @@
+# Add proper error handling
+import traceback
+import sys
+
+# Override the default error handlers to format errors as proper JSON
+def handle_exceptions(func):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            sys.stderr.write(f"Error in MCP handler: {str(e)}\n{error_trace}\n")
+            # Return a properly formatted JSON error
+            return {"error": {"code": -32000, "message": str(e)}}
+    return wrapper
+
+# Apply the decorator to all RPC methods
+original_rpc_method = app.rpc_method
+def patched_rpc_method(*args, **kwargs):
+    def decorator(func):
+        wrapped_func = handle_exceptions(func)
+        return original_rpc_method(*args, **kwargs)(wrapped_func)
+    return decorator
+
+# Then add this line right before creating the FastMCP instance:
+# Replace app.rpc_method with our patched version
+app.rpc_method = patched_rpc_method 

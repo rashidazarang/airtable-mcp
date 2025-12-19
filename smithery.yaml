@@ -1,0 +1,45 @@
+# Smithery.ai configuration
+name: "@rashidazarang/airtable-mcp"
+version: "3.2.4"
+description: "Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Claude Desktop and other Claude-powered editors."
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      airtable_token:
+        type: string
+        description: "Your Airtable Personal Access Token"
+        required: true
+      base_id:
+        type: string
+        description: "Your default Airtable base ID"
+        required: true
+    required: ["airtable_token", "base_id"]
+  commandFunction: |
+    (config) => {
+      // Use the working JavaScript implementation
+      return {
+        command: "node",
+        args: ["airtable_simple.js", "--token", config.airtable_token, "--base", config.base_id],
+        env: {
+          AIRTABLE_TOKEN: config.airtable_token,
+          AIRTABLE_BASE_ID: config.base_id
+        }
+      };
+    }
+
+listTools:
+  command: "node"
+  args: ["airtable_simple.js", "--list-tools"]
+  env: {}
+  
+build:
+  dockerfile: "Dockerfile.node"
+
+metadata:
+  author: "Rashid Azarang"
+  license: "MIT"
+  repository: "https://github.com/rashidazarang/airtable-mcp"
+  homepage: "https://github.com/rashidazarang/airtable-mcp#readme"
