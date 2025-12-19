@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
   QueryInput,
   QueryOutput,

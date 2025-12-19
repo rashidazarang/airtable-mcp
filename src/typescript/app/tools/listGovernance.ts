@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { governanceOutputSchema } from '../types';
 import { AppContext } from '../context';
 import { createToolResponse } from './response';

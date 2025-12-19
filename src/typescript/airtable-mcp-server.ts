@@ -2,9 +2,9 @@
 
 // Import via require to avoid TS type resolution issues with deep subpath exports
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { McpServer } = require('@modelcontextprotocol/sdk/server/mcp');
+const { McpServer } = require('@modelcontextprotocol/sdk/server/mcp.js');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio');
+const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 import { loadConfig } from './app/config';
 import { Logger } from './app/logger';
 import { RateLimiter } from './app/rateLimiter';
