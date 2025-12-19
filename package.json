@@ -64,7 +64,7 @@
   "author": "Rashid Azarang",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.19.1",
+    "@modelcontextprotocol/sdk": "1.25.1",
     "@smithery/cli": "^1.0.0",
     "dotenv": "^16.0.0",
     "zod": "^3.23.8"
