@@ -9,6 +9,7 @@ import {
 import { AppContext } from '../context';
 import { GovernanceError, NotFoundError } from '../../errors';
 import { handleToolError } from './handleError';
+import { createToolResponse } from './response';
 
 type DescribeTableEntry = NonNullable<DescribeOutput['tables']>[number];
 type DescribeFieldEntry = NonNullable<DescribeTableEntry['fields']>[number];
@@ -170,10 +171,7 @@ export function registerDescribeTool(server: McpServer, ctx: AppContext): void {
           tableCount: selectedTables.length
         });
 
-        return {
-          structuredContent,
-          content: [] as const
-        };
+        return createToolResponse(structuredContent);
       } catch (error) {
         return handleToolError('describe', error, ctx);
       }

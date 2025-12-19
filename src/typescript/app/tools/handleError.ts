@@ -7,8 +7,14 @@ function toUserMessage(error: AirtableBrainError): string {
       return 'Airtable rate limit exceeded. Please retry after backoff.';
     case 'ValidationError':
       return 'Airtable rejected the request. Check field names and values.';
-    case 'AuthError':
+    case 'AuthError': {
+      const endpoint = error.context?.endpoint ?? '';
+      const isMetaApi = endpoint.includes('/meta/');
+      if (isMetaApi) {
+        return 'Authentication failed. For Meta API access (describe, list_bases), ensure your token has the "schema.bases:read" scope.';
+      }
       return 'Authentication failed. Verify the Airtable token scopes and base access.';
+    }
     case 'ConflictError':
       return 'The record changed since it was fetched. Refresh data and review the diff.';
     case 'NotFound':

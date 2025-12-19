@@ -9,6 +9,7 @@ import {
 } from '../types';
 import { AppContext } from '../context';
 import { handleToolError } from './handleError';
+import { createToolResponse } from './response';
 
 type PiiPolicy = {
   field: string;
@@ -143,10 +144,7 @@ export function registerQueryTool(server: McpServer, ctx: AppContext): void {
           hasMore: structuredContent.summary?.hasMore
         });
 
-        return {
-          structuredContent,
-          content: [] as const
-        };
+        return createToolResponse(structuredContent);
       } catch (error) {
         return handleToolError('query', error, ctx);
       }

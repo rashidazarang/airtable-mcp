@@ -5,6 +5,7 @@ import {
   listExceptionsOutputSchema
 } from '../types';
 import { AppContext } from '../context';
+import { createToolResponse } from './response';
 
 export function registerExceptionsTool(server: McpServer, ctx: AppContext): void {
   server.registerTool(
@@ -16,10 +17,7 @@ export function registerExceptionsTool(server: McpServer, ctx: AppContext): void
     },
     async (args: ListExceptionsInput) => {
       const snapshot = ctx.exceptions.list(args);
-      return {
-        structuredContent: snapshot,
-        content: [] as const
-      };
+      return createToolResponse(snapshot);
     }
   );
 }

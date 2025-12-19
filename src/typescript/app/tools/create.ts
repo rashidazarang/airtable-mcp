@@ -7,6 +7,7 @@ import {
   createOutputSchema
 } from '../types';
 import { handleToolError } from './handleError';
+import { createToolResponse } from './response';
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -37,7 +38,7 @@ export function registerCreateTool(server: McpServer, ctx: AppContext): void {
             dryRun: true,
             records: args.records.map((r) => ({ id: 'pending', fields: r.fields }))
           };
-          return { structuredContent, content: [] as const };
+          return createToolResponse(structuredContent);
         }
 
         const chunks = chunk(args.records, 10);
@@ -57,7 +58,7 @@ export function registerCreateTool(server: McpServer, ctx: AppContext): void {
         };
 
         logger.info('Create completed', { added: aggregated.length });
-        return { structuredContent, content: [] as const };
+        return createToolResponse(structuredContent);
       } catch (error) {
         return handleToolError('create', error, ctx);
       }

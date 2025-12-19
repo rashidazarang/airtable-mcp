@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { governanceOutputSchema } from '../types';
 import { AppContext } from '../context';
+import { createToolResponse } from './response';
 
 export function registerGovernanceTool(server: McpServer, ctx: AppContext): void {
   server.registerTool(
@@ -11,10 +12,7 @@ export function registerGovernanceTool(server: McpServer, ctx: AppContext): void
     },
     async () => {
       const snapshot = ctx.governance.getSnapshot();
-      return {
-        structuredContent: snapshot,
-        content: [] as const
-      };
+      return createToolResponse(snapshot);
     }
   );
 }

@@ -2,6 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { AppContext } from '../context';
 import { z } from 'zod';
 import { handleToolError } from './handleError';
+import { createToolResponse } from './response';
 
 // Schema for list_bases output
 const listBasesOutputSchema = z.object({
@@ -35,10 +36,7 @@ export function registerListBasesTool(server: McpServer, ctx: AppContext): void 
           const structuredContent: ListBasesOutput = {
             bases: []
           };
-          return {
-            structuredContent,
-            content: [] as const
-          };
+          return createToolResponse(structuredContent);
         }
 
         const normalizedBases = bases.map((base: any) => ({
@@ -53,10 +51,7 @@ export function registerListBasesTool(server: McpServer, ctx: AppContext): void 
 
         ctx.logger.info('Successfully listed bases', { count: bases.length });
 
-        return {
-          structuredContent,
-          content: [] as const
-        };
+        return createToolResponse(structuredContent);
       } catch (error) {
         return handleToolError('list_bases', error, ctx);
       }

@@ -7,6 +7,7 @@ import {
   updateOutputSchema
 } from '../types';
 import { handleToolError } from './handleError';
+import { createToolResponse } from './response';
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -38,7 +39,7 @@ export function registerUpdateTool(server: McpServer, ctx: AppContext): void {
             records: args.records.map((r) => ({ id: r.id, fields: r.fields })),
             conflicts: []
           };
-          return { structuredContent, content: [] as const };
+          return createToolResponse(structuredContent);
         }
 
         const chunks = chunk(args.records, 10);
@@ -59,7 +60,7 @@ export function registerUpdateTool(server: McpServer, ctx: AppContext): void {
         };
 
         logger.info('Update completed', { updated: aggregated.length });
-        return { structuredContent, content: [] as const };
+        return createToolResponse(structuredContent);
       } catch (error) {
         return handleToolError('update', error, ctx);
       }

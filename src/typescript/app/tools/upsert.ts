@@ -7,6 +7,7 @@ import {
   upsertOutputSchema
 } from '../types';
 import { handleToolError } from './handleError';
+import { createToolResponse } from './response';
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -43,7 +44,7 @@ export function registerUpsertTool(server: McpServer, ctx: AppContext): void {
           // When using strict PRD output, we can omit conflicts and include matchedBy
           (structuredContent as any).matchedBy = matchedBy;
           delete (structuredContent as any).conflicts;
-          return { structuredContent, content: [] as const };
+          return createToolResponse(structuredContent);
         }
 
         const chunks = chunk(args.records, 10);
@@ -68,7 +69,7 @@ export function registerUpsertTool(server: McpServer, ctx: AppContext): void {
         };
 
         logger.info('Upsert completed', { processed: aggregated.length, matchedBy });
-        return { structuredContent, content: [] as const };
+        return createToolResponse(structuredContent);
       } catch (error) {
         return handleToolError('upsert', error, ctx);
       }
