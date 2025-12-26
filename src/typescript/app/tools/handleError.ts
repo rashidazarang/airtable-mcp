@@ -9,9 +9,15 @@ function toUserMessage(error: AirtableBrainError): string {
       return 'Airtable rejected the request. Check field names and values.';
     case 'AuthError': {
       const endpoint = error.context?.endpoint ?? '';
+      const baseId = error.context?.baseId;
       const isMetaApi = endpoint.includes('/meta/');
+      const isBaseSpecific = baseId && endpoint.includes(`/bases/${baseId}`);
+
+      if (isMetaApi && isBaseSpecific) {
+        return `Authentication failed for base "${baseId}". This could mean: (1) your token lacks the "schema.bases:read" scope, or (2) your token does not have access to this specific base. Use list_bases to see which bases your token can access.`;
+      }
       if (isMetaApi) {
-        return 'Authentication failed. For Meta API access (describe, list_bases), ensure your token has the "schema.bases:read" scope.';
+        return 'Authentication failed. Ensure your token has the "schema.bases:read" scope.';
       }
       return 'Authentication failed. Verify the Airtable token scopes and base access.';
     }

@@ -357,9 +357,14 @@ export class AirtableClient {
     }
 
     if (status === 401 || status === 403) {
+      const authContext: ErrorContext = { ...baseContext };
+      const upstreamErrorType = this.safeExtractErrorType(body);
+      if (upstreamErrorType) {
+        authContext.upstreamErrorType = upstreamErrorType;
+      }
       return new AuthError('Authentication failed with Airtable', {
         status,
-        context: baseContext
+        context: authContext
       });
     }
 
