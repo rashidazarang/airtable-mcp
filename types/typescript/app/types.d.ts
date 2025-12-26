@@ -1,4 +1,20 @@
 import { z } from 'zod';
+/**
+ * Shared Zod schemas and TypeScript types for Airtable Brain tools.
+ * Keep these aligned with the JSON Schemas under docs/prd/schemas.
+ */
+/**
+ * Detail level for schema operations to optimize LLM context usage.
+ * - tableIdentifiersOnly: Only table IDs and names
+ * - identifiersOnly: Table, field, and view IDs and names
+ * - full: Complete details including field types, options, descriptions
+ */
+export declare const detailLevelSchema: z.ZodEnum<{
+    tableIdentifiersOnly: "tableIdentifiersOnly";
+    identifiersOnly: "identifiersOnly";
+    full: "full";
+}>;
+export type DetailLevel = z.infer<typeof detailLevelSchema>;
 export declare const describeInputSchema: z.ZodObject<{
     scope: z.ZodEnum<{
         base: "base";
@@ -6,6 +22,11 @@ export declare const describeInputSchema: z.ZodObject<{
     }>;
     baseId: z.ZodString;
     table: z.ZodOptional<z.ZodString>;
+    detailLevel: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
+        tableIdentifiersOnly: "tableIdentifiersOnly";
+        identifiersOnly: "identifiersOnly";
+        full: "full";
+    }>>>;
     includeFields: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     includeViews: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, z.core.$strict>;
@@ -16,6 +37,11 @@ export declare const describeInputShape: {
     }>;
     baseId: z.ZodString;
     table: z.ZodOptional<z.ZodString>;
+    detailLevel: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
+        tableIdentifiersOnly: "tableIdentifiersOnly";
+        identifiersOnly: "identifiersOnly";
+        full: "full";
+    }>>>;
     includeFields: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     includeViews: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 };

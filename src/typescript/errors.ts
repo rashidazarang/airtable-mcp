@@ -22,9 +22,11 @@ export interface ErrorContext {
   attempt?: number;
   totalAttempts?: number;
   upstreamErrorType?: string;
+  upstreamErrorMessage?: string;
   upstreamRequestId?: string;
   governanceRule?: string;
   endpoint?: string;
+  tokenFormatWarnings?: string[];
 }
 
 interface AirtableErrorOptions {

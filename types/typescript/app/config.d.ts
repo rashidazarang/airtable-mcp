@@ -5,6 +5,7 @@ export interface AirtableAuthConfig {
     patHash: string;
     defaultBaseId?: string;
     allowedBases: string[];
+    tokenFormatWarnings: string[];
 }
 export interface AppConfig {
     version: string;

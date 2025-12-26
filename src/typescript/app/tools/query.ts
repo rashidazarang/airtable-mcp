@@ -10,6 +10,7 @@ import {
 import { AppContext } from '../context';
 import { handleToolError } from './handleError';
 import { createToolResponse } from './response';
+import { validateFormula } from '../sanitize';
 
 type PiiPolicy = {
   field: string;
@@ -89,6 +90,14 @@ export function registerQueryTool(server: McpServer, ctx: AppContext): void {
           queryParams.fields = input.fields;
         }
         if (input.filterByFormula) {
+          // Validate formula for suspicious patterns (log warning but don't block)
+          const formulaValidation = validateFormula(input.filterByFormula);
+          if (!formulaValidation.isValid) {
+            logger.warn('Potentially unsafe formula pattern detected', {
+              warning: formulaValidation.warning,
+              formula: input.filterByFormula.substring(0, 100) // Truncate for logging
+            });
+          }
           queryParams.filterByFormula = input.filterByFormula;
         }
         if (input.view) {

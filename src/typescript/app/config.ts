@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { config as loadEnv } from 'dotenv';
 import { governanceOutputSchema, GovernanceSnapshot } from './types';
 import { GovernanceError } from '../errors';
+import { validateApiKey } from './validateApiKey';
 
 loadEnv();
 
@@ -14,6 +15,7 @@ export interface AirtableAuthConfig {
   patHash: string;
   defaultBaseId?: string;
   allowedBases: string[];
+  tokenFormatWarnings: string[];
 }
 
 export interface AppConfig {
@@ -157,10 +159,20 @@ export function loadConfig(): AppConfig {
   const allowedBases = determineAllowedBases(defaultBaseId);
   const governance = buildGovernanceSnapshot(allowedBases);
 
+  // Validate token format and collect warnings
+  const tokenValidation = validateApiKey(personalAccessToken);
+  if (tokenValidation.warnings.length > 0) {
+    // Log warnings to stderr (will be visible in MCP server logs)
+    tokenValidation.warnings.forEach((warning) => {
+      console.error(`[airtable-mcp] Token warning: ${warning}`);
+    });
+  }
+
   const auth: AirtableAuthConfig = {
     personalAccessToken,
     patHash: hashSecret(personalAccessToken),
-    allowedBases
+    allowedBases,
+    tokenFormatWarnings: tokenValidation.warnings
   };
   if (defaultBaseId) {
     auth.defaultBaseId = defaultBaseId;

@@ -44,6 +44,7 @@ export declare class AirtableClient {
     private backoffWithJitter;
     private performRequest;
     private toDomainError;
-    private safeExtractErrorType;
+    private safeExtractErrorInfo;
+    private extractRequestId;
 }
 export {};

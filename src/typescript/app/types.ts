@@ -5,6 +5,15 @@ import { z } from 'zod';
  * Keep these aligned with the JSON Schemas under docs/prd/schemas.
  */
 
+/**
+ * Detail level for schema operations to optimize LLM context usage.
+ * - tableIdentifiersOnly: Only table IDs and names
+ * - identifiersOnly: Table, field, and view IDs and names
+ * - full: Complete details including field types, options, descriptions
+ */
+export const detailLevelSchema = z.enum(['tableIdentifiersOnly', 'identifiersOnly', 'full']);
+export type DetailLevel = z.infer<typeof detailLevelSchema>;
+
 const describeInputBase = z
   .object({
     scope: z.enum(['base', 'table']),
@@ -13,6 +22,8 @@ const describeInputBase = z
       .string()
       .min(1, 'table is required when scope=table')
       .optional(),
+    detailLevel: detailLevelSchema.optional().default('full'),
+    // Deprecated: use detailLevel instead
     includeFields: z.boolean().optional().default(true),
     includeViews: z.boolean().optional().default(false)
   })

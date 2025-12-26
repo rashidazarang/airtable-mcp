@@ -349,22 +349,21 @@ export class AirtableClient {
 
   private toDomainError(response: AirtableResponse<unknown>, request: RequestOptions): AirtableBrainError {
     const { status, body, headers } = response;
+    const { type: upstreamErrorType, message: upstreamErrorMessage } = this.safeExtractErrorInfo(body);
+    const requestId = this.extractRequestId(headers);
+
     const baseContext: ErrorContext = {
-      endpoint: request.path
+      endpoint: request.path,
+      ...(request.baseId && { baseId: request.baseId }),
+      ...(upstreamErrorType && { upstreamErrorType }),
+      ...(upstreamErrorMessage && { upstreamErrorMessage }),
+      ...(requestId && { upstreamRequestId: requestId })
     };
-    if (request.baseId) {
-      baseContext.baseId = request.baseId;
-    }
 
     if (status === 401 || status === 403) {
-      const authContext: ErrorContext = { ...baseContext };
-      const upstreamErrorType = this.safeExtractErrorType(body);
-      if (upstreamErrorType) {
-        authContext.upstreamErrorType = upstreamErrorType;
-      }
       return new AuthError('Authentication failed with Airtable', {
         status,
-        context: authContext
+        context: baseContext
       });
     }
 
@@ -383,14 +382,9 @@ export class AirtableClient {
     }
 
     if (status === 400 || status === 422) {
-      const validationContext: ErrorContext = { ...baseContext };
-      const upstreamErrorType = this.safeExtractErrorType(body);
-      if (upstreamErrorType) {
-        validationContext.upstreamErrorType = upstreamErrorType;
-      }
       return new AirtableValidationError('Airtable validation error', {
         status,
-        context: validationContext
+        context: baseContext
       });
     }
 
@@ -404,14 +398,9 @@ export class AirtableClient {
     }
 
     if (status >= 500) {
-      const internalContext: ErrorContext = { ...baseContext };
-      const upstreamErrorType = this.safeExtractErrorType(body);
-      if (upstreamErrorType) {
-        internalContext.upstreamErrorType = upstreamErrorType;
-      }
       return new InternalServerError('Airtable returned an internal error', {
         status,
-        context: internalContext
+        context: baseContext
       });
     }
 
@@ -421,16 +410,26 @@ export class AirtableClient {
     });
   }
 
-  private safeExtractErrorType(body: unknown): string | undefined {
+  private safeExtractErrorInfo(body: unknown): { type?: string; message?: string } {
     if (body && typeof body === 'object' && 'error' in body) {
       const error = (body as Record<string, unknown>).error;
-      if (error && typeof error === 'object' && 'type' in error) {
-        const type = (error as Record<string, unknown>).type;
-        if (typeof type === 'string') {
-          return type;
+      if (error && typeof error === 'object') {
+        const errorObj = error as Record<string, unknown>;
+        const result: { type?: string; message?: string } = {};
+        if (typeof errorObj.type === 'string') {
+          result.type = errorObj.type;
         }
+        if (typeof errorObj.message === 'string') {
+          result.message = errorObj.message;
+        }
+        return result;
       }
     }
-    return undefined;
+    return {};
+  }
+
+  private extractRequestId(headers: IncomingHttpHeaders): string | undefined {
+    const requestId = headers['x-airtable-request-id'];
+    return typeof requestId === 'string' ? requestId : undefined;
   }
 }
