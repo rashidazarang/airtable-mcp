@@ -1,6 +1,6 @@
 # Smithery.ai configuration
 name: "@rashidazarang/airtable-mcp"
-version: "3.2.4"
+version: "3.2.8"
 description: "Connect your AI tools directly to Airtable. Query, create, update, and delete records using natural language. Features include base management, table operations, schema manipulation, record filtering, and data migration—all through a standardized MCP interface compatible with Claude Desktop and other Claude-powered editors."
 
 startCommand:
@@ -19,12 +19,12 @@ startCommand:
     required: ["airtable_token", "base_id"]
   commandFunction: |
     (config) => {
-      // Use the working JavaScript implementation
+      // Use the TypeScript implementation
       return {
         command: "node",
-        args: ["airtable_simple.js", "--token", config.airtable_token, "--base", config.base_id],
+        args: ["dist/typescript/airtable-mcp-server.js"],
         env: {
-          AIRTABLE_TOKEN: config.airtable_token,
+          AIRTABLE_PAT: config.airtable_token,
           AIRTABLE_BASE_ID: config.base_id
         }
       };
@@ -32,7 +32,7 @@ startCommand:
 
 listTools:
   command: "node"
-  args: ["airtable_simple.js", "--list-tools"]
+  args: ["dist/typescript/airtable-mcp-server.js", "--list-tools"]
   env: {}
   
 build:
