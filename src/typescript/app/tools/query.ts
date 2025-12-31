@@ -17,6 +17,13 @@ type PiiPolicy = {
   policy: 'mask' | 'hash' | 'drop';
 };
 
+// Protect against prototype pollution
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function isSafeKey(key: string): boolean {
+  return typeof key === 'string' && !UNSAFE_KEYS.has(key);
+}
+
 function maskValue(value: unknown): unknown {
   if (value === null || value === undefined) {
     return value;
@@ -45,6 +52,8 @@ function applyPiiPolicies(
   }
   const result: Record<string, unknown> = { ...fields };
   for (const policy of policies) {
+    // Skip unsafe keys to prevent prototype pollution
+    if (!isSafeKey(policy.field)) continue;
     if (!(policy.field in result)) continue;
     switch (policy.policy) {
       case 'drop':
