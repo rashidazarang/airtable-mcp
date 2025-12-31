@@ -2,7 +2,7 @@
 build:
   dockerBuildPath: .
 startCommand:
-  type: stdio
+  type: http
   configSchema:
     type: object
     required:
@@ -14,6 +14,3 @@ startCommand:
       baseId:
         type: string
         description: Your default Airtable base ID (optional, starts with 'app')
-  commandFunction:
-    |-
-    (config) => ({ command: 'npx', args: ['-y', '@rashidazarang/airtable-mcp'], env: { AIRTABLE_PAT: config.airtableToken, ...(config.baseId && { AIRTABLE_BASE_ID: config.baseId }) } })

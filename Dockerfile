@@ -12,5 +12,11 @@ RUN npm ci --only=production
 COPY dist/ ./dist/
 COPY bin/ ./bin/
 
-# Set entrypoint
-ENTRYPOINT ["node", "dist/typescript/airtable-mcp-server.js"]
+# Expose HTTP port
+EXPOSE 8080
+
+# Set environment variable for HTTP mode
+ENV PORT=8080
+
+# Start the server
+CMD ["node", "dist/typescript/airtable-mcp-server.js"]
