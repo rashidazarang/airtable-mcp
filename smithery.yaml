@@ -1,4 +1,6 @@
 # Smithery configuration file: https://smithery.ai/docs/build/project-config/smithery-yaml
+build:
+  dockerBuildPath: .
 startCommand:
   type: stdio
   configSchema:
