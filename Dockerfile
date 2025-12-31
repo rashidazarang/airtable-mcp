@@ -2,15 +2,20 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and source
 COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy built files
-COPY dist/ ./dist/
+COPY tsconfig.json ./
+COPY src/ ./src/
 COPY bin/ ./bin/
+
+# Install all dependencies (including dev for build)
+RUN npm ci
+
+# Build TypeScript
+RUN npm run build
+
+# Remove dev dependencies to slim down
+RUN npm prune --production
 
 # Expose HTTP port
 EXPOSE 8080
