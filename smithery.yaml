@@ -1,25 +1,17 @@
-# Smithery.ai configuration
-# https://smithery.ai/docs/build/project-config/smithery-yaml
-
+# Smithery configuration file: https://smithery.ai/docs/build/project-config/smithery-yaml
 startCommand:
   type: stdio
   configSchema:
     type: object
-    properties:
-      airtable_token:
-        type: string
-        description: "Your Airtable Personal Access Token (starts with 'pat.')"
-      base_id:
-        type: string
-        description: "Your default Airtable base ID (optional, starts with 'app')"
     required:
-      - airtable_token
-  commandFunction: |
-    (config) => ({
-      command: "node",
-      args: ["dist/typescript/airtable-mcp-server.js"],
-      env: {
-        AIRTABLE_PAT: config.airtable_token,
-        ...(config.base_id && { AIRTABLE_BASE_ID: config.base_id })
-      }
-    })
+      - airtableToken
+    properties:
+      airtableToken:
+        type: string
+        description: Your Airtable Personal Access Token (starts with 'pat.')
+      baseId:
+        type: string
+        description: Your default Airtable base ID (optional, starts with 'app')
+  commandFunction:
+    |-
+    (config) => ({ command: 'npx', args: ['-y', '@rashidazarang/airtable-mcp'], env: { AIRTABLE_PAT: config.airtableToken, ...(config.baseId && { AIRTABLE_BASE_ID: config.baseId }) } })
