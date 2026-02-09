@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { createHash } from 'node:crypto';
+import { createHmac } from 'node:crypto';
 import { config as loadEnv } from 'dotenv';
 import { governanceOutputSchema, GovernanceSnapshot } from './types';
 import { GovernanceError } from '../errors';
@@ -40,11 +40,11 @@ function parseCsv(value?: string | null): string[] {
 
 /**
  * Creates a short fingerprint of a token for log correlation and rate-limit keying.
- * This is NOT password hashing — the truncated SHA-256 hex is only used as an
- * opaque identifier so logs can correlate requests without exposing the raw PAT.
+ * Uses HMAC-SHA256 with a fixed application key so the output is a stable, opaque
+ * identifier that lets logs correlate requests without exposing the raw PAT.
  */
 function fingerprintToken(token: string): string {
-  return createHash('sha256').update(token).digest('hex').slice(0, 12);
+  return createHmac('sha256', 'airtable-mcp-fingerprint').update(token).digest('hex').slice(0, 12);
 }
 
 function resolveLogLevel(): LogLevel {
