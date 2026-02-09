@@ -1,0 +1,20 @@
+FROM node:18-slim
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy the main application files
+COPY airtable_simple.js ./
+COPY .env.example ./
+
+# Create a non-root user
+RUN useradd -m -u 1000 mcpuser && chown -R mcpuser:mcpuser /app
+USER mcpuser
+
+# The server will be started with command line arguments by Smithery
+ENTRYPOINT ["node", "airtable_simple.js"]

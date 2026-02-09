@@ -1,0 +1,138 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+lerna-debug.log
+.pnpm-debug.log
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Logs
+logs
+*.log
+
+# OS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDEs and editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+
+# Personal tokens and secrets
+*.pem
+*.key
+*.env
+secrets.json
+.mcp.json
+
+# Local
+temp/
+tmp/
+.cache/
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env.*
+
+# AI Agent Project (new subdirectory)
+/ai-agent/
+
+# Test artifacts and temporary files
+/test-clone/
+*.tmp
+*.temp
+
+# Development artifacts
+/airtable_simple_v*.js
+/airtable_enhanced.js
+/airtable_v*.js
+*.backup.js
+
+# Development versions and test files
+/airtable_mcp_v2.js
+/airtable_mcp_v2_oauth.js
+/airtable_mcp_v3_advanced.js
+/test_*.js
+/test_*.sh
+/quick_test.sh
+/cleanup.sh
+/publish-steps.txt
+
+# Development documentation
+/DEVELOPMENT.md
+/IMPROVEMENT_PROPOSAL.md
+/MCP_REVIEW_SUMMARY.md
+/CAPABILITY_REPORT.md
+/API_DOCUMENTATION.md
+/RELEASE_NOTES_*.md
+
+# Infrastructure files (keep for reference but not in main package)
+/helm/
+/k8s/
+/monitoring/
+/docker-compose.production.yml
+/Dockerfile.production
+/.github/workflows/
+/.github/ISSUE_TEMPLATE/
+
+# Chrome extension development
+/airtable-clipper/
+
+# Package artifacts
+*.tgz
+/rashidazarang-airtable-mcp-*.tgz
+
+# Claude Code artifacts
+/.claude/

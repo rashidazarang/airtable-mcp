@@ -1,0 +1,16 @@
+# Smithery configuration file: https://smithery.ai/docs/build/project-config/smithery-yaml
+build:
+  dockerBuildPath: .
+startCommand:
+  type: http
+  configSchema:
+    type: object
+    required:
+      - airtableToken
+    properties:
+      airtableToken:
+        type: string
+        description: Your Airtable Personal Access Token (starts with 'pat.')
+      baseId:
+        type: string
+        description: Your default Airtable base ID (optional, starts with 'app')

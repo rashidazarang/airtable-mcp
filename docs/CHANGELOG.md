@@ -1,0 +1,134 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [4.0.0] - 2026-02-09
+
+### Added
+- **42 tools** (expanded from 9): full Airtable Personal Access Token scope coverage
+- **Record Comments API** — 4 new tools: `list_comments`, `create_comment`, `update_comment`, `delete_comment`
+- **User Info API** — `whoami` tool for token identity verification
+- **10 AI prompt templates** fully wired: analyze_data, create_report, predictive_analytics, natural_language_query, data_insights, optimize_workflow, smart_schema_design, data_quality_audit, smart_data_transformation, automation_recommendations
+- Governance: `manage_comments` operation added to allow-list
+- Claude Code MCP configuration skill (`.claude/skills/configure-mcp`)
+
+### Changed
+- Minimum Node.js version: 18+ (previously 14+)
+- MCP SDK upgraded to 1.26.0
+- Zod upgraded to v4 (4.2.1)
+- Complete TypeScript rewrite with modular tool registration architecture
+
+### Security
+- MCP SDK 1.26.0 security patches
+- hono 4.11.9 dependency update
+- CodeQL-flagged issues resolved
+- Input validation hardened across all mutation tools
+
+### Fixed
+- Rate limiter correctly scopes per-base and per-PAT limits
+- Governance PII masking applies to comment content
+
+## [3.2.4] - 2025-09-09
+
+### Security Fix
+- **Fixed XSS vulnerability in OAuth2 endpoint** (GitHub Security Alert #10, line 708)
+  - Added explicit UTF-8 encoding for HTML responses
+  - Enhanced Content-Type header with charset specification
+  - Added Cache-Control headers to prevent caching of sensitive pages
+  - Ensured proper encoding when sending HTML content
+
+## [3.2.3] - 2025-09-09
+
+### Security Fix - Complete Resolution
+- **Critical**: Fully resolved command injection vulnerability in `test_client.py` (GitHub Security Alert #10)
+  - Added validation for BASE_ID environment variable at startup
+  - Eliminated string interpolation vulnerability in API calls
+  - Enhanced endpoint validation with path traversal protection
+  - Added token format validation
+  - Removed all potential injection vectors
+
+## [3.2.2] - 2025-09-09
+
+### Security Fix
+- **Critical**: Fixed command injection vulnerability in `test_client.py`
+  - Added input validation for API endpoints
+  - Removed unused subprocess import
+  - Sanitized endpoint parameters to prevent injection attacks
+
+### Changed
+- Updated README with latest version information
+- Added project structure documentation
+
+## [3.2.1] - 2025-09-09
+
+### Critical Fix - TypeScript Architecture
+**IMPORTANT**: This release fixes a critical TypeScript compilation issue that prevented the TypeScript implementation from building correctly.
+
+### Fixed
+- **TypeScript Architecture**: Resolved fundamental issue where `.d.ts` files contained runtime code
+  - Moved error classes to `errors.ts`
+  - Moved tool schemas to `tools-schemas.ts`  
+  - Moved AI prompt templates to `prompt-templates.ts`
+  - Type definition files now only contain type definitions as per TypeScript best practices
+- **Build System**: TypeScript now compiles successfully without errors
+- **Import Structure**: Fixed import statements to properly distinguish between type imports and runtime imports
+
+### Changed
+- Updated Smithery configuration version to match package.json (3.2.0)
+
+### Verified
+- JavaScript implementation: ✅ Working
+- TypeScript implementation: ✅ Working (after fixes)
+- NPM package installation: ✅ Working
+- All entry points: ✅ Working
+
+### Backwards Compatibility
+- No breaking changes for existing users
+- All existing functionality preserved
+- Both JavaScript and TypeScript implementations fully operational
+
+## [3.2.0] - 2025-09-09
+
+### Added
+- World-class project structure with proper separation of concerns
+- Comprehensive build system with TypeScript support
+- Jest testing framework configuration
+- ESLint and Prettier for code quality
+- Proper CI/CD pipeline structure
+- Consolidated documentation in organized directories
+
+### Changed
+- Reorganized source code by language (TypeScript, JavaScript, Python)
+- Updated package.json with proper scripts and dependencies
+- Moved documentation to dedicated docs/ directory
+- Improved build and development workflows
+
+### Fixed
+- Removed broken symbolic link
+- Fixed inconsistent version numbering
+- Resolved missing dist/ directory issues
+
+## [3.1.0] - Previous Release
+- TypeScript support with comprehensive type definitions
+- Enterprise-grade features and automation
+- AI-powered analytics and predictive modeling
+
+## [1.6.0] - Previous Release
+- Enhanced Python implementation
+- Improved error handling
+- Better Claude Desktop integration
+
+## [1.5.0] - Previous Release
+- Multi-language support (JavaScript, TypeScript, Python)
+- Advanced Airtable operations
+- Comprehensive testing suite
+
+## [1.4.0] - Previous Release
+- Initial TypeScript implementation
+- Basic CRUD operations
+- MCP protocol support
+
+[Full release history available in docs/releases/]
