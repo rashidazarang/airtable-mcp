@@ -11,7 +11,35 @@
 
 A Model Context Protocol (MCP) server for Airtable with full CRUD operations, schema management, record comments, webhooks, batch operations, governance controls, and AI-powered analytics.
 
-**Version 4.0.0** | MCP Protocol 2024-11-05
+**Version 4.0.0** | MCP Protocol 2024-11-05 | [![npm](https://img.shields.io/npm/v/@rashidazarang/airtable-mcp)](https://www.npmjs.com/package/@rashidazarang/airtable-mcp)
+
+---
+
+## Quick Start
+
+No installation required — just add this to your Claude Desktop config and restart:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "npx",
+      "args": ["-y", "@rashidazarang/airtable-mcp"],
+      "env": {
+        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN",
+        "AIRTABLE_BASE_ID": "YOUR_BASE_ID"
+      }
+    }
+  }
+}
+```
+
+That's it. `npx` downloads and runs the server automatically. No `git clone`, no `npm install`.
+
+> **Get your token** at [airtable.com/create/tokens](https://airtable.com/create/tokens). **Get your Base ID** from the URL when viewing your base: `https://airtable.com/[BASE_ID]/...`
 
 ---
 
