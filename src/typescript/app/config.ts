@@ -8,6 +8,17 @@ import { validateApiKey } from './validateApiKey';
 
 loadEnv();
 
+function resolveVersion(): string {
+  if (process.env.npm_package_version) return process.env.npm_package_version;
+  try {
+    const pkgPath = path.resolve(__dirname, '..', '..', '..', 'package.json');
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    return pkg.version || '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+}
+
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
 
 export interface AirtableAuthConfig {
@@ -184,7 +195,7 @@ export function loadConfig(): AppConfig {
   }
 
   return {
-    version: process.env.npm_package_version || '0.0.0',
+    version: resolveVersion(),
     auth,
     governance,
     logLevel: resolveLogLevel(),
