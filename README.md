@@ -15,7 +15,7 @@ A Model Context Protocol (MCP) server for Airtable with full CRUD operations, sc
 
 ---
 
-## Quick Start
+## Quick Start (Claude Desktop)
 
 No installation required — just add this to your Claude Desktop config and restart:
 
@@ -39,7 +39,44 @@ No installation required — just add this to your Claude Desktop config and res
 
 That's it. `npx` downloads and runs the server automatically. No `git clone`, no `npm install`.
 
-> **Get your token** at [airtable.com/create/tokens](https://airtable.com/create/tokens). **Get your Base ID** from the URL when viewing your base: `https://airtable.com/[BASE_ID]/...`
+> **Get your token** at [airtable.com/create/tokens](https://airtable.com/create/tokens) — grant all scopes listed under [Token Scopes](#token-scopes) below. **Get your Base ID** from the URL when viewing your base: `https://airtable.com/[BASE_ID]/...` (or omit it and use `list_bases` to discover bases dynamically).
+
+---
+
+## Quick Start (Claude Code)
+
+### One-command install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/rashidazarang/airtable-mcp/main/setup.sh | bash
+```
+
+The script checks prerequisites, prompts for your Airtable token, and writes the MCP config to `~/.claude.json`. Restart Claude Code (or run `/mcp`) to connect.
+
+You can also pass your token directly:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/rashidazarang/airtable-mcp/main/setup.sh | bash -s -- YOUR_AIRTABLE_TOKEN
+```
+
+### Manual config
+
+Add to `~/.claude.json` under `mcpServers`:
+
+```json
+{
+  "airtable": {
+    "type": "stdio",
+    "command": "/bin/bash",
+    "args": ["-c", "cd /tmp && npx -y @rashidazarang/airtable-mcp"],
+    "env": {
+      "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN"
+    }
+  }
+}
+```
+
+> **Why the bash wrapper?** `npx` can fail to resolve the binary when run from a directory that contains a `package.json` with the same package name. The `cd /tmp &&` prefix avoids this edge case.
 
 ---
 
@@ -70,86 +107,20 @@ This server provides comprehensive Airtable integration through the Model Contex
 
 ---
 
-## Installation
+## Token Scopes
 
-### Option 1: NPM (Recommended)
+Create a Personal Access Token at [airtable.com/create/tokens](https://airtable.com/create/tokens) with these scopes:
 
-```bash
-npm install -g @rashidazarang/airtable-mcp
-```
-
-### Option 2: Clone from GitHub
-
-```bash
-git clone https://github.com/rashidazarang/airtable-mcp.git
-cd airtable-mcp
-npm install
-npm run build
-```
-
----
-
-## Configuration
-
-### Step 1: Get Your Airtable Credentials
-
-1. **Personal Access Token**: Go to [airtable.com/create/tokens](https://airtable.com/create/tokens) and create a token with these scopes:
-   - `data.records:read` — Read records
-   - `data.records:write` — Create, update, delete records
-   - `data.recordComments:read` — Read record comments
-   - `data.recordComments:write` — Create, update, delete comments
-   - `schema.bases:read` — View table schemas
-   - `schema.bases:write` — Create and modify tables and fields
-   - `user.email:read` — Read user identity (whoami)
-   - `webhook:manage` — Manage webhooks (optional)
-
-2. **Base ID**: Open your Airtable base and copy the ID from the URL: `https://airtable.com/[BASE_ID]/...`
-
-### Step 2: Configure Your MCP Client
-
-Add to your Claude Desktop configuration:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "airtable": {
-      "command": "npx",
-      "args": ["@rashidazarang/airtable-mcp"],
-      "env": {
-        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN",
-        "AIRTABLE_BASE_ID": "YOUR_BASE_ID"
-      }
-    }
-  }
-}
-```
-
-To start without a base ID (and discover bases dynamically):
-
-```json
-{
-  "mcpServers": {
-    "airtable": {
-      "command": "npx",
-      "args": ["@rashidazarang/airtable-mcp"],
-      "env": {
-        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN"
-      }
-    }
-  }
-}
-```
-
-### Claude Code Configuration
-
-If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), this project includes a configuration skill at `.claude/skills/configure-mcp` that can assist with agent-assisted MCP setup. Run `/configure-mcp` inside Claude Code to get guided configuration.
-
-### Step 3: Restart Your MCP Client
-
-Restart Claude Desktop or your MCP client to load the server.
+| Scope | Purpose |
+|-------|---------|
+| `data.records:read` | Read records |
+| `data.records:write` | Create, update, delete records |
+| `data.recordComments:read` | Read record comments |
+| `data.recordComments:write` | Create, update, delete comments |
+| `schema.bases:read` | View table schemas |
+| `schema.bases:write` | Create and modify tables and fields |
+| `user.email:read` | Read user identity (whoami) |
+| `webhook:manage` | Manage webhooks (optional) |
 
 ---
 
@@ -354,13 +325,40 @@ Ten AI prompt templates for advanced analytics:
 
 ---
 
-## Testing
+## Development
+
+> **Not required for users.** Clone the repo only if you want to contribute or modify the server. End users should use `npx` as shown in the Quick Start sections above.
 
 ```bash
+git clone https://github.com/rashidazarang/airtable-mcp.git
+cd airtable-mcp
 npm install
-npm run build          # Compile TypeScript
+npm run build
+```
+
+### Testing
+
+```bash
 npm run test:types     # Type checking
 npm test               # Run test suite
+```
+
+### Project Structure
+
+```
+airtable-mcp/
+├── src/typescript/          # TypeScript implementation
+│   ├── app/
+│   │   ├── tools/           # 42 tool implementations
+│   │   ├── prompts/         # 10 AI prompt registrations
+│   │   ├── airtable-client.ts
+│   │   ├── governance.ts
+│   │   └── context.ts
+│   └── airtable-mcp-server.ts
+├── dist/                    # Compiled output
+├── docs/                    # Documentation
+├── types/                   # TypeScript definitions
+└── bin/                     # CLI executables
 ```
 
 ---
@@ -381,26 +379,6 @@ npm test               # Run test suite
 - Confirm your Base ID is correct
 - Verify your token has access to the base
 - Use `list_bases` to discover accessible bases
-
----
-
-## Project Structure
-
-```
-airtable-mcp/
-├── src/typescript/          # TypeScript implementation
-│   ├── app/
-│   │   ├── tools/           # 42 tool implementations
-│   │   ├── prompts/         # 10 AI prompt registrations
-│   │   ├── airtable-client.ts
-│   │   ├── governance.ts
-│   │   └── context.ts
-│   └── airtable-mcp-server.ts
-├── dist/                    # Compiled output
-├── docs/                    # Documentation
-├── types/                   # TypeScript definitions
-└── bin/                     # CLI executables
-```
 
 ---
 
