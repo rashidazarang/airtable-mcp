@@ -43,6 +43,10 @@ That's it. `npx` downloads and runs the server automatically. No `git clone`, no
 
 ---
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/rashidazarang-airtable-mcp).
+
 ## Quick Start (Claude Code)
 
 ### One-command install
