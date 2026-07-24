@@ -56,17 +56,17 @@ export declare const describeOutputSchema: z.ZodObject<{
         fields: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">>, "many">>;
         views: z.ZodOptional<z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>, "many">>;
@@ -78,17 +78,17 @@ export declare const describeOutputSchema: z.ZodObject<{
         fields: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">>, "many">>;
         views: z.ZodOptional<z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>, "many">>;
@@ -100,17 +100,17 @@ export declare const describeOutputSchema: z.ZodObject<{
         fields: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">>, "many">>;
         views: z.ZodOptional<z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>, "many">>;
@@ -132,17 +132,17 @@ export declare const describeOutputSchema: z.ZodObject<{
         fields: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">>, "many">>;
         views: z.ZodOptional<z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>, "many">>;
@@ -163,17 +163,17 @@ export declare const describeOutputSchema: z.ZodObject<{
         fields: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, "passthrough", z.ZodTypeAny, z.objectOutputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">, z.objectInputType<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.ZodTypeAny, "passthrough">>, "many">>;
         views: z.ZodOptional<z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>, "many">>;
