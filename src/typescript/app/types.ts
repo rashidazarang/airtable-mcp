@@ -45,7 +45,9 @@ const describeFieldSchema = z
   .object({
     id: z.string(),
     name: z.string(),
-    type: z.string(),
+    // Optional: schema-only detail levels omit `type` (identifiersOnly
+    // deletes it in normalizeField), so the output schema must not require it.
+    type: z.string().optional(),
     options: z.record(z.string(), z.unknown()).optional()
   })
   .passthrough();
