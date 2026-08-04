@@ -58,7 +58,7 @@ export declare const describeOutputSchema: z.ZodObject<{
         fields: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
-            type: z.ZodString;
+            type: z.ZodOptional<z.ZodString>;
             options: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
         }, z.core.$loose>>>;
         views: z.ZodOptional<z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>>>;

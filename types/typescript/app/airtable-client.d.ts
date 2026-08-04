@@ -40,7 +40,7 @@ export declare class AirtableClient {
     updateRecords<T = unknown>(baseId: string, table: string, payload: unknown, idempotencyKey?: string): Promise<T>;
     upsertRecords<T = unknown>(baseId: string, table: string, payload: unknown, idempotencyKey?: string): Promise<T>;
     getRecord<T = unknown>(baseId: string, table: string, recordId: string): Promise<T>;
-    deleteRecords<T = unknown>(baseId: string, table: string, recordIds: string[]): Promise<T>;
+    deleteRecords<T = unknown>(baseId: string, table: string, recordIds: string[], idempotencyKey?: string): Promise<T>;
     createTable<T = unknown>(baseId: string, payload: unknown): Promise<T>;
     updateTable<T = unknown>(baseId: string, tableId: string, payload: unknown): Promise<T>;
     createField<T = unknown>(baseId: string, tableId: string, payload: unknown): Promise<T>;

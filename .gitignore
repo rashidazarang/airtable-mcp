@@ -124,7 +124,6 @@ tmp/
 /monitoring/
 /docker-compose.production.yml
 /Dockerfile.production
-/.github/workflows/
 /.github/ISSUE_TEMPLATE/
 
 # Chrome extension development

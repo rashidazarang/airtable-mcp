@@ -202,13 +202,24 @@ export class AirtableClient {
     });
   }
 
-  async deleteRecords<T = unknown>(baseId: string, table: string, recordIds: string[]): Promise<T> {
-    return this.request<T>({
+  async deleteRecords<T = unknown>(
+    baseId: string,
+    table: string,
+    recordIds: string[],
+    idempotencyKey?: string
+  ): Promise<T> {
+    const requestOptions: RequestOptions = {
       method: 'DELETE',
       path: `/v0/${encodeURIComponent(baseId)}/${encodeURIComponent(table)}`,
       query: { records: recordIds },
       baseId
-    });
+    };
+
+    if (idempotencyKey) {
+      requestOptions.idempotencyKey = idempotencyKey;
+    }
+
+    return this.request<T>(requestOptions);
   }
 
   async createTable<T = unknown>(baseId: string, payload: unknown): Promise<T> {

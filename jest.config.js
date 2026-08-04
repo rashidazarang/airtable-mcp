@@ -7,7 +7,8 @@ module.exports = {
     '**/?(*.)+(spec|test).+(ts|tsx|js)',
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    // tsconfig.json sets "types": [] for the build; tests need jest globals.
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: { types: ['node', 'jest'] } }],
   },
   collectCoverageFrom: [
     'src/**/*.{js,ts}',

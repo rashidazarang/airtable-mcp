@@ -45,7 +45,9 @@ const describeFieldSchema = z
   .object({
     id: z.string(),
     name: z.string(),
-    type: z.string(),
+    // Optional: identifiersOnly omits `type` by design, and at `full` a field
+    // whose meta-API entry lacks a type omits the key rather than inventing "".
+    type: z.string().optional(),
     options: z.record(z.string(), z.unknown()).optional()
   })
   .passthrough();

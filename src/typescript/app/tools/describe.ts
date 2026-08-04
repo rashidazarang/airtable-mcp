@@ -31,23 +31,21 @@ function normalizeField(raw: unknown, detailLevel: DetailLevel): DescribeFieldEn
   const source = raw as Record<string, unknown>;
   const field: DescribeFieldEntry = {
     id: String(source?.id ?? ''),
-    name: String(source?.name ?? ''),
-    type: detailLevel === 'full' ? String(source?.type ?? '') : ''
+    name: String(source?.name ?? '')
   };
 
-  // Only include full details in 'full' mode
+  // Only include full details in 'full' mode. A field whose meta-API entry has
+  // no type omits the key — "" is not a valid Airtable field type.
   if (detailLevel === 'full') {
+    if (typeof source?.type === 'string' && source.type.length > 0) {
+      field.type = source.type;
+    }
     if (source?.description && typeof source.description === 'string') {
       field.description = source.description;
     }
     if (source?.options && typeof source.options === 'object') {
       field.options = source.options as Record<string, unknown>;
     }
-  }
-
-  // Remove empty type for identifiersOnly
-  if (detailLevel === 'identifiersOnly') {
-    delete (field as Record<string, unknown>).type;
   }
 
   return field;

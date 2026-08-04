@@ -1,27 +1,25 @@
-import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { AppContext } from '../context';
 import { handleToolError } from './handleError';
 import { createToolResponse } from './response';
-
-const schema = z.object({
-  baseId: z.string().min(1),
-  table: z.string().min(1),
-  recordIds: z.array(z.string().min(1)).min(1).max(10)
-}).strict();
-
-type DeleteRecordInput = z.infer<typeof schema>;
+import {
+  DeleteGuardInput,
+  buildDeletePreview,
+  deleteGuardInputSchema,
+  performDelete
+} from './deleteGuard';
 
 export function registerDeleteRecordTool(server: McpServer, ctx: AppContext): void {
   server.registerTool(
     'delete_record',
     {
-      description: 'Delete one or more Airtable records by ID.',
-      inputSchema: schema.shape as any
+      description:
+        'Delete one or more Airtable records by ID. Use dryRun first to preview the records and their linked-record impact; pass idempotencyKey on the real delete.',
+      inputSchema: deleteGuardInputSchema.shape as any
     },
-    async (raw: DeleteRecordInput) => {
+    async (raw: DeleteGuardInput) => {
       try {
-        const args = schema.parse(raw);
+        const args = deleteGuardInputSchema.parse(raw);
         ctx.governance.ensureOperationAllowed('delete');
         ctx.governance.ensureBaseAllowed(args.baseId);
         ctx.governance.ensureTableAllowed(args.baseId, args.table);
@@ -32,17 +30,16 @@ export function registerDeleteRecordTool(server: McpServer, ctx: AppContext): vo
           table: args.table
         });
 
-        const response: any = await ctx.airtable.deleteRecords(args.baseId, args.table, args.recordIds);
+        if (args.dryRun) {
+          const records = await buildDeletePreview(ctx, args);
+          logger.info('Delete dry run completed', { count: records.length });
+          return createToolResponse({ dryRun: true, records, count: records.length });
+        }
 
-        const deletedIds: string[] = Array.isArray(response?.records)
-          ? response.records
-              .filter((r: any) => r?.deleted)
-              .map((r: any) => String(r.id))
-          : [];
-
+        const deletedIds = await performDelete(ctx, args);
         logger.info('Delete completed', { count: deletedIds.length });
 
-        return createToolResponse({ deletedIds, count: deletedIds.length });
+        return createToolResponse({ dryRun: false, deletedIds, count: deletedIds.length });
       } catch (error) {
         return handleToolError('delete_record', error, ctx);
       }
