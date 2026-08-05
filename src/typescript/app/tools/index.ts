@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { AppContext } from '../context';
+import { resolveToolset } from '../toolset';
 
 // Original tools
 import { registerListBasesTool } from './listBases';
@@ -59,7 +60,29 @@ import { registerDeleteCommentTool } from './deleteComment';
 // User info
 import { registerWhoamiTool } from './whoami';
 
-export function registerAllTools(server: McpServer, ctx: AppContext): void {
+/**
+ * Wrap a server so registerTool becomes a no-op for tools outside the
+ * configured toolset (AIRTABLE_TOOLSET). Interposing here keeps the 40+ tool
+ * modules unchanged and filters by the exact registered name.
+ */
+function withToolsetFilter(server: McpServer, allowed: ReadonlySet<string>): McpServer {
+  const filtered: McpServer = Object.create(server);
+  (filtered as unknown as Record<string, unknown>).registerTool = (
+    name: string,
+    ...rest: unknown[]
+  ) => {
+    if (!allowed.has(name)) {
+      return undefined;
+    }
+    return (server.registerTool as unknown as (...args: unknown[]) => unknown)(name, ...rest);
+  };
+  return filtered;
+}
+
+export function registerAllTools(target: McpServer, ctx: AppContext): void {
+  const toolset = ctx.config.toolset ?? resolveToolset(undefined);
+  const server = toolset.mode === 'full' ? target : withToolsetFilter(target, toolset.names);
+
   // Original tools
   registerListBasesTool(server, ctx);
   registerDescribeTool(server, ctx);

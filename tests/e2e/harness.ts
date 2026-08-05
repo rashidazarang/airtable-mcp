@@ -8,6 +8,7 @@ import { ExceptionStore } from '../../src/typescript/app/exceptions';
 import { Logger } from '../../src/typescript/app/logger';
 import { createAirtableServerFactory } from '../../src/typescript/app/server-factory';
 import { GovernanceSnapshot } from '../../src/typescript/app/types';
+import { resolveToolset } from '../../src/typescript/app/toolset';
 import { NotFoundError } from '../../src/typescript/errors';
 
 /**
@@ -184,6 +185,8 @@ const ALL_OPERATIONS: GovernanceSnapshot['allowedOperations'] = [
 export interface HarnessOptions {
   fixture?: FixtureBase;
   allowedOperations?: GovernanceSnapshot['allowedOperations'];
+  /** Raw AIRTABLE_TOOLSET value: 'full', 'core', or a comma list of names. */
+  toolset?: string;
 }
 
 export interface E2EHarness {
@@ -217,7 +220,8 @@ export async function createHarness(options: HarnessOptions = {}): Promise<E2EHa
     },
     governance: governanceSnapshot,
     logLevel: 'error',
-    exceptionQueueSize: 50
+    exceptionQueueSize: 50,
+    toolset: resolveToolset(options.toolset)
   };
 
   const logger = new Logger('error', { component: 'e2e' });
