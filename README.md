@@ -3,15 +3,15 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-4.0.0-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-5.0.0-blue)](https://github.com/rashidazarang/airtable-mcp)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![AI Agent](https://img.shields.io/badge/AI_Agent-Enhanced-purple)](https://github.com/rashidazarang/airtable-mcp)
 [![Security](https://img.shields.io/badge/Security-Enterprise-green)](https://github.com/rashidazarang/airtable-mcp)
-[![Protocol](https://img.shields.io/badge/Protocol-2024--11--05-success)](https://modelcontextprotocol.io/)
+[![Protocol](https://img.shields.io/badge/Protocol-2026--07--28-success)](https://modelcontextprotocol.io/)
 
 A Model Context Protocol (MCP) server for Airtable with full CRUD operations, schema management, record comments, webhooks, batch operations, governance controls, and AI-powered analytics.
 
-**Version 4.0.0** | MCP Protocol 2024-11-05 | [![npm](https://img.shields.io/npm/v/@rashidazarang/airtable-mcp)](https://www.npmjs.com/package/@rashidazarang/airtable-mcp)
+**Version 5.0.0** | MCP Protocol 2026-07-28 (stateless core, legacy 2025-era clients still served) | [![npm](https://img.shields.io/npm/v/@rashidazarang/airtable-mcp)](https://www.npmjs.com/package/@rashidazarang/airtable-mcp)
 
 ---
 
@@ -99,9 +99,20 @@ This server provides comprehensive Airtable integration through the Model Contex
 
 ---
 
+## Protocol Support
+
+Built on the **MCP 2026-07-28 specification** with the v2 TypeScript SDK (`@modelcontextprotocol/server`):
+
+- **Stateless core** — every request is served by a fresh server instance from a shared factory; no sessions, no sticky routing. In HTTP mode any request can land on any replica, so the server deploys cleanly to serverless and horizontally scaled environments.
+- **Both eras served** — modern 2026-07-28 clients (per-request envelope) and legacy 2025-era clients (`initialize` handshake) are handled by the same factory: per-connection era pinning over stdio, per-request stateless fallback over HTTP.
+- **Transports** — stdio (`serveStdio`) for local clients like Claude Desktop/Code, and streamable HTTP (`createMcpHandler` + Node adapter) when `PORT`/`MCP_HTTP_PORT` is set, with a `/health` endpoint for orchestrators.
+- **Tasks extension** — deliberately not implemented: the 2026-07-28 spec moved Tasks out of core into the `io.modelcontextprotocol/tasks` extension, and every operation this server exposes is a sub-second Airtable API call (batches are capped at 10 records), so background-task semantics add nothing. This will be revisited if long-running tools are added.
+
+---
+
 ## Prerequisites
 
-- Node.js 18 or later
+- Node.js 20 or later (required by the MCP v2 SDK)
 - An Airtable account with a Personal Access Token
 - Your Airtable Base ID (optional — can be discovered via the `list_bases` tool)
 

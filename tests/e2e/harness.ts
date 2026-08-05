@@ -1,22 +1,23 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { createMcpHandler, McpHttpHandler } from '@modelcontextprotocol/server';
+import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { AppConfig } from '../../src/typescript/app/config';
 import { AppContext } from '../../src/typescript/app/context';
 import { AirtableClient } from '../../src/typescript/app/airtable-client';
 import { GovernanceService } from '../../src/typescript/app/governance';
 import { ExceptionStore } from '../../src/typescript/app/exceptions';
 import { Logger } from '../../src/typescript/app/logger';
-import { registerAllTools } from '../../src/typescript/app/tools';
+import { createAirtableServerFactory } from '../../src/typescript/app/server-factory';
 import { GovernanceSnapshot } from '../../src/typescript/app/types';
 import { NotFoundError } from '../../src/typescript/errors';
 
 /**
- * End-to-end harness: runs the real McpServer with all tools registered,
- * connected to a real MCP Client over the SDK's in-memory transport. Only the
- * outbound Airtable HTTP layer is faked, so every request travels the full
- * path: client → protocol → tool handler → zod parsing → SDK output-schema
- * validation → client-side output validation.
+ * End-to-end harness: serves the production server factory through the real
+ * stateless HTTP entry (createMcpHandler), with a real MCP Client pinned to
+ * protocol revision 2026-07-28 driving it through the handler's fetch face.
+ * Only the outbound Airtable HTTP layer is faked, so every request travels
+ * the full path: client → per-request envelope → HTTP handler → fresh server
+ * instance → tool handler → zod parsing → SDK output-schema validation →
+ * client-side output validation.
  */
 
 export interface FixtureField {
@@ -187,7 +188,7 @@ export interface HarnessOptions {
 
 export interface E2EHarness {
   client: Client;
-  server: McpServer;
+  handler: McpHttpHandler;
   fake: FakeAirtableClient;
   close: () => Promise<void>;
 }
@@ -229,23 +230,27 @@ export async function createHarness(options: HarnessOptions = {}): Promise<E2EHa
     exceptions: new ExceptionStore(config.exceptionQueueSize, logger)
   };
 
-  const server = new McpServer(
-    { name: 'airtable-brain-e2e', version: config.version },
-    { capabilities: { tools: {} } }
-  );
-  registerAllTools(server, ctx);
+  // The exact factory production serves — one fresh server per request.
+  const handler = createMcpHandler(createAirtableServerFactory(ctx));
 
-  const client = new Client({ name: 'e2e-client', version: '0.0.0' });
-  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-  await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
+  const client = new Client(
+    { name: 'e2e-client', version: '0.0.0' },
+    // Pin the modern era: if the server ever stops serving 2026-07-28,
+    // connect() fails loudly instead of silently downgrading to legacy.
+    { versionNegotiation: { mode: { pin: '2026-07-28' } } }
+  );
+  const transport = new StreamableHTTPClientTransport(new URL('http://e2e.local/mcp'), {
+    fetch: (url, init) => handler.fetch(new Request(url, init))
+  });
+  await client.connect(transport);
 
   return {
     client,
-    server,
+    handler,
     fake,
     close: async () => {
       await client.close();
-      await server.close();
+      await handler.close();
     }
   };
 }

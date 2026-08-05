@@ -8,7 +8,11 @@ module.exports = {
   ],
   transform: {
     // tsconfig.json sets "types": [] for the build; tests need jest globals.
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: { types: ['node', 'jest'] } }],
+    // isolatedModules: ts-jest requires it for the Node16 hybrid module kind.
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      { tsconfig: { types: ['node', 'jest'], isolatedModules: true } },
+    ],
   },
   collectCoverageFrom: [
     'src/**/*.{js,ts}',
