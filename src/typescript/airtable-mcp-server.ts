@@ -45,7 +45,9 @@ function buildContext(config: ReturnType<typeof loadConfig>, rootLogger: Logger)
   };
 }
 
-export async function start(): Promise<void> {
+// Startup is synchronous under the stateless v2 entries: serveStdio and
+// createMcpHandler return immediately and serve as traffic arrives.
+export function start(): void {
   const config = loadConfig();
   const logger = new Logger(config.logLevel, { component: 'server' });
 
@@ -131,9 +133,11 @@ export async function start(): Promise<void> {
 }
 
 if (typeof require !== 'undefined' && require.main === module) {
-  start().catch((error) => {
+  try {
+    start();
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Failed to start Airtable Brain MCP server:', error);
     process.exit(1);
-  });
+  }
 }
