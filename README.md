@@ -3,7 +3,7 @@
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/rashidazarang/airtable-mcp)](https://archestra.ai/mcp-catalog/rashidazarang__airtable-mcp)
 [![smithery badge](https://smithery.ai/badge/@rashidazarang/airtable-mcp)](https://smithery.ai/server/@rashidazarang/airtable-mcp)
 ![Airtable](https://img.shields.io/badge/Airtable-18BFFF?style=for-the-badge&logo=Airtable&logoColor=white)
-[![MCP](https://img.shields.io/badge/MCP-5.0.0-blue)](https://github.com/rashidazarang/airtable-mcp)
+[![MCP](https://img.shields.io/badge/MCP-5.1.0-blue)](https://github.com/rashidazarang/airtable-mcp)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 [![AI Agent](https://img.shields.io/badge/AI_Agent-Enhanced-purple)](https://github.com/rashidazarang/airtable-mcp)
 [![Security](https://img.shields.io/badge/Security-Enterprise-green)](https://github.com/rashidazarang/airtable-mcp)
@@ -11,7 +11,7 @@
 
 A Model Context Protocol (MCP) server for Airtable with full CRUD operations, schema management, record comments, webhooks, batch operations, governance controls, and AI-powered analytics.
 
-**Version 5.0.0** | MCP Protocol 2026-07-28 (stateless core, legacy 2025-era clients still served) | [![npm](https://img.shields.io/npm/v/@rashidazarang/airtable-mcp)](https://www.npmjs.com/package/@rashidazarang/airtable-mcp)
+**Version 5.1.0** | MCP Protocol 2026-07-28 (stateless core, legacy 2025-era clients still served) | Works with Claude, Codex, Cursor, Windsurf, VS Code, and any MCP client | [![npm](https://img.shields.io/npm/v/@rashidazarang/airtable-mcp)](https://www.npmjs.com/package/@rashidazarang/airtable-mcp)
 
 ---
 
@@ -77,6 +77,83 @@ Add to `~/.claude.json` under `mcpServers`:
 ```
 
 > **Why the bash wrapper?** `npx` can fail to resolve the binary when run from a directory that contains a `package.json` with the same package name. The `cd /tmp &&` prefix avoids this edge case.
+
+---
+
+## Quick Start (Codex, Cursor, Windsurf, VS Code)
+
+The server works with any MCP client. It serves both the modern 2026-07-28 protocol and 2025-era clients automatically — no configuration needed for either.
+
+### OpenAI Codex (CLI, IDE extension, ChatGPT desktop)
+
+One command:
+
+```bash
+codex mcp add airtable -- npx -y @rashidazarang/airtable-mcp
+```
+
+Or edit `~/.codex/config.toml` (or `.codex/config.toml` for a trusted project) directly:
+
+```toml
+[mcp_servers.airtable]
+command = "npx"
+args = ["-y", "@rashidazarang/airtable-mcp"]
+
+[mcp_servers.airtable.env]
+AIRTABLE_TOKEN = "YOUR_AIRTABLE_TOKEN"
+```
+
+The Codex CLI, IDE extension, and ChatGPT desktop app share this configuration.
+
+### Cursor
+
+Add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (per project):
+
+```json
+{
+  "mcpServers": {
+    "airtable": {
+      "command": "npx",
+      "args": ["-y", "@rashidazarang/airtable-mcp"],
+      "env": {
+        "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN",
+        "AIRTABLE_TOOLSET": "core"
+      }
+    }
+  }
+}
+```
+
+> **Why `AIRTABLE_TOOLSET=core`?** Cursor caps agents at **40 enabled tools across all servers**, and this server exposes 42. The `core` profile registers the 18 record-centric tools (reads, writes, batches, governance), leaving room for other servers. Omit it (or set `full`) if Airtable is your only MCP server and you manage the cap by disabling individual tools in Cursor's *Tools & MCP* settings. Also note: Cursor offers MCP tools in **Agent** and **Plan** modes only (not Ask/Edit), and consumes tools and resources but not MCP prompts.
+
+### Windsurf
+
+Add the same JSON block to `~/.codeium/windsurf/mcp_config.json` (Cascade → MCP settings). Windsurf supports per-tool toggling if you prefer the full toolset.
+
+### VS Code (GitHub Copilot agent mode)
+
+Add to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "airtable": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@rashidazarang/airtable-mcp"],
+      "env": { "AIRTABLE_TOKEN": "YOUR_AIRTABLE_TOKEN" }
+    }
+  }
+}
+```
+
+### Compatibility notes (any client)
+
+- **Both protocol eras served** — modern 2026-07-28 clients and legacy 2025-era clients (Codex, Cursor, Windsurf, Cline, Zed, and most others today) negotiate automatically.
+- **Tool names are client-safe** — bare snake_case, well under length limits, and free of `:` and `*` (reserved by Cursor's allowlist grammar `server:tool`).
+- **Logs never touch stdout** — all logging goes to stderr, so stdio framing is never corrupted.
+- **Remote/HTTP clients** — start the server with `PORT` or `MCP_HTTP_PORT` set and point the client at `http://host:port/mcp` (streamable HTTP, stateless; `/health` for orchestrators).
+- **Tool caps** — use `AIRTABLE_TOOLSET=core` or an explicit allowlist (e.g. `AIRTABLE_TOOLSET=describe,query,list_records`) for clients that limit enabled tools or to slim the agent's context.
 
 ---
 
@@ -331,6 +408,7 @@ Ten AI prompt templates for advanced analytics:
 |----------|----------|-------------|
 | `AIRTABLE_TOKEN` | Yes | Personal Access Token |
 | `AIRTABLE_BASE_ID` | No | Default base ID (discoverable via `list_bases`) |
+| `AIRTABLE_TOOLSET` | No | Which tools to register: `full` (default, all 42), `core` (18 record-centric tools — fits Cursor's 40-tool cap), or a comma-separated allowlist of tool names |
 | `LOG_LEVEL` | No | Logging level (default: `info`) |
 | `MCP_HTTP_PORT` | No | Enable HTTP transport for hosted deployments |
 

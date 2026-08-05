@@ -5,6 +5,7 @@ import { config as loadEnv } from 'dotenv';
 import { governanceOutputSchema, GovernanceSnapshot } from './types';
 import { GovernanceError } from '../errors';
 import { validateApiKey } from './validateApiKey';
+import { ToolsetConfig, resolveToolset } from './toolset';
 
 loadEnv();
 
@@ -35,6 +36,12 @@ export interface AppConfig {
   governance: GovernanceSnapshot;
   logLevel: LogLevel;
   exceptionQueueSize: number;
+  /**
+   * Which tools to register, from AIRTABLE_TOOLSET. Omitted means full.
+   * Lets the server fit client-side tool caps (Cursor allows 40 enabled
+   * tools across all servers).
+   */
+  toolset?: ToolsetConfig;
 }
 
 const DEFAULT_EXCEPTION_QUEUE_SIZE = 500;
@@ -203,6 +210,7 @@ export function loadConfig(): AppConfig {
     exceptionQueueSize:
       Number.parseInt(process.env.EXCEPTION_QUEUE_SIZE || '', 10) > 0
         ? Number.parseInt(process.env.EXCEPTION_QUEUE_SIZE as string, 10)
-        : DEFAULT_EXCEPTION_QUEUE_SIZE
+        : DEFAULT_EXCEPTION_QUEUE_SIZE,
+    toolset: resolveToolset(process.env.AIRTABLE_TOOLSET)
   };
 }
