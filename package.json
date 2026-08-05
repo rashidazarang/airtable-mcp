@@ -1,6 +1,6 @@
 {
   "name": "@rashidazarang/airtable-mcp",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "Advanced AI-powered Airtable MCP server with TypeScript support, intelligent analytics, predictive modeling, and enterprise automation capabilities",
   "main": "dist/typescript/index.js",
   "exports": {
@@ -63,17 +63,19 @@
   "author": "Rashid Azarang",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@modelcontextprotocol/node": "^2.0.0",
+    "@modelcontextprotocol/server": "^2.0.0",
     "dotenv": "^16.0.0",
     "zod": "^4.2.1",
     "zod-to-json-schema": "^3.25.0"
   },
   "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.10.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-security": "^3.0.1",
@@ -85,7 +87,10 @@
     "typescript": "^5.3.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
+  },
+  "overrides": {
+    "@hono/node-server": "^2.0.5"
   },
   "repository": {
     "type": "git",

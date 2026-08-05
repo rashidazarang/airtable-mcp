@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from '@modelcontextprotocol/server';
 import { AI_PROMPT_TEMPLATES, PromptSchema } from '../../prompt-templates';
 import { AppContext } from '../context';
 
@@ -97,10 +97,12 @@ export function registerAllPrompts(server: McpServer, _ctx: AppContext): void {
   for (const [name, template] of Object.entries(AI_PROMPT_TEMPLATES)) {
     const argsShape = buildZodShape(template);
 
-    server.prompt(
+    server.registerPrompt(
       name,
-      template.description,
-      argsShape,
+      {
+        description: template.description,
+        argsSchema: z.object(argsShape)
+      },
       async (args: Record<string, unknown>) => {
         const stringArgs: Record<string, string> = {};
         for (const [k, v] of Object.entries(args)) {
