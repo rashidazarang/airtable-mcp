@@ -1,0 +1,73 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.rashidazarang/airtable-mcp",
+  "description": "Runs locally: Airtable records, schema, comments, upserts, base/table allow-lists and PII masking",
+  "repository": {
+    "url": "https://github.com/rashidazarang/airtable-mcp",
+    "source": "github",
+    "id": "948964764"
+  },
+  "websiteUrl": "https://www.airtablemcp.com/",
+  "version": "5.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@rashidazarang/airtable-mcp",
+      "version": "5.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "AIRTABLE_TOKEN",
+          "description": "Airtable personal access token from https://airtable.com/create/tokens. Grant data.records, data.recordComments and schema.bases (read and write) and user.email:read.",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "AIRTABLE_BASE_ID",
+          "description": "Default base ID. When set, other bases are refused unless listed in AIRTABLE_ALLOWED_BASES. Leave unset to use every base the token can reach.",
+          "format": "string",
+          "placeholder": "appXXXXXXXXXXXXXX"
+        },
+        {
+          "name": "AIRTABLE_ALLOWED_BASES",
+          "description": "Comma-separated base IDs the server may use. Unset allows every base the token can reach.",
+          "format": "string",
+          "placeholder": "appXXXXXXXXXXXXXX,appYYYYYYYYYYYYYY"
+        },
+        {
+          "name": "AIRTABLE_ALLOWED_TABLES",
+          "description": "Comma-separated baseId:tableName pairs. In a base listed here, only the listed tables are allowed.",
+          "format": "string",
+          "placeholder": "appXXXXXXXXXXXXXX:Tasks"
+        },
+        {
+          "name": "AIRTABLE_TOOLSET",
+          "description": "Tools to register: full (all tools), core (18 record tools, for clients that cap enabled tools) or a comma-separated list of tool names.",
+          "format": "string",
+          "default": "full"
+        },
+        {
+          "name": "AIRTABLE_GOVERNANCE_PATH",
+          "description": "Path to a governance JSON file (allow-lists, allowed operations, PII field policies). Defaults to config/governance.json in the working directory, if present.",
+          "format": "filepath"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "description": "Log level. Logs go to stderr.",
+          "format": "string",
+          "default": "info",
+          "choices": ["error", "warn", "info", "debug"]
+        },
+        {
+          "name": "EXCEPTION_QUEUE_SIZE",
+          "description": "How many recent errors the list_exceptions tool keeps.",
+          "format": "number",
+          "default": "500"
+        }
+      ]
+    }
+  ]
+}
