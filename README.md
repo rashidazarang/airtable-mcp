@@ -484,6 +484,10 @@ Contributions are welcome. Please open an issue first to discuss major changes.
 
 ---
 
+## Author
+
+Built by [Rashid Azarang](https://rashidazarang.com), Senior AI Engineer in Mexico. Available for contract work on AI agents, LLM evaluation and MCP servers: [rashidazarang.com/contact](https://rashidazarang.com/contact).
+
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
